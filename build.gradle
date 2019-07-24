@@ -16,6 +16,10 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
+//compileJava {
+//    options.compilerArgs << "-XDignore.symbol.file=true"
+//}
+
 compileKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }

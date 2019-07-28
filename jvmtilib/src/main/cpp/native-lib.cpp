@@ -64,12 +64,16 @@ void ObjectAllocCallback(jvmtiEnv *jvmti, JNIEnv *jni,
 
 void GCStartCallback(jvmtiEnv *jvmti) {
     ALOGI("==========触发 GCStart=======");
-
 }
 
 void GCFinishCallback(jvmtiEnv *jvmti) {
     ALOGI("==========触发 GCFinish=======");
+}
 
+void printJavaStatus(JNIEnv *jni, const char *funName) {
+    jclass cls = jni->FindClass("com/dodola/jvmtilib/JVMTIHelper");
+    jmethodID printMethod = jni->GetMethodID(cls, "printStatus", "(Ljava/lang/String;)V");
+    jni->CallStaticVoidMethod(cls, printMethod, funName);
 }
 
 void SetEventNotification(jvmtiEnv *jvmti, jvmtiEventMode mode,
@@ -177,3 +181,4 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
     env->RegisterNatives(clazz, methods, 1);
     return JNI_VERSION_1_6;
 }
+

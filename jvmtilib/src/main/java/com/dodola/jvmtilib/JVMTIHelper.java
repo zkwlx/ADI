@@ -64,10 +64,10 @@ public class JVMTIHelper {
 
     public static native void retransformClasses(Class[] classes);
 
-    public static void printStatus() {
+    public static void printStatus(String methodName) {
         int pid = Process.myPid();
         String threadName = Thread.currentThread().getName();
-        Log.i("zkw", "---------> pid:" + pid + ", threadName:" + threadName);
+        Log.i("zkw", "---------> pid:" + pid + ", threadName:" + threadName + ", jni fun: " + methodName);
     }
 
     public static void printEnter(String log) {

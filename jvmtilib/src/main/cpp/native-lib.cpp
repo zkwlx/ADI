@@ -13,6 +13,16 @@
 #define ALOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
 static jvmtiEnv *localJvmtiEnv;
 
+void printJavaStatus(JNIEnv *jni, const char *funName) {
+    jclass cls = jni->FindClass("com/dodola/jvmtilib/JVMTIHelper");
+//    jclass global_clazz = (jclass) jni->NewGlobalRef(cls);
+
+    jmethodID printMethod = jni->GetStaticMethodID(cls, "printStatus", "(Ljava/lang/String;)V");
+    jstring args = jni->NewStringUTF(funName);
+    jni->CallStaticVoidMethod(cls, printMethod, args);
+    jni->DeleteLocalRef(args);
+}
+
 static void
 ClassTransform(jvmtiEnv *jvmti_env,
                JNIEnv *env,
@@ -59,7 +69,11 @@ void ObjectAllocCallback(jvmtiEnv *jvmti, JNIEnv *jni,
     jstring name = static_cast<jstring>(jni->CallObjectMethod(klass, mid_getName));
     const char *className = jni->GetStringUTFChars(name, JNI_FALSE);
     ALOGI("==========alloc callback======= %s {size:%d}", className, size);
+    if (strcmp(className, "com.dodola.jvmtilib.JVMTIHelper") == 0) {
+        printJavaStatus(jni, "ObjectAllocCallback");
+    }
     jni->ReleaseStringUTFChars(name, className);
+
 }
 
 void GCStartCallback(jvmtiEnv *jvmti) {
@@ -70,11 +84,6 @@ void GCFinishCallback(jvmtiEnv *jvmti) {
     ALOGI("==========触发 GCFinish=======");
 }
 
-void printJavaStatus(JNIEnv *jni, const char *funName) {
-    jclass cls = jni->FindClass("com/dodola/jvmtilib/JVMTIHelper");
-    jmethodID printMethod = jni->GetStaticMethodID(cls, "printStatus", "(Ljava/lang/String;)V");
-    jni->CallStaticVoidMethod(cls, printMethod, funName);
-}
 
 void SetEventNotification(jvmtiEnv *jvmti, jvmtiEventMode mode,
                           jvmtiEvent event_type) {
@@ -158,9 +167,9 @@ extern "C" JNIEXPORT jint JNICALL Agent_OnAttach(JavaVM *vm, char *options,
     SetEventNotification(jvmti_env, JVMTI_ENABLE,
                          JVMTI_EVENT_CLASS_FILE_LOAD_HOOK);
     ALOGI("==========Agent_OnAttach=======");
-    JNIEnv *env;
-    vm->GetEnv((void **) &env, JNI_VERSION_1_6);
-    printJavaStatus(env, "Agent_OnAttach");
+//    JNIEnv *env;
+//    vm->GetEnv((void **) &env, JNI_VERSION_1_6);
+//    printJavaStatus(env, "Agent_OnAttach");
     return JNI_OK;
 
 }
@@ -182,6 +191,8 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
     ALOGI("==============library load====================");
     jclass clazz = env->FindClass("com/dodola/jvmtilib/JVMTIHelper");
     env->RegisterNatives(clazz, methods, 1);
+
+    printJavaStatus(env, "JNI_OnLoad");
     return JNI_VERSION_1_6;
 }
 

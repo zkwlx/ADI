@@ -21,6 +21,12 @@ public class JVMTIHelper {
     private static String packageCodePath = "";
 
     public static void init(Context context) {
+
+//        if (true) {
+//            System.loadLibrary("jvmti_agent");
+//            return;
+//        }
+
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 packageCodePath = context.getPackageCodePath();

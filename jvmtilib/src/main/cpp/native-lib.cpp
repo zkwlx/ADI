@@ -72,7 +72,7 @@ void GCFinishCallback(jvmtiEnv *jvmti) {
 
 void printJavaStatus(JNIEnv *jni, const char *funName) {
     jclass cls = jni->FindClass("com/dodola/jvmtilib/JVMTIHelper");
-    jmethodID printMethod = jni->GetMethodID(cls, "printStatus", "(Ljava/lang/String;)V");
+    jmethodID printMethod = jni->GetStaticMethodID(cls, "printStatus", "(Ljava/lang/String;)V");
     jni->CallStaticVoidMethod(cls, printMethod, funName);
 }
 
@@ -158,6 +158,9 @@ extern "C" JNIEXPORT jint JNICALL Agent_OnAttach(JavaVM *vm, char *options,
     SetEventNotification(jvmti_env, JVMTI_ENABLE,
                          JVMTI_EVENT_CLASS_FILE_LOAD_HOOK);
     ALOGI("==========Agent_OnAttach=======");
+    JNIEnv *env;
+    vm->GetEnv((void **) &env, JNI_VERSION_1_6);
+    printJavaStatus(env, "Agent_OnAttach");
     return JNI_OK;
 
 }

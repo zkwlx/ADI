@@ -1,41 +1,42 @@
-package com.dodola.jvmtilib;
+package com.adi;
 
 import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.os.Debug;
+import android.os.Process;
 import android.util.Log;
 import android.widget.Toast;
-import android.os.Process;
 
 import java.io.File;
 import java.lang.reflect.Method;
-
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
 /**
- * Created by dodola on 2018/12/16.
+ * @author zhoukewen
+ * @since 2019-08-12
  */
-public class JVMTIHelper {
+public class ADIHelper {
+
+    private static final String TAG = "ADIHelper";
+
+    private static final String LIB_NAME = "adi_agent";
+
+    // jni 层用到
+    private static String packageCodePath = "";
 
     public static void init(Context context) {
-
-//        if (true) {
-//            System.loadLibrary("jvmti_agent");
-//            return;
-//        }
-
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                String packageCodePath = context.getPackageCodePath();
+                packageCodePath = context.getPackageCodePath();
                 ClassLoader classLoader = context.getClassLoader();
                 Method findLibrary = ClassLoader.class.getDeclaredMethod("findLibrary", String.class);
-                String jvmtiAgentLibPath = (String) findLibrary.invoke(classLoader, "jvmti_agent");
+                String jvmtiAgentLibPath = (String) findLibrary.invoke(classLoader, LIB_NAME);
                 //copy lib to /data/data/com.dodola.jvmti/files/jvmti
-                Log.d("Jvmti", "jvmtiagentlibpath " + jvmtiAgentLibPath);
+                Log.d(TAG, "adi_agentlibpath " + jvmtiAgentLibPath);
                 File filesDir = context.getFilesDir();
-                File jvmtiLibDir = new File(filesDir, "jvmti");
+                File jvmtiLibDir = new File(filesDir, "adi");
                 if (!jvmtiLibDir.exists()) {
                     jvmtiLibDir.mkdirs();
 
@@ -46,7 +47,7 @@ public class JVMTIHelper {
                 }
                 Files.copy(Paths.get(new File(jvmtiAgentLibPath).getAbsolutePath()), Paths.get((agentLibSo).getAbsolutePath()));
 
-                Log.d("Jvmti", agentLibSo.getAbsolutePath() + ", " + context.getPackageCodePath());
+                Log.d(TAG, agentLibSo.getAbsolutePath() + ", " + context.getPackageCodePath());
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                     Debug.attachJvmtiAgent(agentLibSo.getAbsolutePath(), null, classLoader);
@@ -60,7 +61,7 @@ public class JVMTIHelper {
                         ex.printStackTrace();
                     }
                 }
-                System.loadLibrary("jvmti_agent");
+                System.loadLibrary(LIB_NAME);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -72,17 +73,15 @@ public class JVMTIHelper {
     public static void printStatus(String methodName) {
         int pid = Process.myPid();
         String threadName = Thread.currentThread().getName();
-        Log.i("zkw", "---------> pid:" + pid + ", threadName:" + threadName + ", jni fun: " + methodName);
+        Log.i(TAG, "---------> pid:" + pid + ", threadName:" + threadName + ", jni fun: " + methodName);
     }
 
     public static void printEnter(String log) {
-        Log.d("JVMTIHelper", "_____________________" + log);
+        Log.d(TAG, "_____________________" + log);
     }
 
     public static void printEnter(Activity context, String log) {
         Toast.makeText(context, "======" + log, Toast.LENGTH_SHORT).show();
-        Log.d("JVMTIHelper", "_____________________" + log);
+        Log.d(TAG, "_____________________" + log);
     }
-
-
 }

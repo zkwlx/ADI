@@ -1,7 +1,8 @@
-package com.dodola.jvmti;
+package com.adi.demo;
 
 import android.os.Bundle;
 import android.app.Activity;
+import com.adi.demo.R;
 
 public class Main2Activity extends Activity {
 

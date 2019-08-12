@@ -4,7 +4,7 @@
 #include <android/log.h>
 #include <sstream>
 
-#define LOG_TAG "jvmti"
+#define LOG_TAG "adi"
 
 #define ALOGV(...) __android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, __VA_ARGS__)
 #define ALOGD(...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
@@ -14,7 +14,7 @@
 static jvmtiEnv *localJvmtiEnv;
 
 void printJavaStatus(JNIEnv *jni, const char *funName) {
-    jclass cls = jni->FindClass("com/dodola/jvmtilib/JVMTIHelper");
+    jclass cls = jni->FindClass("com/adi/ADIHelper");
 //    jclass global_clazz = (jclass) jni->NewGlobalRef(cls);
 
     jmethodID printMethod = jni->GetStaticMethodID(cls, "printStatus", "(Ljava/lang/String;)V");
@@ -69,12 +69,9 @@ void ObjectAllocCallback(jvmtiEnv *jvmti, JNIEnv *env,
     jstring name = static_cast<jstring>(env->CallObjectMethod(klass, mid_getName));
     const char *className = env->GetStringUTFChars(name, JNI_FALSE);
     ALOGI("==========alloc callback======= %s {size:%d}", className, size);
-    if (strcmp(className, "com.dodola.jvmtilib.JVMTIHelper") == 0) {
-        printJavaStatus(env, "ObjectAllocCallback");
-    }
     env->ReleaseStringUTFChars(name, className);
 
-    if (strcmp(className, "com.dodola.jvmti.DemoObject") == 0) {
+    if (strcmp(className, "com.adi.demo.DemoObject") == 0) {
         jclass throwable_class = env->FindClass("java/lang/Throwable");
         jmethodID throwable_init = env->GetMethodID(throwable_class, "<init>", "(Ljava/lang/String;)V");
         jobject throwable_obj = env->NewObject(throwable_class, throwable_init, env->NewStringUTF("JDI_Demo"));
@@ -122,7 +119,7 @@ JvmTINativeMethodBind(jvmtiEnv *jvmti_env, JNIEnv *jni_env, jthread thread, jmet
                       void *address, void **new_address_ptr) {
     ALOGI("===========NativeMethodBind===============");
 
-    jclass clazz = jni_env->FindClass("com/dodola/jvmtilib/JVMTIHelper");
+    jclass clazz = jni_env->FindClass("com/adi/ADIHelper");
     jmethodID methodid = jni_env->GetStaticMethodID(clazz, "retransformClasses",
                                                     "([Ljava/lang/Class;)V");
     if (methodid == method) {
@@ -196,7 +193,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
         return JNI_ERR;
     }
     ALOGI("==============library load====================");
-    jclass clazz = env->FindClass("com/dodola/jvmtilib/JVMTIHelper");
+    jclass clazz = env->FindClass("com/adi/ADIHelper");
     env->RegisterNatives(clazz, methods, 1);
 
     printJavaStatus(env, "JNI_OnLoad");

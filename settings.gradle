@@ -1,1 +1,1 @@
-include ':app', ':jvmtilib', ':jdi'
+include ':app', ':jdi', ':adilib'

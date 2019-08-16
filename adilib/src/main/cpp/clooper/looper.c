@@ -50,7 +50,6 @@ static int clear_message_queue(message_queue_t *queue) {
 
 static void *message_loop(void *arg) {
     message_looper_t *looper = (message_looper_t *) arg;
-    ALOGI(">>>>>>>>>>>> %p <<<<<<<<<<<<<" , &looper);
     while (looper->is_loop) {
         pthread_mutex_lock(&(looper->queue_mutex));        //获取锁
         if ((looper->queue).size < 1) {
@@ -119,7 +118,6 @@ int start_loop(message_looper_t *looper) {
         pthread_mutex_unlock(&(looper->queue_mutex));   //释放锁
         return -1;
     }
-    ALOGI("<<<<<<<<<<<< %p >>>>>>>>>>>>>",&looper);
     pthread_mutex_unlock(&(looper->queue_mutex));   //释放锁
     return 0;
 }

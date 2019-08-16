@@ -1,12 +1,9 @@
 package com.adi;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.os.Debug;
-import android.os.Process;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -66,22 +63,14 @@ public class ADIHelper {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+        startDump();
     }
 
-    public static native void retransformClasses(Class[] classes);
-
-    public static void printStatus(String methodName) {
-        int pid = Process.myPid();
-        String threadName = Thread.currentThread().getName();
-        Log.i(TAG, "---------> pid:" + pid + ", threadName:" + threadName + ", jni fun: " + methodName);
+    public static void stop() {
+        stopDump();
     }
 
-    public static void printEnter(String log) {
-        Log.d(TAG, "_____________________" + log);
-    }
+    private static native void startDump();
 
-    public static void printEnter(Activity context, String log) {
-        Toast.makeText(context, "======" + log, Toast.LENGTH_SHORT).show();
-        Log.d(TAG, "_____________________" + log);
-    }
+    private static native void stopDump();
 }

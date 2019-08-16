@@ -41,7 +41,6 @@ public class MainActivity extends Activity {
         findViewById(R.id.button_modify_class).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ADIHelper.retransformClasses(new Class[]{Activity.class});
             }
         });
         findViewById(R.id.button_start_activity).setOnClickListener(new View.OnClickListener() {
@@ -53,14 +52,14 @@ public class MainActivity extends Activity {
         findViewById(R.id.malloc_object).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for (int i = 0; i < 3; i++) {
-                    list.add(new DemoObject());
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                list.add(new DemoObject());
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
+                Object o = new DemoObject();
+                Log.i("adi", "=======+>" + Thread.currentThread().getName() + ": " + Thread.currentThread().getId());
             }
         });
         findViewById(R.id.call_system_service).setOnClickListener(new View.OnClickListener() {

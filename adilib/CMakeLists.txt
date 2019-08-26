@@ -5,6 +5,11 @@
 
 cmake_minimum_required(VERSION 3.4.1)
 
+# 将当前 "./src/main/cpp" 目录下的所有源文件保存到 "NATIVE_SRC" 中，然后在 add_library 方法调用。
+aux_source_directory(./src/main/cpp NATIVE_SRC)
+aux_source_directory(./src/main/cpp/clooper LOOPER_SRC)
+aux_source_directory(./src/main/cpp/handler HANDLER_SRC)
+
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
 # You can define multiple libraries, and CMake builds them for you.
@@ -18,10 +23,10 @@ add_library( # Sets the name of the library.
         SHARED
 
         # Provides a relative path to your source file(s).
-        src/main/cpp/native-lib.cpp
-        src/main/cpp/dumper.c
-        src/main/cpp/clooper/looper.c
-        src/main/cpp/clooper/looper.h)
+        ${NATIVE_SRC}
+        ${LOOPER_SRC}
+        ${HANDLER_SRC}
+        )
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
@@ -41,7 +46,6 @@ find_library( # Sets the name of the path variable.
 # build script, prebuilt third-party libraries, or system libraries.
 target_link_libraries( # Specifies the target library.
         adi_agent
-        z
         # Links the target library to the log library
         # included in the NDK.
         ${log-lib})

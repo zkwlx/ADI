@@ -18,10 +18,10 @@
         android:layout_height="wrap_content"
         android:text="触发 GC" />
     <Button
-        android:id="@+id/button_modify_class"
+        android:id="@+id/button_dumper_stop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="修改 Activity Class" />
+        android:text="停止 Dumper" />
     <Button
         android:id="@+id/button_start_activity"
         android:layout_width="wrap_content"

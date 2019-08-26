@@ -8,8 +8,10 @@
 //#ifdef __cplusplus
 //extern "C" {
 //#endif
-void dumper_start();
+void dumper_start(char *dumpDir);
+
 void dumper_stop();
+
 void dumper_add(char *data);
 //#ifdef __cplusplus
 //}

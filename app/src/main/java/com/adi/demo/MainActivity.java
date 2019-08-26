@@ -38,9 +38,10 @@ public class MainActivity extends Activity {
                 System.runFinalization();
             }
         });
-        findViewById(R.id.button_modify_class).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.button_dumper_stop).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ADIHelper.stop();
             }
         });
         findViewById(R.id.button_start_activity).setOnClickListener(new View.OnClickListener() {

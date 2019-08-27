@@ -5,6 +5,7 @@
 #include <sstream>
 #include <cstring>
 #include <unistd.h>
+#include <signal.h>
 #include "handler/VMObjectAllocHandler.h"
 #include "handler/MethodEntryHandler.h"
 
@@ -69,6 +70,7 @@ void SetEventNotification(jvmtiEnv *jvmti, jvmtiEventMode mode,
 }
 
 bool isNativeBinded = false;
+
 void JNICALL
 JvmTINativeMethodBind(jvmtiEnv *jvmti_env, JNIEnv *jni_env, jthread thread, jmethodID method,
                       void *address, void **new_address_ptr) {
@@ -91,8 +93,14 @@ JvmTINativeMethodBind(jvmtiEnv *jvmti_env, JNIEnv *jni_env, jthread thread, jmet
 
 }
 
+void ignoreHandler(int sig) {
+    ALOGI("!!!!!-> %d", sig);
+}
+
 extern "C" JNIEXPORT jint JNICALL Agent_OnAttach(JavaVM *vm, char *options,
                                                  void *reserved) {
+    signal(SIGTRAP, ignoreHandler);
+
     jvmtiEnv *jvmti_env = CreateJvmtiEnv(vm);
 
     if (jvmti_env == nullptr) {
@@ -106,7 +114,7 @@ extern "C" JNIEXPORT jint JNICALL Agent_OnAttach(JavaVM *vm, char *options,
 
     callbacks.VMObjectAlloc = &ObjectAllocCallback;
     callbacks.NativeMethodBind = &JvmTINativeMethodBind;
-    callbacks.MethodEntry = &MethodEntry;
+//    callbacks.MethodEntry = &MethodEntry;
 
     callbacks.GarbageCollectionStart = &GCStartCallback;
     callbacks.GarbageCollectionFinish = &GCFinishCallback;
@@ -116,7 +124,7 @@ extern "C" JNIEXPORT jint JNICALL Agent_OnAttach(JavaVM *vm, char *options,
 //    SetEventNotification(jvmti_env, JVMTI_ENABLE, JVMTI_EVENT_GARBAGE_COLLECTION_FINISH);
     SetEventNotification(jvmti_env, JVMTI_ENABLE, JVMTI_EVENT_NATIVE_METHOD_BIND);
     SetEventNotification(jvmti_env, JVMTI_ENABLE, JVMTI_EVENT_VM_OBJECT_ALLOC);
-    SetEventNotification(jvmti_env, JVMTI_ENABLE, JVMTI_EVENT_METHOD_ENTRY);
+//    SetEventNotification(jvmti_env, JVMTI_ENABLE, JVMTI_EVENT_METHOD_ENTRY);
 //    SetEventNotification(jvmti_env, JVMTI_ENABLE, JVMTI_EVENT_OBJECT_FREE);
 //    SetEventNotification(jvmti_env, JVMTI_ENABLE, JVMTI_EVENT_CLASS_FILE_LOAD_HOOK);
     ALOGI("==========Agent_OnAttach=======");

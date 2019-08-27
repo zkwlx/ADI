@@ -27,20 +27,20 @@ extern "C" {
 static char *createMethodInfo(jvmtiEnv *jvmti, JNIEnv *env, jthread thread, jmethodID method) {
     char *result = nullptr;
     jvmtiError err;
-    char *classSignature = nullptr;
+//    char *classSignature = nullptr;
     char *methodName = nullptr;
-    char *methodSignature = nullptr;
-    err = jvmti->GetMethodName(method, &methodName, &methodSignature, nullptr);
+//    char *methodSignature = nullptr;
+    err = jvmti->GetMethodName(method, &methodName, nullptr, nullptr);
     if (err != JVMTI_ERROR_NONE) {
         ALOGE("[JVMTI ERROR on GetMethodName]:%i", err);
         return result;
     }
-    jclass declaringClass = nullptr;
-    err = jvmti->GetMethodDeclaringClass(method, &declaringClass);
-    if (err != JVMTI_ERROR_NONE) {
-        ALOGE("[JVMTI ERROR on GetMethodDeclaringClass]:%i", err);
-        return result;
-    }
+//    jclass declaringClass = nullptr;
+//    err = jvmti->GetMethodDeclaringClass(method, &declaringClass);
+//    if (err != JVMTI_ERROR_NONE) {
+//        ALOGE("[JVMTI ERROR on GetMethodDeclaringClass]:%i", err);
+//        return result;
+//    }
 
 //            jclass cls = env->FindClass("java/lang/Class");
 //            jmethodID mid_getName = env->GetMethodID(cls, "getName", "()Ljava/lang/String;");
@@ -52,17 +52,17 @@ static char *createMethodInfo(jvmtiEnv *jvmti, JNIEnv *env, jthread thread, jmet
 //            }
 //            env->ReleaseStringUTFChars(name, className);
 
-    err = jvmti->GetClassSignature(declaringClass, &classSignature, nullptr);
-    if (err != JVMTI_ERROR_NONE) {
-        ALOGE("[JVMTI ERROR on GetClassSignature]:%i", err);
-        return result;
-    }
+//    err = jvmti->GetClassSignature(declaringClass, &classSignature, nullptr);
+//    if (err != JVMTI_ERROR_NONE) {
+//        ALOGE("[JVMTI ERROR on GetClassSignature]:%i", err);
+//        return result;
+//    }
 
-    asprintf(&result, "%s %s %s", classSignature, methodName, methodSignature);
-    ALOGI("++++: %s", result);
-    jvmti->Deallocate((unsigned char *) classSignature);
+//    asprintf(&result, "%s", methodName);
+    ALOGI("++++: %s", methodName);
+//    jvmti->Deallocate((unsigned char *) classSignature);
     jvmti->Deallocate((unsigned char *) methodName);
-    jvmti->Deallocate((unsigned char *) methodSignature);
+//    jvmti->Deallocate((unsigned char *) methodSignature);
 }
 
 static char *createBaseInfo(jvmtiEnv *jvmti, jthread thread) {
@@ -79,14 +79,12 @@ static char *createBaseInfo(jvmtiEnv *jvmti, jthread thread) {
 void MethodEntry(jvmtiEnv *jvmti_env, JNIEnv *jni_env, jthread thread, jmethodID method) {
     ALOGI("==========method entry callback==========");
 
-//    char *baseInfo = createBaseInfo(jvmti_env, thread);
+    char *baseInfo = createBaseInfo(jvmti_env, thread);
     char *methodInfo = createMethodInfo(jvmti_env, jni_env, thread, method);
-//    ALOGI("base: %s | stack: %s", baseInfo, methodInfo);
-    ALOGI("method: %s", methodInfo);
 
-//    char *line;
-//    asprintf(&line, "ME|%s|%s\n", baseInfo, methodInfo);
-//    free(baseInfo);
+    char *line;
+    asprintf(&line, "ME|%s|%s\n", baseInfo, methodInfo);
+    free(baseInfo);
     free(methodInfo);
-//    dumper_add(line);
+    dumper_add(line);
 }

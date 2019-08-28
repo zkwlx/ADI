@@ -25,7 +25,7 @@ typedef struct {
 typedef void (*CALLBACK_FUNC)(message_t *msg);
 
 typedef struct {
-    int is_loop;  //退出线程循环标志
+    volatile int is_looping;  //退出线程循环标志
     pthread_t looper_thread;
     pthread_mutex_t queue_mutex;
     pthread_cond_t queue_cond;

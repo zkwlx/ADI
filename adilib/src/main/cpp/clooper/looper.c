@@ -50,7 +50,7 @@ static int clear_message_queue(message_queue_t *queue) {
 
 static void *message_loop(void *arg) {
     message_looper_t *looper = (message_looper_t *) arg;
-    while (looper->is_loop) {
+    while (looper->is_looping) {
         pthread_mutex_lock(&(looper->queue_mutex));        //获取锁
         if ((looper->queue).size < 1) {
             pthread_cond_wait(&(looper->queue_cond), &(looper->queue_mutex));  //等待这个信号量
@@ -90,7 +90,7 @@ int create_looper(message_looper_t **looper, CALLBACK_FUNC func) {
         ALOGI("[message_looper] create_looper malloc fail.\n");
         return -1;
     }
-    (*looper)->is_loop = 0;
+    (*looper)->is_looping = 0;
     pthread_mutex_init(&((*looper)->queue_mutex), NULL);
     pthread_cond_init(&((*looper)->queue_cond), NULL);
     (*looper)->queue.head = NULL;
@@ -106,15 +106,15 @@ int start_loop(message_looper_t *looper) {
     }
 
     pthread_mutex_lock(&(looper->queue_mutex));   //加锁保护
-    if (looper->is_loop) {
+    if (looper->is_looping) {
         ALOGI("[message_loop] start_loop message_loop had start.");
         pthread_mutex_unlock(&(looper->queue_mutex));   //释放锁
         return -1;
     }
-    looper->is_loop = 1;   //标志创建了 looper线程
+    looper->is_looping = 1;   //标志创建了 looper线程
     if (pthread_create(&(looper->looper_thread), NULL, message_loop, looper)) {
         ALOGI("[message_looper] pthread_create message_loop fail.");
-        looper->is_loop = 0;  //线程创建失败，loop标志为false
+        looper->is_looping = 0;  //线程创建失败，loop标志为false
         pthread_mutex_unlock(&(looper->queue_mutex));   //释放锁
         return -1;
     }
@@ -128,10 +128,11 @@ int stop_loop(message_looper_t *looper) {
         return -1;
     }
     pthread_mutex_lock(&(looper->queue_mutex));   //加锁保护
-    looper->is_loop = 0; //标志线程结束
+    looper->is_looping = 0; //标志线程结束
     pthread_mutex_unlock(&(looper->queue_mutex));   //释放锁
     push_message(looper, MESSAGE_EXIT_LOOP, NULL, 0);  //线程可能还在等待消息，push 一个消息，让它结束运行
     pthread_join(looper->looper_thread, NULL);   //等待线程运行结束
+
     return 0;
 }
 
@@ -141,7 +142,7 @@ int destroy_looper(message_looper_t *looper) {
         return -1;
     }
 
-    if (looper->is_loop) {
+    if (looper->is_looping) {
         ALOGI("[message_looper] destroy_loop looper is start.");
         stop_loop(looper); //结束线程
     }

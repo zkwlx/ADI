@@ -6,15 +6,16 @@
 
 extern "C" {
 #include "../dumper.h"
+#include "../common/utils.h"
 }
 
 #include <jni.h>
 #include <string>
-#include "../jvmti.h"
 #include <android/log.h>
 #include <sstream>
 #include <cstring>
 #include <unistd.h>
+#include "../jvmti.h"
 
 
 #define LOG_TAG "ObjectAlloc"
@@ -46,18 +47,20 @@ static char *createStackInfo(jvmtiEnv *jvmti, JNIEnv *env, jthread thread) {
         char *classSignature;
         char *methodName;
         char *methodSignature;
+        //获取方法签名
         err = jvmti->GetMethodName(info.method, &methodName, &methodSignature, nullptr);
         if (err != JVMTI_ERROR_NONE) {
             ALOGE("[JVMTI ERROR on GetMethodName]:%i", err);
             break;
         }
+        //获取方法所在类
         jclass declaringClass;
         err = jvmti->GetMethodDeclaringClass(info.method, &declaringClass);
         if (err != JVMTI_ERROR_NONE) {
             ALOGE("[JVMTI ERROR on GetMethodDeclaringClass]:%i", err);
             break;
         }
-
+        //获取方法所在类的签名
         err = jvmti->GetClassSignature(declaringClass, &classSignature, nullptr);
         if (err != JVMTI_ERROR_NONE) {
             ALOGE("[JVMTI ERROR on GetClassSignature]:%i", err);
@@ -77,10 +80,10 @@ static char *createStackInfo(jvmtiEnv *jvmti, JNIEnv *env, jthread thread) {
         jvmti->Deallocate((unsigned char *) classSignature);
         jvmti->Deallocate((unsigned char *) methodName);
         jvmti->Deallocate((unsigned char *) methodSignature);
-//        ALOGI("####: %s", result);
     }
     return result;
 }
+
 
 static char *
 createBaseInfo(jvmtiEnv *jvmti, JNIEnv *env, jthread thread, jobject object, jclass klass,
@@ -90,18 +93,25 @@ createBaseInfo(jvmtiEnv *jvmti, JNIEnv *env, jthread thread, jobject object, jcl
     char *classSignature;
     jvmti->GetClassSignature(klass, &classSignature, nullptr);
     char *baseInfo;
-    //TODO 添加时间戳
+    long timeMillis = currentTimeMillis();
+    // TODO 白名单逻辑
 //    char *findSelf = strstr(classSignature, "com/adi/");
 //    char *findAndroid = strstr(classSignature, "android");
 //    if (findSelf == nullptr && findAndroid == nullptr) {
 //        return nullptr;
 //    }
-    asprintf(&baseInfo, "%s %s %lli", threadInfo.name, classSignature, size);
+    asprintf(&baseInfo, "%ld %s %s %lli", timeMillis, threadInfo.name, classSignature, size);
     ALOGI("[base:] %s", baseInfo);
     jvmti->Deallocate((unsigned char *) classSignature);
     return baseInfo;
 }
 
+/**
+ * 生成的日志格式：
+ * <p>
+ * 事件名称|时间戳 线程名 对象签名 对象大小|调用栈第一行(方法所在类签名 方法名 方法签名),调用栈第二行,调用栈第三行
+ *
+ */
 void ObjectAllocCallback(jvmtiEnv *jvmti, JNIEnv *env, jthread thread, jobject object, jclass klass,
                          jlong size) {
     ALOGI("==========alloc callback==========");
@@ -111,8 +121,6 @@ void ObjectAllocCallback(jvmtiEnv *jvmti, JNIEnv *env, jthread thread, jobject o
         return;
     }
     char *stackInfo = createStackInfo(jvmti, env, thread);
-//    ALOGI("base: %s | stack: %s", baseInfo, stackInfo);
-
     char *line;
     asprintf(&line, "OA|%s|%s\n", baseInfo, stackInfo);
     free(baseInfo);

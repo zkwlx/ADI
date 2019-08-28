@@ -9,6 +9,7 @@ cmake_minimum_required(VERSION 3.4.1)
 aux_source_directory(./src/main/cpp NATIVE_SRC)
 aux_source_directory(./src/main/cpp/clooper LOOPER_SRC)
 aux_source_directory(./src/main/cpp/handler HANDLER_SRC)
+aux_source_directory(src/main/cpp/common COMMON_SRC)
 
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
@@ -27,6 +28,7 @@ add_library( # Sets the name of the library.
         ${NATIVE_SRC}
         ${LOOPER_SRC}
         ${HANDLER_SRC}
+        ${COMMON_SRC}
         )
 
 # Searches for a specified prebuilt library and stores the path as a

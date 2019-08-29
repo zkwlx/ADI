@@ -48,16 +48,29 @@ static void create_file(char *dumpDir) {
 
 void dumper_start(char *dumpDir) {
     ALOGI("Dumper 文件目录：%s", dumpDir);
-    if (create_looper(&looper, _dump_to_file)) {
-        ALOGI("create_looper fail.");
+    looper = looperCreate(_dump_to_file);
+    if (looper == NULL) {
+        ALOGI("looperCreate fail!!!!!!!!!");
         return;
     }
-    if (start_loop(looper)) {
-        ALOGI("start_loop fail.");
-        destroy_looper(looper);
-        return;
+    if (looperStart(looper) == 0) {
+        create_file(dumpDir);
+    } else {
+        switch (looperStart(looper)) {
+            case LOOPER_START_THREAD_ERROR:
+                ALOGI("looperStart thread create fail.");
+                looperDestroy(&looper);
+                break;
+            case LOOPER_START_REPEAT_ERROR:
+                ALOGI("looperStart looper is started");
+                break;
+            case LOOPER_IS_NULL:
+                ALOGI("looperStart looper is NULL");
+                break;
+            default:
+                break;
+        }
     }
-    create_file(dumpDir);
 }
 
 void dumper_stop() {
@@ -66,12 +79,13 @@ void dumper_stop() {
         if (fclose(dumpFile)) {
             ALOGI("%s", "文件关闭成功");
         }
+        dumpFile = NULL;
     }
-    destroy_looper(looper);
+    looperDestroy(&looper);
 }
 
 
 void dumper_add(char *data) {
-    push_message(looper, 0, data, (int) strlen(data));
+    looperPost(looper, 0, data, strlen(data) + 1);
     free(data);
 }

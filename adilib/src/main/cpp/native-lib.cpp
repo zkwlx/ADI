@@ -142,9 +142,32 @@ extern "C" JNIEXPORT void JNICALL stopDump(JNIEnv *env, jclass jclazz) {
     dumper_stop();
 }
 
+//===============用于 Looper 的测试方法 =============
+extern "C" {
+#include "clooper/looper_test.h"
+}
+extern "C" JNIEXPORT void JNICALL startLooper(JNIEnv *env, jclass jclazz) {
+    test_looper_start();
+}
+
+extern "C" JNIEXPORT void JNICALL pushToLooper(JNIEnv *env, jclass jclazz, jstring data) {
+    char *dataChar = const_cast<char *>(env->GetStringUTFChars(data, JNI_FALSE));
+    test_looper_push(dataChar);
+    env->ReleaseStringUTFChars(data, dataChar);
+}
+extern "C" JNIEXPORT void JNICALL stopLooper(JNIEnv *env, jclass jclazz) {
+    test_looper_destroy();
+}
+
+//===============用于 Looper 的测试方法 =============
+
 static JNINativeMethod methods[] = {
-        {"startDump", "(Ljava/lang/String;)V", (void *) startDump},
-        {"stopDump",  "()V",                   (void *) stopDump},
+        {"startDump",           "(Ljava/lang/String;)V", (void *) startDump},
+        {"stopDump",            "()V",                   (void *) stopDump},
+        // 用于 Looper 的测试方法
+        {"startLooperForTest",  "()V",                   (void *) startLooper},
+        {"pushToLooperForTest", "(Ljava/lang/String;)V", (void *) pushToLooper},
+        {"stopLooperForTest",   "()V",                   (void *) stopLooper},
 };
 
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {

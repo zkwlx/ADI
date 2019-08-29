@@ -23,10 +23,15 @@
         android:layout_height="wrap_content"
         android:text="停止 Dumper" />
     <Button
-        android:id="@+id/button_start_activity"
+        android:id="@+id/button_start_looper_test"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="启动 Activity" />
+        android:text="开始 Looper 测试" />
+    <Button
+        android:id="@+id/button_stop_looper_test"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="停止 Looper 测试" />
     <Button
         android:id="@+id/malloc_object"
         android:layout_width="wrap_content"

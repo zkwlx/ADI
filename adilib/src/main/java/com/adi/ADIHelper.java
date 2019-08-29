@@ -97,4 +97,25 @@ public class ADIHelper {
 
     private static native void stopDump();
 
+    //===============用于 Looper 的测试方法 Start=============
+
+    private static boolean isLoaded = false;
+
+    public static void startTest() {
+        if (!isLoaded) {
+            System.loadLibrary(LIB_NAME);
+            isLoaded = true;
+        }
+        startLooperForTest();
+    }
+
+    private static native void startLooperForTest();
+
+    public static native void pushToLooperForTest(String data);
+
+    public static native void stopLooperForTest();
+
+    //===============用于 Looper 的测试方法 End=============
+
+
 }

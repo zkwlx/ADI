@@ -11,18 +11,12 @@ extern "C" {
 #include <jni.h>
 #include <string>
 #include "../jvmti.h"
-#include <android/log.h>
 #include <sstream>
 #include <cstring>
 #include <unistd.h>
+#include "../common/log.h"
 
 #define LOG_TAG "MethodEntry"
-
-#define ALOGV(...) __android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, __VA_ARGS__)
-#define ALOGD(...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
-#define ALOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
-#define ALOGW(...) __android_log_print(ANDROID_LOG_WARN, LOG_TAG, __VA_ARGS__)
-#define ALOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
 
 static char *createMethodInfo(jvmtiEnv *jvmti, JNIEnv *env, jthread thread, jmethodID method) {
     char *result = nullptr;

@@ -1,6 +1,7 @@
 package com.adi;
 
 import android.annotation.SuppressLint;
+import android.app.Instrumentation;
 import android.content.Context;
 import android.os.Build;
 import android.os.Debug;
@@ -93,9 +94,15 @@ public class ADIHelper {
         stopDump();
     }
 
+    public static long getObjSize(Object obj) {
+        return getObjectSize(obj);
+    }
+
     private static native void startDump(String dumpDir);
 
     private static native void stopDump();
+
+    private static native long getObjectSize(Object obj);
 
     //===============用于 Looper 的测试方法 Start=============
 

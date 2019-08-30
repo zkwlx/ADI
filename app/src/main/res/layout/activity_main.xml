@@ -1,45 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".MainActivity">
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".MainActivity">
 
     <Button
-        android:id="@+id/sample_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="启动 JVMTI Agent" />
+            android:id="@+id/sample_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="启动 JVMTI Agent" />
 
     <Button
-        android:id="@+id/button_gc"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="触发 GC" />
+            android:id="@+id/button_gc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="触发 GC" />
+
     <Button
-        android:id="@+id/button_dumper_stop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="停止 Dumper" />
+            android:id="@+id/button_dumper_stop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="停止 Dumper" />
+
     <Button
-        android:id="@+id/button_start_looper_test"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="开始 Looper 测试" />
+            android:id="@+id/button_start_looper_test"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="开始 Looper 测试" />
+
     <Button
-        android:id="@+id/button_stop_looper_test"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="停止 Looper 测试" />
+            android:id="@+id/button_stop_looper_test"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="停止 Looper 测试" />
+
     <Button
-        android:id="@+id/malloc_object"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="分配对象" />
+            android:id="@+id/malloc_object"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="分配对象" />
+
     <Button
-        android:id="@+id/call_system_service"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="频繁调用系统服务" />
+            android:id="@+id/call_system_service"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="频繁调用系统服务" />
+
+    <Button
+            android:id="@+id/thread_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="创建线程" />
+    <Button
+            android:id="@+id/object_size"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="查看对象 Size" />
 </LinearLayout>

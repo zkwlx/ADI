@@ -1,22 +1,20 @@
 #include <jni.h>
 #include <string>
 #include "jvmti.h"
-#include <android/log.h>
 #include <sstream>
 #include <cstring>
 #include <unistd.h>
 #include <signal.h>
 #include "handler/VMObjectAllocHandler.h"
 #include "handler/MethodEntryHandler.h"
+#include "handler/ThreadStartHandler.h"
+#include "handler/GCCallbackHandler.h"
+#include "common/jdi_native.h"
+#include "common/log.h"
 
 extern "C" {
 #include "dumper.h"
 }
-
-#define LOG_TAG "adi"
-
-#define ALOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
-
 
 static void ClassTransform(jvmtiEnv *jvmti_env,
                            JNIEnv *env,
@@ -43,26 +41,6 @@ void SetAllCapabilities(jvmtiEnv *jvmti) {
     error = jvmti->GetPotentialCapabilities(&caps);
     error = jvmti->AddCapabilities(&caps);
 }
-
-jvmtiEnv *CreateJvmtiEnv(JavaVM *vm) {
-    jvmtiEnv *jvmti_env;
-    jint result = vm->GetEnv((void **) &jvmti_env, JVMTI_VERSION_1_2);
-    if (result != JNI_OK) {
-        return nullptr;
-    }
-
-    return jvmti_env;
-
-}
-
-void GCStartCallback(jvmtiEnv *jvmti) {
-    ALOGI("==========触发 GCStart=======");
-}
-
-void GCFinishCallback(jvmtiEnv *jvmti) {
-    ALOGI("==========触发 GCFinish=======");
-}
-
 
 void SetEventNotification(jvmtiEnv *jvmti, jvmtiEventMode mode,
                           jvmtiEvent event_type) {
@@ -93,15 +71,13 @@ JvmTINativeMethodBind(jvmtiEnv *jvmti_env, JNIEnv *jni_env, jthread thread, jmet
 
 }
 
-void ignoreHandler(int sig) {
-    ALOGI("!!!!!-> %d", sig);
-}
+void ignoreHandler(int sig) { ALOGI("!!!!!-> %d", sig); }
 
 extern "C" JNIEXPORT jint JNICALL Agent_OnAttach(JavaVM *vm, char *options,
                                                  void *reserved) {
     signal(SIGTRAP, ignoreHandler);
 
-    jvmtiEnv *jvmti_env = CreateJvmtiEnv(vm);
+    jvmtiEnv *jvmti_env = getJvmtiEnv(vm);
 
     if (jvmti_env == nullptr) {
         return JNI_ERR;
@@ -118,12 +94,14 @@ extern "C" JNIEXPORT jint JNICALL Agent_OnAttach(JavaVM *vm, char *options,
 
     callbacks.GarbageCollectionStart = &GCStartCallback;
     callbacks.GarbageCollectionFinish = &GCFinishCallback;
+    callbacks.ThreadStart = &ThreadStart;
     int error = jvmti_env->SetEventCallbacks(&callbacks, sizeof(callbacks));
 
-//    SetEventNotification(jvmti_env, JVMTI_ENABLE, JVMTI_EVENT_GARBAGE_COLLECTION_START);
-//    SetEventNotification(jvmti_env, JVMTI_ENABLE, JVMTI_EVENT_GARBAGE_COLLECTION_FINISH);
+    SetEventNotification(jvmti_env, JVMTI_ENABLE, JVMTI_EVENT_GARBAGE_COLLECTION_START);
+    SetEventNotification(jvmti_env, JVMTI_ENABLE, JVMTI_EVENT_GARBAGE_COLLECTION_FINISH);
     SetEventNotification(jvmti_env, JVMTI_ENABLE, JVMTI_EVENT_NATIVE_METHOD_BIND);
     SetEventNotification(jvmti_env, JVMTI_ENABLE, JVMTI_EVENT_VM_OBJECT_ALLOC);
+    SetEventNotification(jvmti_env, JVMTI_ENABLE, JVMTI_EVENT_THREAD_START);
 //    SetEventNotification(jvmti_env, JVMTI_ENABLE, JVMTI_EVENT_METHOD_ENTRY);
 //    SetEventNotification(jvmti_env, JVMTI_ENABLE, JVMTI_EVENT_OBJECT_FREE);
 //    SetEventNotification(jvmti_env, JVMTI_ENABLE, JVMTI_EVENT_CLASS_FILE_LOAD_HOOK);
@@ -155,6 +133,7 @@ extern "C" JNIEXPORT void JNICALL pushToLooper(JNIEnv *env, jclass jclazz, jstri
     test_looper_push(dataChar);
     env->ReleaseStringUTFChars(data, dataChar);
 }
+
 extern "C" JNIEXPORT void JNICALL stopLooper(JNIEnv *env, jclass jclazz) {
     test_looper_destroy();
 }
@@ -164,6 +143,7 @@ extern "C" JNIEXPORT void JNICALL stopLooper(JNIEnv *env, jclass jclazz) {
 static JNINativeMethod methods[] = {
         {"startDump",           "(Ljava/lang/String;)V", (void *) startDump},
         {"stopDump",            "()V",                   (void *) stopDump},
+        {"getObjectSize",       "(Ljava/lang/Object;)J", (void *) getObjectSize},
         // 用于 Looper 的测试方法
         {"startLooperForTest",  "()V",                   (void *) startLooper},
         {"pushToLooperForTest", "(Ljava/lang/String;)V", (void *) pushToLooper},

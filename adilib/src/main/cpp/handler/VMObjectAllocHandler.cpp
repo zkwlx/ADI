@@ -11,20 +11,13 @@ extern "C" {
 
 #include <jni.h>
 #include <string>
-#include <android/log.h>
 #include <sstream>
 #include <cstring>
 #include <unistd.h>
-#include "../jvmti.h"
+#include "../common/log.h"
 
 
-#define LOG_TAG "ObjectAlloc"
-
-#define ALOGV(...) __android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, __VA_ARGS__)
-#define ALOGD(...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
-#define ALOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
-#define ALOGW(...) __android_log_print(ANDROID_LOG_WARN, LOG_TAG, __VA_ARGS__)
-#define ALOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
+#define LOG_TAG "OA"
 
 constexpr int FRAME_COUNT = 10;
 
@@ -66,7 +59,7 @@ static char *createStackInfo(jvmtiEnv *jvmti, JNIEnv *env, jthread thread) {
             ALOGE("[JVMTI ERROR on GetClassSignature]:%i", err);
             break;
         }
-        ALOGI("-----------------method: %s %s", classSignature, methodName);
+//        ALOGI("-----------------method: %s %s", classSignature, methodName);
 
         if (result == nullptr) {
             asprintf(&result, "%s %s %s", classSignature, methodName, methodSignature);
@@ -122,9 +115,9 @@ void ObjectAllocCallback(jvmtiEnv *jvmti, JNIEnv *env, jthread thread, jobject o
     }
     char *stackInfo = createStackInfo(jvmti, env, thread);
     char *line;
-    asprintf(&line, "OA|%s|%s\n", baseInfo, stackInfo);
+    asprintf(&line, "%s|%s|%s\n", LOG_TAG, baseInfo, stackInfo);
     free(baseInfo);
     free(stackInfo);
-//    ALOGI("%s", line);
+    ALOGI("%s", line);
     dumper_add(line);
 }

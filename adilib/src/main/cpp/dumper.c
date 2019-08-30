@@ -4,18 +4,16 @@
 
 #include "dumper.h"
 #include <unistd.h>
-#include <android/log.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/time.h>
 #include "clooper/looper.h"
 #include <errno.h>
 #include <malloc.h>
+#include "common/log.h"
 
 #define FLUSH_THRESHOLD 10
-#define LOG_TAG "adi"
-#define ALOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
-#define ALOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
+#define LOG_TAG "Dumper"
 
 static message_looper_t *looper;
 
@@ -24,8 +22,8 @@ static FILE *dumpFile = NULL;
 static int writeCount = 0;
 
 void _dump_to_file(message_t *msg) {
-//    ALOGI("%s", (char *) msg->data);
-    fwrite(msg->data, sizeof(char), (size_t) msg->data_size, dumpFile);
+    ALOGI("%s", (char *) msg->data);
+    fwrite(msg->data, sizeof(char), (msg->data_size - 1), dumpFile);
     if (++writeCount > FLUSH_THRESHOLD) {
         ALOGI("%s", "........ flush to file ...........");
         fflush(dumpFile);

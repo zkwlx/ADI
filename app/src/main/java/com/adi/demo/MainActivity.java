@@ -3,14 +3,11 @@ package com.adi.demo;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 
 import com.adi.ADIHelper;
@@ -42,63 +39,49 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         Button tv = findViewById(R.id.sample_text);
-        tv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ADIHelper.init(MainActivity.this);
-            }
+        tv.setOnClickListener(v -> ADIHelper.init(MainActivity.this));
+
+        findViewById(R.id.button_gc).setOnClickListener(v -> {
+            System.gc();
+            System.runFinalization();
         });
-        findViewById(R.id.button_gc).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                System.gc();
-                System.runFinalization();
+        findViewById(R.id.button_dumper_stop).setOnClickListener(v -> ADIHelper.stop());
+        findViewById(R.id.malloc_object).setOnClickListener(v -> {
+            list.add(new DemoObject());
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
+            Object o = new DemoObject();
+            Log.i("adi", "=======+>" + Thread.currentThread().getName() + ": " + Thread.currentThread().getId());
         });
-        findViewById(R.id.button_dumper_stop).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ADIHelper.stop();
-            }
-        });
-        findViewById(R.id.malloc_object).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                list.add(new DemoObject());
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                Object o = new DemoObject();
-                Log.i("adi", "=======+>" + Thread.currentThread().getName() + ": " + Thread.currentThread().getId());
-            }
-        });
-        findViewById(R.id.call_system_service).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                for (int i = 0; i < 5; i++) {
-                    String ssid = getWifiSSID();
-                    Log.i("zkw", i + ": ssid: " + ssid);
-                }
+        findViewById(R.id.call_system_service).setOnClickListener(v -> {
+            for (int i = 0; i < 5; i++) {
+                String ssid = getWifiSSID();
+                Log.i("zkw", i + ": ssid: " + ssid);
             }
         });
 
+        findViewById(R.id.object_size).setOnClickListener(v -> {
+            TestObject o = new TestObject();
+            long size = ADIHelper.getObjSize(o);
+            Log.i("zkw", "============>>" + size);
+        });
+        findViewById(R.id.thread_start).setOnClickListener(v -> {
+            for (int i = 0; i < 5; i++) {
+                new Thread("TTT_" + i).start();
+            }
+        });
         //===============用于 Looper 的测试方法 =============
-        findViewById(R.id.button_start_looper_test).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ADIHelper.startTest();
+        findViewById(R.id.button_start_looper_test).setOnClickListener(v -> {
+            ADIHelper.startTest();
 
-                startPushToLooperForTest();
-            }
+            startPushToLooperForTest();
         });
-        findViewById(R.id.button_stop_looper_test).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ADIHelper.stopLooperForTest();
+        findViewById(R.id.button_stop_looper_test).setOnClickListener(v -> {
+            ADIHelper.stopLooperForTest();
 //                onRequest();
-            }
         });
     }
 

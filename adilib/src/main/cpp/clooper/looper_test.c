@@ -2,14 +2,12 @@
 // Created by kewen on 2019-08-28.
 //
 
-#include <android/log.h>
 #include <string.h>
 #include "looper_test.h"
 #include "looper.h"
+#include "../common/log.h"
 
 #define LOG_TAG "looper_test"
-#define ALOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
-#define ALOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
 
 static message_looper_t *looper;
 

@@ -6,10 +6,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <android/log.h>
+#include "../common/log.h"
 
 #define LOG_TAG "adi_looper"
-#define ALOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
 
 static message_t *fetch_message(message_queue_t *queue) {
     if (queue->size < 1) {
@@ -51,24 +50,20 @@ static int clear_message_queue(message_queue_t *queue) {
 static void *message_loop(void *arg) {
     message_looper_t *looper = (message_looper_t *) arg;
     while (looper->is_looping) {
-        pthread_mutex_lock(&(looper->queue_mutex));        //获取锁
+        pthread_mutex_lock(&(looper->queue_mutex));
         if ((looper->queue).size < 1) {
             pthread_cond_wait(&(looper->queue_cond), &(looper->queue_mutex));  //等待这个信号量
             pthread_mutex_unlock(&(looper->queue_mutex));  //下次进入判断队列是否有消息
             continue;
         }
         message_t *msg = fetch_message(&(looper->queue));
-        pthread_mutex_unlock(&(looper->queue_mutex));  //释放锁
+        pthread_mutex_unlock(&(looper->queue_mutex));
 
         if (msg == NULL) {
             continue;
         }
 
-        /*
-         * 如果handle_msg() 可能会导致死锁，比如异步消息需要push到这个线程中
-         * 刚好这个线程正在处理消息，然后出现消息又需要用到异步发送消息的函数
-         * 异步发送消息的函数中又刚好需要锁，这时候会出现死锁
-         */
+        // 没有对共享变量如 is_looping queue 做改动，无需加锁
         looper->handler(msg);  //处理消息
         delete_message(msg);    //删除消息
 

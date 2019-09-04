@@ -62,10 +62,14 @@ static char *createStackInfo(jvmtiEnv *jvmti, JNIEnv *env, jthread thread) {
 //        ALOGI("-----------------method: %s %s", classSignature, methodName);
 
         if (result == nullptr) {
-            asprintf(&result, "%s %s %s", classSignature, methodName, methodSignature);
+            asprintf(&result, "%s%s%s%s%s", classSignature, SEP_POWER, methodName, SEP_POWER,
+                     methodSignature);
         } else {
             char *stack;
-            asprintf(&stack, "%s,%s %s %s", result, classSignature, methodName,
+            asprintf(&stack, "%s%s%s%s%s%s%s",
+                     result, SEP_COMMA,
+                     classSignature, SEP_POWER,
+                     methodName, SEP_POWER,
                      methodSignature);
             free(result);
             result = stack;
@@ -93,7 +97,11 @@ createBaseInfo(jvmtiEnv *jvmti, JNIEnv *env, jthread thread, jobject object, jcl
 //    if (findSelf == nullptr && findAndroid == nullptr) {
 //        return nullptr;
 //    }
-    asprintf(&baseInfo, "%ld %s %s %lli", timeMillis, threadInfo.name, classSignature, size);
+    asprintf(&baseInfo, "%ld%s%s%s%s%s%lli",
+             timeMillis, SEP_POWER,
+             threadInfo.name, SEP_POWER,
+             classSignature, SEP_POWER,
+             size);
     ALOGI("[base:] %s", baseInfo);
     jvmti->Deallocate((unsigned char *) classSignature);
     return baseInfo;

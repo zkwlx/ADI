@@ -5,6 +5,9 @@
 #ifndef ADI_UTILS_H
 #define ADI_UTILS_H
 
+#define SEP_POWER "^^^"
+#define SEP_COMMA ",,,"
+
 long currentTimeMillis();
 
 #endif //ADI_UTILS_H

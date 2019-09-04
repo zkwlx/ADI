@@ -19,7 +19,7 @@ static char *createBaseInfo(jvmtiEnv *jvmti_env, JNIEnv *jni_env, jthread thread
     jvmti_env->GetThreadInfo(thread, &threadInfo);
     char *baseInfo;
     long timeMillis = currentTimeMillis();
-    asprintf(&baseInfo, "%ld %s", timeMillis, threadInfo.name);
+    asprintf(&baseInfo, "%ld%s%s", timeMillis, SEP_POWER, threadInfo.name);
     return baseInfo;
 }
 

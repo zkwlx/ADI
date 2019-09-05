@@ -9,6 +9,7 @@
 #include "handler/MethodEntryHandler.h"
 #include "handler/ThreadStartHandler.h"
 #include "handler/GCCallbackHandler.h"
+#include "handler/Config.h"
 #include "common/jdi_native.h"
 #include "common/log.h"
 
@@ -137,6 +138,14 @@ extern "C" JNIEXPORT void JNICALL pushToLooper(JNIEnv *env, jclass jclazz, jstri
 extern "C" JNIEXPORT void JNICALL stopLooper(JNIEnv *env, jclass jclazz) {
     test_looper_destroy();
 }
+
+extern "C" JNIEXPORT void JNICALL demo(JNIEnv *env, jclass jclazz, jobject configObj) {
+    jclass configClass = env->GetObjectClass(configObj);
+    jfieldID filedId = env->GetFieldID(configClass, "sampleIntervalMs", "I");
+    jint sampleInterval = env->GetIntField(configObj, filedId);
+    sampleIntervalMs = sampleInterval;
+}
+
 
 //===============用于 Looper 的测试方法 =============
 

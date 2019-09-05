@@ -3,6 +3,7 @@
 //
 
 #include "VMObjectAllocHandler.h"
+#include "Config.h"
 
 extern "C" {
 #include "../dumper.h"
@@ -20,6 +21,9 @@ extern "C" {
 #define LOG_TAG "OA"
 
 constexpr int FRAME_COUNT = 10;
+
+static int sampleInterval = sampleIntervalMs * 1000;
+static int startTime = 0;
 
 static char *createStackInfo(jvmtiEnv *jvmti, JNIEnv *env, jthread thread) {
     char *result = nullptr;
@@ -115,8 +119,16 @@ createBaseInfo(jvmtiEnv *jvmti, JNIEnv *env, jthread thread, jobject object, jcl
  */
 void ObjectAllocCallback(jvmtiEnv *jvmti, JNIEnv *env, jthread thread, jobject object, jclass klass,
                          jlong size) {
-    ALOGI("==========alloc callback==========");
+    timeval tv{};
+    gettimeofday(&tv, nullptr);
+    int now = tv.tv_usec;
+    if (now - startTime <= sampleInterval) {
+        ALOGD("=======Object Alloc too fast!=======");
+        return;
+    }
+    startTime = now;
 
+    ALOGI("==========Object Alloc dump~==========");
     char *baseInfo = createBaseInfo(jvmti, env, thread, object, klass, size);
     if (baseInfo == nullptr) {
         return;

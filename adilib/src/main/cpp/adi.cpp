@@ -64,7 +64,7 @@ JvmTINativeMethodBind(jvmtiEnv *jvmti_env, JNIEnv *jni_env, jthread thread, jmet
     isNativeBinded = true;
     ALOGI("===========NativeMethodBind===============");
 
-    jclass clazz = jni_env->FindClass("com/adi/ADIHelper");
+    jclass clazz = jni_env->FindClass("com/adi/ADIManager");
     //绑定 package code 到BootClassLoader 里
     jfieldID packageCodePathId = jni_env->GetStaticFieldID(clazz, "packageCodePath",
                                                            "Ljava/lang/String;");
@@ -151,8 +151,8 @@ enableEvents(JNIEnv *env, jclass jclazz, jobject configObj, jintArray jevents) {
     }
     // 解析 Config
     jclass configClass = env->GetObjectClass(configObj);
-    jfieldID filedId = env->GetFieldID(configClass, "sampleIntervalMs", "I");
-    jint sampleInterval = env->GetIntField(configObj, filedId);
+    jfieldID filedId = env->GetFieldID(configClass, "sampleIntervalMs", "F");
+    jfloat sampleInterval = env->GetFloatField(configObj, filedId);
     setSampleIntervalMs(sampleInterval);
 
     jint events[len];
@@ -194,7 +194,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
         return JNI_ERR;
     }
     ALOGI("==============library load pid: %d====================", getpid());
-    jclass clazz = env->FindClass("com/adi/ADIHelper");
+    jclass clazz = env->FindClass("com/adi/ADIManager");
     env->RegisterNatives(clazz, methods, sizeof(methods) / sizeof(methods[0]));
     return JNI_VERSION_1_6;
 }

@@ -5,9 +5,7 @@
 #include "Config.h"
 #include "VMObjectAllocHandler.h"
 
-static int sampleIntervalMs = 0;
-
-void setSampleIntervalMs(int ms) {
+void setSampleIntervalMs(float ms) {
     setVMObjectAllocSampleInterval(ms);
 }
 

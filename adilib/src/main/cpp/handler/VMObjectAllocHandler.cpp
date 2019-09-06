@@ -21,7 +21,7 @@ extern "C" {
 
 #define LOG_TAG "OA"
 
-static int sampleInterval = 0;
+static float sampleInterval = 0;
 static int startTime = 0;
 
 static char *
@@ -66,7 +66,7 @@ void ObjectAllocCallback(jvmtiEnv *jvmti, JNIEnv *env, jthread thread, jobject o
     }
     startTime = now;
 
-    ALOGI("==========Object Alloc dump~ sample: %d==========", sampleInterval);
+    ALOGI("==========Object Alloc dump~ =========");
     char *baseInfo = createBaseInfo(jvmti, env, thread, object, klass, size);
     if (baseInfo == nullptr) {
         return;
@@ -80,6 +80,6 @@ void ObjectAllocCallback(jvmtiEnv *jvmti, JNIEnv *env, jthread thread, jobject o
     dumper_add(line);
 }
 
-void setVMObjectAllocSampleInterval(int intervalMs) {
+void setVMObjectAllocSampleInterval(float intervalMs) {
     sampleInterval = intervalMs * 1000;
 }

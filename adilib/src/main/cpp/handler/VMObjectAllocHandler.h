@@ -11,6 +11,6 @@
 void ObjectAllocCallback(jvmtiEnv *jvmti, JNIEnv *env, jthread thread, jobject object, jclass klass,
                          jlong size);
 
-void setVMObjectAllocSampleInterval(int intervalMs);
+void setVMObjectAllocSampleInterval(float intervalMs);
 
 #endif //ADI_VMOBJECTALLOCHANDLER_H

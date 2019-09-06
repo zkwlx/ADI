@@ -8,9 +8,8 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Button;
 
-import com.adi.ADIHelper;
+import com.adi.ADIManager;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -38,9 +37,9 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        findViewById(R.id.sample_text).setOnClickListener(v -> ADIHelper.init(MainActivity.this));
-        findViewById(R.id.adi_start).setOnClickListener(v -> ADIHelper.start(MainActivity.this));
-        findViewById(R.id.adi_stop).setOnClickListener(v -> ADIHelper.stop());
+        findViewById(R.id.sample_text).setOnClickListener(v -> ADIManager.init(MainActivity.this));
+        findViewById(R.id.adi_start).setOnClickListener(v -> ADIManager.start(MainActivity.this, 1));
+        findViewById(R.id.adi_stop).setOnClickListener(v -> ADIManager.stop());
 
         findViewById(R.id.button_gc).setOnClickListener(v -> {
             System.gc();
@@ -65,7 +64,7 @@ public class MainActivity extends Activity {
 
         findViewById(R.id.object_size).setOnClickListener(v -> {
             TestObject o = new TestObject();
-            long size = ADIHelper.getObjSize(o);
+            long size = ADIManager.getObjSize(o);
             Log.i("zkw", "============>>" + size);
         });
         findViewById(R.id.thread_start).setOnClickListener(v -> {
@@ -75,12 +74,12 @@ public class MainActivity extends Activity {
         });
         //===============用于 Looper 的测试方法 =============
         findViewById(R.id.button_start_looper_test).setOnClickListener(v -> {
-            ADIHelper.startTest();
+            ADIManager.startTest();
 
             startPushToLooperForTest();
         });
         findViewById(R.id.button_stop_looper_test).setOnClickListener(v -> {
-            ADIHelper.stopLooperForTest();
+            ADIManager.stopLooperForTest();
 //                onRequest();
         });
     }
@@ -93,7 +92,7 @@ public class MainActivity extends Activity {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                ADIHelper.pushToLooperForTest(Thread.currentThread().getName() + ": " + i);
+                ADIManager.pushToLooperForTest(Thread.currentThread().getName() + ": " + i);
             }
         });
         t1.setName("Thread_1");
@@ -106,7 +105,7 @@ public class MainActivity extends Activity {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                ADIHelper.pushToLooperForTest(Thread.currentThread().getName() + ": " + i);
+                ADIManager.pushToLooperForTest(Thread.currentThread().getName() + ": " + i);
             }
         });
         t2.setName("Thread_2");
@@ -119,7 +118,7 @@ public class MainActivity extends Activity {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                ADIHelper.pushToLooperForTest(Thread.currentThread().getName() + ": " + i);
+                ADIManager.pushToLooperForTest(Thread.currentThread().getName() + ": " + i);
             }
         });
         t3.setName("Thread_3");

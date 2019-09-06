@@ -2,9 +2,9 @@ package com.adi;
 
 public class ADIConfig {
 
-    private int sampleIntervalMs;
+    private float sampleIntervalMs;
 
-    public int getSampleIntervalMs() {
+    public float getSampleIntervalMs() {
         return sampleIntervalMs;
     }
 
@@ -13,9 +13,9 @@ public class ADIConfig {
 
     public static class Builder {
 
-        private int sampleIntervalMs = 0;
+        private float sampleIntervalMs = 0;
 
-        public Builder setSampleIntervalMs(int ms) {
+        public Builder setSampleIntervalMs(float ms) {
             sampleIntervalMs = ms;
             return this;
         }

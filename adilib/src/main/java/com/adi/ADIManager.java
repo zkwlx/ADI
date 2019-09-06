@@ -22,9 +22,9 @@ import static com.adi.Constant.JVMTI_EVENT_VM_OBJECT_ALLOC;
  * @author zhoukewen
  * @since 2019-08-12
  */
-public class ADIHelper {
+public class ADIManager {
 
-    private static final String TAG = "ADIHelper";
+    private static final String TAG = "ADIManager";
 
     private static final String LIB_NAME = "adi_agent";
 
@@ -92,8 +92,9 @@ public class ADIHelper {
      * 启动 Dumper，并开启 JVMTI 事件监听
      *
      * @param context
+     * @param sampleMs
      */
-    public static void start(Context context) {
+    public static void start(Context context, float sampleMs) {
         File file = context.getExternalCacheDir();
         File root = new File(file.getAbsolutePath(), "ADI/");
         Log.i(TAG, root.getAbsolutePath());
@@ -101,7 +102,7 @@ public class ADIHelper {
         startDump(root.getAbsolutePath());
 
         ADIConfig.Builder builder = new ADIConfig.Builder();
-        ADIConfig config = builder.setSampleIntervalMs(1).build();
+        ADIConfig config = builder.setSampleIntervalMs(sampleMs).build();
         enableEvents(config,
                 JVMTI_EVENT_GARBAGE_COLLECTION_START,
                 JVMTI_EVENT_GARBAGE_COLLECTION_FINISH,

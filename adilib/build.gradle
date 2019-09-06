@@ -1,8 +1,9 @@
 apply plugin: 'com.android.library'
 apply plugin: 'maven'
 
-group = "com.adi"
-version = '1.0'
+group = "zhihu.adi"
+archivesBaseName = "adi"
+version = '0.0.1'
 uploadArchives {
     doFirst {
         System.out.println("============uploadArchives for local")

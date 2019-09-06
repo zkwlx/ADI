@@ -51,23 +51,22 @@ void dumper_start(char *dumpDir) {
         ALOGI("looperCreate fail!!!!!!!!!");
         return;
     }
-    if (looperStart(looper) == 0) {
-        create_file(dumpDir);
-    } else {
-        switch (looperStart(looper)) {
-            case LOOPER_START_THREAD_ERROR:
-                ALOGI("looperStart thread create fail.");
-                looperDestroy(&looper);
-                break;
-            case LOOPER_START_REPEAT_ERROR:
-                ALOGI("looperStart looper is started");
-                break;
-            case LOOPER_IS_NULL:
-                ALOGI("looperStart looper is NULL");
-                break;
-            default:
-                break;
-        }
+    switch (looperStart(looper)) {
+        case LOOPER_START_SUCCESS:
+            create_file(dumpDir);
+            break;
+        case LOOPER_START_THREAD_ERROR:
+            ALOGI("looperStart thread create fail.");
+            looperDestroy(&looper);
+            break;
+        case LOOPER_START_REPEAT_ERROR:
+            ALOGI("looperStart looper is started");
+            break;
+        case LOOPER_IS_NULL:
+            ALOGI("looperStart looper is NULL");
+            break;
+        default:
+            break;
     }
 }
 

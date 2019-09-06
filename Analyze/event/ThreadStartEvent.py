@@ -3,7 +3,6 @@
 # @Time    : 2019/9/2 1:34 下午
 # @Author  : kewen
 # @File    : GCEvent.py
-
 from event.Event import Event
 
 

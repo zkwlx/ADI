@@ -7,10 +7,20 @@ import copy
 import difflib
 
 from event.ObjectAllocEvent import ObjectAllocEvent
+from event.StackEvent import StackEvent
+from event.ThreadStartEvent import ThreadStartEvent
 from utils.JVMUtils import convertClassDesc, convertMethodDesc
 
 idCounter = 1000
 aggregateEvent = []
+
+threadCount = 0
+
+
+def aggregateTSEvent(e: ThreadStartEvent) -> int:
+    global threadCount
+    threadCount += 1
+    return threadCount
 
 
 def aggregateOAEvent(e: ObjectAllocEvent) -> (int, int, str):
@@ -39,7 +49,7 @@ def aggregateOAEvent(e: ObjectAllocEvent) -> (int, int, str):
         idCounter += 1
         event.aggId = idCounter
         event.count = 1
-        event.niceStack = aggregateNiceStack(event)
+        event.niceStack = aggregateOAStack(event)
         aggregateEvent.append(event)
     else:
         aggEvent.count += 1
@@ -48,23 +58,35 @@ def aggregateOAEvent(e: ObjectAllocEvent) -> (int, int, str):
     return event.aggId, event.count, event.niceStack
 
 
-def aggregateNiceStack(e: ObjectAllocEvent) -> str:
+def aggregateOAStack(e: ObjectAllocEvent) -> str:
+    """
+    聚合 Object Alloc Event 的栈信息
+    :param e:
+    :return:
+    """
+    header = "%s %s\n" % (convertClassDesc(e.objectName), e.threadName)
+    niceStack = convertNiceStack(e)
+    print(header + niceStack)
+    return header + niceStack
+
+
+def convertNiceStack(e: StackEvent) -> str:
     """
     将原始 Stack 信息转换成更加可读的样子
     :param e:
     :return:
     """
-    header = "%s %s\n" % (convertClassDesc(e.objectName), e.threadName)
     niceStack = ""
     for line in e.stack:
-        print(line)
         if "(null)" in line:
             niceStack = line
         else:
             args = line.split(" ")
-            niceStack += "at    " + convertClassDesc(args[0]) + "." + args[1] + convertMethodDesc(args[2]) + "\n"
-    print(header + niceStack)
-    return header + niceStack
+            if len(args) == 3:
+                niceStack += "at    " + convertClassDesc(args[0]) + "." + args[1] + convertMethodDesc(args[2]) + "\n"
+            else:
+                niceStack += "at    " + line
+    return niceStack
 
 
 def matcherScore(str1, str2):

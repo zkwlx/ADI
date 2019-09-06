@@ -4,7 +4,7 @@
 # @Author  : kewen
 # @File    : ObjectAllocHandler.py
 from event.ThreadStartEvent import ThreadStartEvent
-from handler.BaseHandler import BaseHandler, SEP_POWER
+from handler.BaseHandler import BaseHandler, SEP_POWER, SEP_COMMA
 
 ThreadStart = "TS"
 
@@ -22,4 +22,8 @@ class ThreadStartHandler(BaseHandler):
         baseList = base.split(SEP_POWER)
         event.timestamp = int(baseList[0])
         event.startThreadName = baseList[1]
+        # 收集栈信息
+        stack = str(segmentList[2]).replace(SEP_POWER, " ")
+        event.stack = stack.split(SEP_COMMA)
+        event.stackStr = "\n".join(event.stack)
         return event

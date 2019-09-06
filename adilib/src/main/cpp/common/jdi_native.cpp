@@ -3,9 +3,11 @@
 //
 
 #include <jni.h>
+#include <cstdlib>
 #include "jdi_native.h"
 #include "../jvmti.h"
 #include "../common/log.h"
+#include "utils.h"
 
 /**
  * 使用前要 load so 并且启动 jvmti
@@ -45,3 +47,63 @@ JavaVM *getJavaVM(JNIEnv *env) {
     }
     return javaVm;
 }
+
+char *createStackInfo(jvmtiEnv *jvmti, JNIEnv *env, jthread thread, int stackDepth) {
+    char *result = nullptr;
+    jvmtiFrameInfo frames[stackDepth];
+    jint count;
+    jvmtiError err;
+
+    err = jvmti->GetStackTrace(thread, 0, stackDepth, frames, &count);
+    if (err != JVMTI_ERROR_NONE) {
+        ALOGE("[JVMTI ERROR on GetStackTrace]: %i", err);
+        return result;
+    }
+    if (count <= 0) {
+        return result;
+    }
+    for (int i = 0; i < count; i++) {
+        jvmtiFrameInfo info = frames[i];
+        char *classSignature;
+        char *methodName;
+        char *methodSignature;
+        //获取方法签名
+        err = jvmti->GetMethodName(info.method, &methodName, &methodSignature, nullptr);
+        if (err != JVMTI_ERROR_NONE) {
+            ALOGE("[JVMTI ERROR on GetMethodName]:%i", err);
+            break;
+        }
+        //获取方法所在类
+        jclass declaringClass;
+        err = jvmti->GetMethodDeclaringClass(info.method, &declaringClass);
+        if (err != JVMTI_ERROR_NONE) {
+            ALOGE("[JVMTI ERROR on GetMethodDeclaringClass]:%i", err);
+            break;
+        }
+        //获取方法所在类的签名
+        err = jvmti->GetClassSignature(declaringClass, &classSignature, nullptr);
+        if (err != JVMTI_ERROR_NONE) {
+            ALOGE("[JVMTI ERROR on GetClassSignature]:%i", err);
+            break;
+        }
+
+        if (result == nullptr) {
+            asprintf(&result, "%s%s%s%s%s", classSignature, SEP_POWER, methodName, SEP_POWER,
+                     methodSignature);
+        } else {
+            char *stack;
+            asprintf(&stack, "%s%s%s%s%s%s%s",
+                     result, SEP_COMMA,
+                     classSignature, SEP_POWER,
+                     methodName, SEP_POWER,
+                     methodSignature);
+            free(result);
+            result = stack;
+        }
+        jvmti->Deallocate((unsigned char *) classSignature);
+        jvmti->Deallocate((unsigned char *) methodName);
+        jvmti->Deallocate((unsigned char *) methodSignature);
+    }
+    return result;
+}
+

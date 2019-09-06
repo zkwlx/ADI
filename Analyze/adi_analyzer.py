@@ -7,7 +7,7 @@
 import pymongo
 
 from event.Event import Event
-from event_aggregation import aggregateOAEvent
+from event_aggregation import aggregateOAEvent, aggregateTSEvent
 from handler.GCHandler import GCHandler
 from handler.ObjectAllocHandler import ObjectAllocHandler
 from handler.ThreadStartHandler import ThreadStartHandler
@@ -32,6 +32,7 @@ def handleLineFromFile(line: str) -> Event:
 
 
 def aggregateEvents(originEventList: list):
+    # 对齐时间起点
     startTime = originEventList[0].timestamp
     eventJsonList = []
     for event in originEventList:
@@ -49,7 +50,20 @@ def aggregateEvents(originEventList: list):
                 "count": count,
                 "aggNiceStack": aggStack,
             }
-            collection.insert(json)
+            eventJsonList.append(json)
+        if event.eventName == "TS":
+            count = aggregateTSEvent(event)
+            json = {
+                "timestamp": event.timestamp,
+                "time": (event.timestamp - startTime),
+                "eventName": event.eventName,
+                "startThreadName": event.startThreadName,
+                "curTotalCount": count,
+            }
+            eventJsonList.append(json)
+
+    for json in eventJsonList:
+        collection.insert(json)
 
 
 def main():

@@ -113,11 +113,13 @@ extern "C" JNIEXPORT jint JNICALL Agent_OnAttach(JavaVM *vm, char *options, void
 extern "C" {
 #include "common/utils.h"
 }
+
 extern "C" JNIEXPORT void JNICALL startDump(JNIEnv *env, jclass jclazz, jstring dumpDir) {
     char *dumpDirChar = const_cast<char *>(env->GetStringUTFChars(dumpDir, JNI_FALSE));
     dumper_start(dumpDirChar);
     env->ReleaseStringUTFChars(dumpDir, dumpDirChar);
 }
+
 
 extern "C" JNIEXPORT void JNICALL stopDump(JNIEnv *env, jclass jclazz) {
     dumper_stop();

@@ -23,4 +23,6 @@ jvmtiEnv *getJvmtiEnvFromJNI(JNIEnv *env);
 
 JavaVM *getJavaVM(JNIEnv *env);
 
+char *createStackInfo(jvmtiEnv *jvmti, JNIEnv *env, jthread thread, int stackDepth);
+
 #endif //ADI_JDI_NATIVE_H

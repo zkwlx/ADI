@@ -4,9 +4,10 @@
 # @Author  : kewen
 # @File    : ObjectAllocEvent.py
 from event.Event import Event
+from event.StackEvent import StackEvent
 
 
-class ObjectAllocEvent(Event):
+class ObjectAllocEvent(StackEvent):
     """
     JVM 分配对象的 Event。保存分配对象时的线程名字、对象类名、调用栈等详细信息
     """
@@ -16,7 +17,5 @@ class ObjectAllocEvent(Event):
         self.threadName = ""
         self.objectName = ""
         self.objectSize = 0
-        self.stack = [""]
-        self.stackStr = ""
 
 

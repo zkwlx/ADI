@@ -17,6 +17,8 @@ extern "C" {
 #include "dumper.h"
 }
 
+static jvmtiEnv *jvmti_env;
+
 static void ClassTransform(jvmtiEnv *jvmti_env,
                            JNIEnv *env,
                            jclass classBeingRedefined,
@@ -46,6 +48,9 @@ void SetAllCapabilities(jvmtiEnv *jvmti) {
 void SetEventNotification(jvmtiEnv *jvmti, jvmtiEventMode mode,
                           jvmtiEvent event_type) {
     jvmtiError err = jvmti->SetEventNotificationMode(mode, event_type, nullptr);
+    if (err != JVMTI_ERROR_NONE) {
+        ALOGI("Error on SetEventNotification: %d", err);
+    }
 }
 
 bool isNativeBinded = false;
@@ -74,11 +79,10 @@ JvmTINativeMethodBind(jvmtiEnv *jvmti_env, JNIEnv *jni_env, jthread thread, jmet
 
 void ignoreHandler(int sig) { ALOGI("!!!!!-> %d", sig); }
 
-extern "C" JNIEXPORT jint JNICALL Agent_OnAttach(JavaVM *vm, char *options,
-                                                 void *reserved) {
+extern "C" JNIEXPORT jint JNICALL Agent_OnAttach(JavaVM *vm, char *options, void *reserved) {
     signal(SIGTRAP, ignoreHandler);
 
-    jvmtiEnv *jvmti_env = getJvmtiEnv(vm);
+    jvmti_env = getJvmtiEnv(vm);
 
     if (jvmti_env == nullptr) {
         return JNI_ERR;
@@ -87,30 +91,28 @@ extern "C" JNIEXPORT jint JNICALL Agent_OnAttach(JavaVM *vm, char *options,
 
     jvmtiEventCallbacks callbacks;
     memset(&callbacks, 0, sizeof(callbacks));
-    callbacks.ClassFileLoadHook = &ClassTransform;
 
-    callbacks.VMObjectAlloc = &ObjectAllocCallback;
+    //TODO NativeMethodBind 比较特殊，需要时注意
     callbacks.NativeMethodBind = &JvmTINativeMethodBind;
 //    callbacks.MethodEntry = &MethodEntry;
-
+    callbacks.ClassFileLoadHook = &ClassTransform;
+    callbacks.VMObjectAlloc = &ObjectAllocCallback;
     callbacks.GarbageCollectionStart = &GCStartCallback;
     callbacks.GarbageCollectionFinish = &GCFinishCallback;
     callbacks.ThreadStart = &ThreadStart;
     int error = jvmti_env->SetEventCallbacks(&callbacks, sizeof(callbacks));
+    if (error != JVMTI_ERROR_NONE) {
+        ALOGI("Error on Agent_OnAttach: %d", error);
+    }
 
-    SetEventNotification(jvmti_env, JVMTI_ENABLE, JVMTI_EVENT_GARBAGE_COLLECTION_START);
-    SetEventNotification(jvmti_env, JVMTI_ENABLE, JVMTI_EVENT_GARBAGE_COLLECTION_FINISH);
-    SetEventNotification(jvmti_env, JVMTI_ENABLE, JVMTI_EVENT_NATIVE_METHOD_BIND);
-    SetEventNotification(jvmti_env, JVMTI_ENABLE, JVMTI_EVENT_VM_OBJECT_ALLOC);
-    SetEventNotification(jvmti_env, JVMTI_ENABLE, JVMTI_EVENT_THREAD_START);
-//    SetEventNotification(jvmti_env, JVMTI_ENABLE, JVMTI_EVENT_METHOD_ENTRY);
-//    SetEventNotification(jvmti_env, JVMTI_ENABLE, JVMTI_EVENT_OBJECT_FREE);
-//    SetEventNotification(jvmti_env, JVMTI_ENABLE, JVMTI_EVENT_CLASS_FILE_LOAD_HOOK);
     ALOGI("==========Agent_OnAttach=======");
-
     return JNI_OK;
+
 }
 
+extern "C" {
+#include "common/utils.h"
+}
 extern "C" JNIEXPORT void JNICALL startDump(JNIEnv *env, jclass jclazz, jstring dumpDir) {
     char *dumpDirChar = const_cast<char *>(env->GetStringUTFChars(dumpDir, JNI_FALSE));
     dumper_start(dumpDirChar);
@@ -139,24 +141,49 @@ extern "C" JNIEXPORT void JNICALL stopLooper(JNIEnv *env, jclass jclazz) {
     test_looper_destroy();
 }
 
-extern "C" JNIEXPORT void JNICALL demo(JNIEnv *env, jclass jclazz, jobject configObj) {
+extern "C" JNIEXPORT void JNICALL
+enableEvents(JNIEnv *env, jclass jclazz, jobject configObj, jintArray jevents) {
+    jint len = env->GetArrayLength(jevents);
+    if (len == 0) {
+        return;
+    }
+    // 解析 Config
     jclass configClass = env->GetObjectClass(configObj);
     jfieldID filedId = env->GetFieldID(configClass, "sampleIntervalMs", "I");
     jint sampleInterval = env->GetIntField(configObj, filedId);
-    sampleIntervalMs = sampleInterval;
+    setSampleIntervalMs(sampleInterval);
+
+    jint events[len];
+    env->GetIntArrayRegion(jevents, 0, len, events);
+    for (int i : events) {
+        SetEventNotification(jvmti_env, JVMTI_ENABLE, jvmtiEvent(i));
+    }
 }
 
+extern "C" JNIEXPORT void JNICALL disableEvents(JNIEnv *env, jclass jclazz, jintArray jevents) {
+    jint len = env->GetArrayLength(jevents);
+    if (len == 0) {
+        return;
+    }
+    jint events[len];
+    env->GetIntArrayRegion(jevents, 0, len, events);
+    for (int i : events) {
+        SetEventNotification(jvmti_env, JVMTI_DISABLE, jvmtiEvent(i));
+    }
+}
 
 //===============用于 Looper 的测试方法 =============
 
 static JNINativeMethod methods[] = {
-        {"startDump",           "(Ljava/lang/String;)V", (void *) startDump},
-        {"stopDump",            "()V",                   (void *) stopDump},
-        {"getObjectSize",       "(Ljava/lang/Object;)J", (void *) getObjectSize},
+        {"startDump",           "(Ljava/lang/String;)V",    (void *) startDump},
+        {"stopDump",            "()V",                      (void *) stopDump},
+        {"getObjectSize",       "(Ljava/lang/Object;)J",    (void *) getObjectSize},
+        {"enableEvents",        "(Lcom/adi/ADIConfig;[I)V", (void *) enableEvents},
+        {"disableEvents",       "([I)V",                    (void *) disableEvents},
         // 用于 Looper 的测试方法
-        {"startLooperForTest",  "()V",                   (void *) startLooper},
-        {"pushToLooperForTest", "(Ljava/lang/String;)V", (void *) pushToLooper},
-        {"stopLooperForTest",   "()V",                   (void *) stopLooper},
+        {"startLooperForTest",  "()V",                      (void *) startLooper},
+        {"pushToLooperForTest", "(Ljava/lang/String;)V",    (void *) pushToLooper},
+        {"stopLooperForTest",   "()V",                      (void *) stopLooper},
 };
 
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {

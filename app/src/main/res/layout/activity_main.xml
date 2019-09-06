@@ -10,19 +10,19 @@
             android:id="@+id/sample_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="启动 JVMTI Agent" />
+            android:text="初始化 JVMTI Agent" />
 
     <Button
-            android:id="@+id/button_gc"
+            android:id="@+id/adi_start"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="触发 GC" />
+            android:text="启动 ADI" />
 
     <Button
-            android:id="@+id/button_dumper_stop"
+            android:id="@+id/adi_stop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="停止 Dumper" />
+            android:text="停止 ADI" />
 
     <Button
             android:id="@+id/button_start_looper_test"
@@ -35,6 +35,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="停止 Looper 测试" />
+
+    <Button
+            android:id="@+id/button_gc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="触发 GC" />
 
     <Button
             android:id="@+id/malloc_object"
@@ -53,6 +59,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="创建线程" />
+
     <Button
             android:id="@+id/object_size"
             android:layout_width="wrap_content"

@@ -12,6 +12,12 @@ import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import static com.adi.Constant.JVMTI_EVENT_GARBAGE_COLLECTION_FINISH;
+import static com.adi.Constant.JVMTI_EVENT_GARBAGE_COLLECTION_START;
+import static com.adi.Constant.JVMTI_EVENT_NATIVE_METHOD_BIND;
+import static com.adi.Constant.JVMTI_EVENT_THREAD_START;
+import static com.adi.Constant.JVMTI_EVENT_VM_OBJECT_ALLOC;
+
 /**
  * @author zhoukewen
  * @since 2019-08-12
@@ -32,17 +38,9 @@ public class ADIHelper {
         if (isInited) {
             return;
         }
-        File file = context.getExternalCacheDir();
-        File root = new File(file.getAbsolutePath(), "ADI/");
-        Log.i(TAG, root.getAbsolutePath());
-        boolean result = root.mkdirs();
         String path = createDuplicateLib(context);
-
         System.load(path);
-        startDump(root.getAbsolutePath());
-
         attachJvmtiAgent(path, context.getClassLoader());
-
         isInited = true;
     }
 
@@ -90,17 +88,70 @@ public class ADIHelper {
         }
     }
 
+    /**
+     * 启动 Dumper，并开启 JVMTI 事件监听
+     *
+     * @param context
+     */
+    public static void start(Context context) {
+        File file = context.getExternalCacheDir();
+        File root = new File(file.getAbsolutePath(), "ADI/");
+        Log.i(TAG, root.getAbsolutePath());
+        root.mkdirs();
+        startDump(root.getAbsolutePath());
+
+        ADIConfig.Builder builder = new ADIConfig.Builder();
+        ADIConfig config = builder.setSampleIntervalMs(1).build();
+        enableEvents(config,
+                JVMTI_EVENT_GARBAGE_COLLECTION_START,
+                JVMTI_EVENT_GARBAGE_COLLECTION_FINISH,
+                JVMTI_EVENT_NATIVE_METHOD_BIND,
+                JVMTI_EVENT_VM_OBJECT_ALLOC,
+                JVMTI_EVENT_THREAD_START);
+    }
+
+    /**
+     * 停止 Dumper 线程，并关闭 JVMTI 事件监听
+     */
     public static void stop() {
         stopDump();
+
+        disableEvents(JVMTI_EVENT_GARBAGE_COLLECTION_START,
+                JVMTI_EVENT_GARBAGE_COLLECTION_FINISH,
+                JVMTI_EVENT_NATIVE_METHOD_BIND,
+                JVMTI_EVENT_VM_OBJECT_ALLOC,
+                JVMTI_EVENT_THREAD_START);
     }
 
     public static long getObjSize(Object obj) {
         return getObjectSize(obj);
     }
 
+    /**
+     * 启动 Dumper 线程，开始保存 Dumper 文件
+     *
+     * @param dumpDir
+     */
     private static native void startDump(String dumpDir);
 
+    /**
+     * 停止 Dumper 线程
+     */
     private static native void stopDump();
+
+    /**
+     * 开启 JVMTI 的事件监听
+     *
+     * @param events 事件集合，参考 {@link Constant} 中的常量
+     */
+    private static native void enableEvents(ADIConfig config, int... events);
+
+    /**
+     * 停止 JVMTI 的事件监听
+     *
+     * @param events 事件集合，参考 {@link Constant} 中的常量
+     */
+    private static native void disableEvents(int... events);
 
     private static native long getObjectSize(Object obj);
 

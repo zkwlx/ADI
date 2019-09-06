@@ -38,14 +38,14 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button tv = findViewById(R.id.sample_text);
-        tv.setOnClickListener(v -> ADIHelper.init(MainActivity.this));
+        findViewById(R.id.sample_text).setOnClickListener(v -> ADIHelper.init(MainActivity.this));
+        findViewById(R.id.adi_start).setOnClickListener(v -> ADIHelper.start(MainActivity.this));
+        findViewById(R.id.adi_stop).setOnClickListener(v -> ADIHelper.stop());
 
         findViewById(R.id.button_gc).setOnClickListener(v -> {
             System.gc();
             System.runFinalization();
         });
-        findViewById(R.id.button_dumper_stop).setOnClickListener(v -> ADIHelper.stop());
         findViewById(R.id.malloc_object).setOnClickListener(v -> {
             list.add(new DemoObject());
             try {

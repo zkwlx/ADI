@@ -3,7 +3,7 @@
 //
 
 #include "VMObjectAllocHandler.h"
-#include "Config.h"
+
 
 extern "C" {
 #include "../dumper.h"
@@ -22,8 +22,9 @@ extern "C" {
 
 constexpr int FRAME_COUNT = 10;
 
-static int sampleInterval = sampleIntervalMs * 1000;
+static int sampleInterval = 0;
 static int startTime = 0;
+
 
 static char *createStackInfo(jvmtiEnv *jvmti, JNIEnv *env, jthread thread) {
     char *result = nullptr;
@@ -128,7 +129,7 @@ void ObjectAllocCallback(jvmtiEnv *jvmti, JNIEnv *env, jthread thread, jobject o
     }
     startTime = now;
 
-    ALOGI("==========Object Alloc dump~==========");
+    ALOGI("==========Object Alloc dump~ sample: %d==========", sampleInterval);
     char *baseInfo = createBaseInfo(jvmti, env, thread, object, klass, size);
     if (baseInfo == nullptr) {
         return;
@@ -140,4 +141,8 @@ void ObjectAllocCallback(jvmtiEnv *jvmti, JNIEnv *env, jthread thread, jobject o
     free(stackInfo);
     ALOGI("%s", line);
     dumper_add(line);
+}
+
+void setVMObjectAllocSampleInterval(int intervalMs) {
+    sampleInterval = intervalMs * 1000;
 }

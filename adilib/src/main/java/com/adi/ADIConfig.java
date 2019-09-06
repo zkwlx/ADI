@@ -8,6 +8,9 @@ public class ADIConfig {
         return sampleIntervalMs;
     }
 
+    private ADIConfig() {
+    }
+
     public static class Builder {
 
         private int sampleIntervalMs = 0;

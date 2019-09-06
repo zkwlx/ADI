@@ -12,9 +12,11 @@ from handler.GCHandler import GCHandler
 from handler.ObjectAllocHandler import ObjectAllocHandler
 from handler.ThreadStartHandler import ThreadStartHandler
 
+FILE_NAME = "adi_1567593367.log"
+
 mongo = pymongo.MongoClient(host="localhost", port=27017)
 db = mongo['adi_analyze']
-collection = db['test']
+collection = db[FILE_NAME]
 
 # TODO 在这里配置需要解析的 Event
 handlerList = [ObjectAllocHandler(), GCHandler(), ThreadStartHandler()]
@@ -52,7 +54,7 @@ def aggregateEvents(originEventList: list):
 
 def main():
     originEventList = []
-    with open("adi.log", "r") as file:
+    with open(FILE_NAME, "r") as file:
         count = 0
         for line in file:
             count += 1

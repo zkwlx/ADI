@@ -5,6 +5,6 @@
 #ifndef ADI_CONFIG_H
 #define ADI_CONFIG_H
 
-int sampleIntervalMs = 0;
+void setSampleIntervalMs(int ms);
 
 #endif //ADI_CONFIG_H

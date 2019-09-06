@@ -19,6 +19,8 @@ extern "C" JNIEXPORT jlong JNICALL getObjectSize(JNIEnv *env, jclass jclazz, job
 
 jvmtiEnv *getJvmtiEnv(JavaVM *vm);
 
+jvmtiEnv *getJvmtiEnvFromJNI(JNIEnv *env);
+
 JavaVM *getJavaVM(JNIEnv *env);
 
 #endif //ADI_JDI_NATIVE_H

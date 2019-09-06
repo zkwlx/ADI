@@ -23,6 +23,11 @@ extern "C" JNIEXPORT jlong JNICALL getObjectSize(JNIEnv *env, jclass jclazz, job
     return size;
 }
 
+jvmtiEnv *getJvmtiEnvFromJNI(JNIEnv *env) {
+    JavaVM *vm = getJavaVM(env);
+    return getJvmtiEnv(vm);
+}
+
 jvmtiEnv *getJvmtiEnv(JavaVM *vm) {
     jvmtiEnv *jvmti_env;
     jint result = vm->GetEnv((void **) &jvmti_env, JVMTI_VERSION_1_2);

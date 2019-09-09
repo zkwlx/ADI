@@ -8,6 +8,8 @@
 #define SEP_POWER "^^^"
 #define SEP_COMMA ",,,"
 
-long currentTimeMillis();
+#include <stdint.h>
+
+int64_t currentTimeMillis();
 
 #endif //ADI_UTILS_H

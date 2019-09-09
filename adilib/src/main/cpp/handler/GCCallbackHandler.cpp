@@ -15,8 +15,8 @@ extern "C" {
 
 static char *createBaseInfo(jvmtiEnv *jvmti_env) {
     char *baseInfo;
-    long timeMillis = currentTimeMillis();
-    asprintf(&baseInfo, "%ld", timeMillis);
+    int64_t timeMillis = currentTimeMillis();
+    asprintf(&baseInfo, "%lld", timeMillis);
     return baseInfo;
 }
 

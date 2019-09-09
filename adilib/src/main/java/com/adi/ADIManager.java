@@ -106,7 +106,7 @@ public class ADIManager {
         enableEvents(config,
                 JVMTI_EVENT_GARBAGE_COLLECTION_START,
                 JVMTI_EVENT_GARBAGE_COLLECTION_FINISH,
-                JVMTI_EVENT_NATIVE_METHOD_BIND,
+//                JVMTI_EVENT_NATIVE_METHOD_BIND,
                 JVMTI_EVENT_VM_OBJECT_ALLOC,
                 JVMTI_EVENT_THREAD_START);
     }
@@ -119,7 +119,7 @@ public class ADIManager {
 
         disableEvents(JVMTI_EVENT_GARBAGE_COLLECTION_START,
                 JVMTI_EVENT_GARBAGE_COLLECTION_FINISH,
-                JVMTI_EVENT_NATIVE_METHOD_BIND,
+//                JVMTI_EVENT_NATIVE_METHOD_BIND,
                 JVMTI_EVENT_VM_OBJECT_ALLOC,
                 JVMTI_EVENT_THREAD_START);
     }

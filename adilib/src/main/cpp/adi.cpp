@@ -93,7 +93,7 @@ extern "C" JNIEXPORT jint JNICALL Agent_OnAttach(JavaVM *vm, char *options, void
     memset(&callbacks, 0, sizeof(callbacks));
 
     //TODO NativeMethodBind 比较特殊，需要时注意
-    callbacks.NativeMethodBind = &JvmTINativeMethodBind;
+//    callbacks.NativeMethodBind = &JvmTINativeMethodBind;
 //    callbacks.MethodEntry = &MethodEntry;
     callbacks.ClassFileLoadHook = &ClassTransform;
     callbacks.VMObjectAlloc = &ObjectAllocCallback;
@@ -183,9 +183,9 @@ static JNINativeMethod methods[] = {
         {"enableEvents",        "(Lcom/adi/ADIConfig;[I)V", (void *) enableEvents},
         {"disableEvents",       "([I)V",                    (void *) disableEvents},
         // 用于 Looper 的测试方法
-        {"startLooperForTest",  "()V",                      (void *) startLooper},
-        {"pushToLooperForTest", "(Ljava/lang/String;)V",    (void *) pushToLooper},
-        {"stopLooperForTest",   "()V",                      (void *) stopLooper},
+//        {"startLooperForTest",  "()V",                      (void *) startLooper},
+//        {"pushToLooperForTest", "(Ljava/lang/String;)V",    (void *) pushToLooper},
+//        {"stopLooperForTest",   "()V",                      (void *) stopLooper},
 };
 
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {

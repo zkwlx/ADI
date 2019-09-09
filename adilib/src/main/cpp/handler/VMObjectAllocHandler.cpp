@@ -32,14 +32,15 @@ createBaseInfo(jvmtiEnv *jvmti, JNIEnv *env, jthread thread, jobject object, jcl
     char *classSignature;
     jvmti->GetClassSignature(klass, &classSignature, nullptr);
     char *baseInfo;
-    long timeMillis = currentTimeMillis();
+    int64_t timeMillis = currentTimeMillis();
+    ALOGI("timeMillis-----> %lld", timeMillis);
     // TODO 白名单逻辑
 //    char *findSelf = strstr(classSignature, "com/adi/");
 //    char *findAndroid = strstr(classSignature, "android");
 //    if (findSelf == nullptr && findAndroid == nullptr) {
 //        return nullptr;
 //    }
-    asprintf(&baseInfo, "%ld%s%s%s%s%s%lli",
+    asprintf(&baseInfo, "%lld%s%s%s%s%s%lli",
              timeMillis, SEP_POWER,
              threadInfo.name, SEP_POWER,
              classSignature, SEP_POWER,

@@ -3,7 +3,6 @@
 # @Time    : 2019/9/2 1:09 下午
 # @Author  : kewen
 # @File    : ObjectAllocEvent.py
-from event.Event import Event
 from event.StackEvent import StackEvent
 
 
@@ -17,5 +16,6 @@ class ObjectAllocEvent(StackEvent):
         self.threadName = ""
         self.objectName = ""
         self.objectSize = 0
+        self.objectTag = 0
 
 

@@ -15,6 +15,7 @@ import java.nio.file.Paths;
 import static com.adi.Constant.JVMTI_EVENT_GARBAGE_COLLECTION_FINISH;
 import static com.adi.Constant.JVMTI_EVENT_GARBAGE_COLLECTION_START;
 import static com.adi.Constant.JVMTI_EVENT_NATIVE_METHOD_BIND;
+import static com.adi.Constant.JVMTI_EVENT_OBJECT_FREE;
 import static com.adi.Constant.JVMTI_EVENT_THREAD_START;
 import static com.adi.Constant.JVMTI_EVENT_VM_OBJECT_ALLOC;
 
@@ -93,8 +94,9 @@ public class ADIManager {
      *
      * @param context
      * @param sampleMs
+     * @param events
      */
-    public static void start(Context context, float sampleMs) {
+    public static void start(Context context, float sampleMs, int... events) {
         File file = context.getExternalCacheDir();
         File root = new File(file.getAbsolutePath(), "ADI/");
         Log.i(TAG, root.getAbsolutePath());
@@ -103,25 +105,45 @@ public class ADIManager {
 
         ADIConfig.Builder builder = new ADIConfig.Builder();
         ADIConfig config = builder.setSampleIntervalMs(sampleMs).build();
-        enableEvents(config,
-                JVMTI_EVENT_GARBAGE_COLLECTION_START,
-                JVMTI_EVENT_GARBAGE_COLLECTION_FINISH,
-//                JVMTI_EVENT_NATIVE_METHOD_BIND,
-                JVMTI_EVENT_VM_OBJECT_ALLOC,
-                JVMTI_EVENT_THREAD_START);
+        enableEvents(config, events);
     }
 
     /**
      * 停止 Dumper 线程，并关闭 JVMTI 事件监听
+     *
+     * @param events
      */
-    public static void stop() {
+    public static void stop(int... events) {
         stopDump();
+        disableEvents(events);
+    }
 
-        disableEvents(JVMTI_EVENT_GARBAGE_COLLECTION_START,
+    /**
+     * 启动 Dumper，并开启默认的 JVMTI 事件监听
+     *
+     * @param context
+     * @param sampleMs
+     */
+    public static void startForDefaultEvents(Context context, float sampleMs) {
+        start(context, sampleMs,
+                JVMTI_EVENT_GARBAGE_COLLECTION_START,
                 JVMTI_EVENT_GARBAGE_COLLECTION_FINISH,
 //                JVMTI_EVENT_NATIVE_METHOD_BIND,
                 JVMTI_EVENT_VM_OBJECT_ALLOC,
-                JVMTI_EVENT_THREAD_START);
+                JVMTI_EVENT_THREAD_START,
+                JVMTI_EVENT_OBJECT_FREE);
+    }
+
+    /**
+     * 停止 Dumper 线程，并关闭默认的 JVMTI 事件监听
+     */
+    public static void stopForDefaultEvents() {
+        stop(JVMTI_EVENT_GARBAGE_COLLECTION_START,
+                JVMTI_EVENT_GARBAGE_COLLECTION_FINISH,
+//                JVMTI_EVENT_NATIVE_METHOD_BIND,
+                JVMTI_EVENT_VM_OBJECT_ALLOC,
+                JVMTI_EVENT_THREAD_START,
+                JVMTI_EVENT_OBJECT_FREE);
     }
 
     public static long getObjSize(Object obj) {

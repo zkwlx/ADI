@@ -22,32 +22,36 @@ extern "C" {
 #define LOG_TAG "OA"
 
 static float sampleInterval = 0;
-static int startTime = 0;
+static int64_t startTime = 0;
 
 static char *
 createBaseInfo(jvmtiEnv *jvmti, JNIEnv *env, jthread thread, jobject object, jclass klass,
-               jlong size) {
+               jlong size, jlong tag) {
     jvmtiThreadInfo threadInfo;
     jvmti->GetThreadInfo(thread, &threadInfo);
     char *classSignature;
     jvmti->GetClassSignature(klass, &classSignature, nullptr);
     char *baseInfo;
     int64_t timeMillis = currentTimeMillis();
-    ALOGI("timeMillis-----> %lld", timeMillis);
-    // TODO 白名单逻辑
-//    char *findSelf = strstr(classSignature, "com/adi/");
-//    char *findAndroid = strstr(classSignature, "android");
-//    if (findSelf == nullptr && findAndroid == nullptr) {
-//        return nullptr;
-//    }
-    asprintf(&baseInfo, "%lld%s%s%s%s%s%lli",
+    asprintf(&baseInfo, "%lld%s%s%s%s%s%lld%s%lld",
              timeMillis, SEP_POWER,
              threadInfo.name, SEP_POWER,
              classSignature, SEP_POWER,
-             size);
+             size, SEP_POWER,
+             tag);
     ALOGI("[base:] %s", baseInfo);
     jvmti->Deallocate((unsigned char *) classSignature);
     return baseInfo;
+}
+
+static jlong tag = 0;
+static pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;
+
+static jlong createObjectTag() {
+    pthread_mutex_lock(&mtx);
+    tag += 1;
+    pthread_mutex_unlock(&mtx);
+    return tag;
 }
 
 /**
@@ -58,20 +62,18 @@ createBaseInfo(jvmtiEnv *jvmti, JNIEnv *env, jthread thread, jobject object, jcl
  */
 void ObjectAllocCallback(jvmtiEnv *jvmti, JNIEnv *env, jthread thread, jobject object, jclass klass,
                          jlong size) {
-    timeval tv{};
-    gettimeofday(&tv, nullptr);
-    int now = tv.tv_usec;
+    int64_t now = currentTimeMicro();
     if (now - startTime <= sampleInterval) {
-        ALOGD("=======Object Alloc too fast!=======");
+        ALOGI("----Object Alloc too fast!----");
         return;
     }
     startTime = now;
 
-    ALOGI("==========Object Alloc dump~ =========");
-    char *baseInfo = createBaseInfo(jvmti, env, thread, object, klass, size);
-    if (baseInfo == nullptr) {
-        return;
-    }
+    jlong tag = createObjectTag();
+    jvmti->SetTag(object, tag);
+    ALOGI("==========Object Alloc dump~ tag: %lld =========", tag);
+
+    char *baseInfo = createBaseInfo(jvmti, env, thread, object, klass, size, tag);
     char *stackInfo = createStackInfo(jvmti, env, thread, 10);
     char *line;
     asprintf(&line, "%s|%s|%s\n", LOG_TAG, baseInfo, stackInfo);
@@ -79,6 +81,7 @@ void ObjectAllocCallback(jvmtiEnv *jvmti, JNIEnv *env, jthread thread, jobject o
     free(stackInfo);
     ALOGI("%s", line);
     dumper_add(line);
+
 }
 
 void setVMObjectAllocSampleInterval(float intervalMs) {

@@ -9,6 +9,7 @@
 #include "handler/MethodEntryHandler.h"
 #include "handler/ThreadStartHandler.h"
 #include "handler/GCCallbackHandler.h"
+#include "handler/ObjectFreeHandler.h"
 #include "handler/Config.h"
 #include "common/jdi_native.h"
 #include "common/log.h"
@@ -99,6 +100,7 @@ extern "C" JNIEXPORT jint JNICALL Agent_OnAttach(JavaVM *vm, char *options, void
     callbacks.VMObjectAlloc = &ObjectAllocCallback;
     callbacks.GarbageCollectionStart = &GCStartCallback;
     callbacks.GarbageCollectionFinish = &GCFinishCallback;
+    callbacks.ObjectFree = &ObjectFree;
     callbacks.ThreadStart = &ThreadStart;
     int error = jvmti_env->SetEventCallbacks(&callbacks, sizeof(callbacks));
     if (error != JVMTI_ERROR_NONE) {
@@ -177,11 +179,11 @@ extern "C" JNIEXPORT void JNICALL disableEvents(JNIEnv *env, jclass jclazz, jint
 //===============用于 Looper 的测试方法 =============
 
 static JNINativeMethod methods[] = {
-        {"startDump",           "(Ljava/lang/String;)V",    (void *) startDump},
-        {"stopDump",            "()V",                      (void *) stopDump},
-        {"getObjectSize",       "(Ljava/lang/Object;)J",    (void *) getObjectSize},
-        {"enableEvents",        "(Lcom/adi/ADIConfig;[I)V", (void *) enableEvents},
-        {"disableEvents",       "([I)V",                    (void *) disableEvents},
+        {"startDump",     "(Ljava/lang/String;)V",    (void *) startDump},
+        {"stopDump",      "()V",                      (void *) stopDump},
+        {"getObjectSize", "(Ljava/lang/Object;)J",    (void *) getObjectSize},
+        {"enableEvents",  "(Lcom/adi/ADIConfig;[I)V", (void *) enableEvents},
+        {"disableEvents", "([I)V",                    (void *) disableEvents},
         // 用于 Looper 的测试方法
 //        {"startLooperForTest",  "()V",                      (void *) startLooper},
 //        {"pushToLooperForTest", "(Ljava/lang/String;)V",    (void *) pushToLooper},

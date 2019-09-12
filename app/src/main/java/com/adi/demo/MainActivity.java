@@ -10,23 +10,9 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.adi.ADIManager;
+import com.adi.ui.ADIFloatManager;
 
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
 import java.util.ArrayList;
-import java.util.List;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Connection;
-import okhttp3.EventListener;
-import okhttp3.Handshake;
-import okhttp3.OkHttpClient;
-import okhttp3.Protocol;
-import okhttp3.Request;
-import okhttp3.Response;
 
 public class MainActivity extends Activity {
 
@@ -38,8 +24,11 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         findViewById(R.id.sample_text).setOnClickListener(v -> ADIManager.init(MainActivity.this));
-        findViewById(R.id.adi_start).setOnClickListener(v -> ADIManager.start(MainActivity.this, 1));
-        findViewById(R.id.adi_stop).setOnClickListener(v -> ADIManager.stop());
+        findViewById(R.id.adi_start).setOnClickListener(v -> {
+            ADIFloatManager.INSTANCE.showADIFloat(this);
+//            ADIManager.startForDefaultEvents(MainActivity.this, 1)
+        });
+        findViewById(R.id.adi_stop).setOnClickListener(v -> ADIManager.stopForDefaultEvents());
 
         findViewById(R.id.button_gc).setOnClickListener(v -> {
             System.gc();
@@ -146,133 +135,6 @@ public class MainActivity extends Activity {
             }
         }
         return null;
-    }
-
-    public void onRequest() {
-        String url = "http://www.baidu.com";
-        OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .eventListener(new MonitorEventListener())
-                .build();
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
-        Call call = okHttpClient.newCall(request);
-        Request request2 = new Request.Builder()
-                .url("http://www.zhihu.com")
-                .build();
-        Call call2 = okHttpClient.newCall(request2);
-        call2.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-
-            }
-        });
-        try {
-            call.enqueue(new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    e.printStackTrace();
-                }
-
-                @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    System.out.println(response.body().string());
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private class MonitorEventListener extends EventListener {
-        @Override
-        public void callStart(Call call) {
-            super.callStart(call);
-            Log.i("zkw", this.toString() + "callStart-> " + call.toString() + ", thread:" + Thread.currentThread().getName());
-        }
-
-        @Override
-        public void dnsStart(Call call, String domainName) {
-            super.dnsStart(call, domainName);
-            Log.i("zkw", this.toString() + "dnsStart-> " + call.toString() + ", thread:" + Thread.currentThread().getName());
-        }
-
-        @Override
-        public void dnsEnd(Call call, String domainName, List<InetAddress> inetAddressList) {
-            super.dnsEnd(call, domainName, inetAddressList);
-            Log.i("zkw", this.toString() + "dnsEnd-> " + call.toString() + ", thread:" + Thread.currentThread().getName());
-        }
-
-        @Override
-        public void connectStart(Call call, InetSocketAddress inetSocketAddress, Proxy proxy) {
-            super.connectStart(call, inetSocketAddress, proxy);
-            Log.i("zkw", "connectStart-> " + call.toString() + ", thread:" + Thread.currentThread().getName());
-        }
-
-        @Override
-        public void secureConnectStart(Call call) {
-            super.secureConnectStart(call);
-            Log.i("zkw", "secureConnectStart-> " + call.toString() + ", thread:" + Thread.currentThread().getName());
-        }
-
-        @Override
-        public void secureConnectEnd(Call call, Handshake handshake) {
-            super.secureConnectEnd(call, handshake);
-            Log.i("zkw", "secureConnectEnd-> " + call.toString() + ", thread:" + Thread.currentThread().getName());
-        }
-
-        @Override
-        public void connectEnd(Call call, InetSocketAddress inetSocketAddress, Proxy proxy, Protocol protocol) {
-            super.connectEnd(call, inetSocketAddress, proxy, protocol);
-            Log.i("zkw", "connectEnd-> " + call.toString() + ", thread:" + Thread.currentThread().getName());
-        }
-
-        @Override
-        public void connectFailed(Call call, InetSocketAddress inetSocketAddress, Proxy proxy, Protocol protocol, IOException ioe) {
-            super.connectFailed(call, inetSocketAddress, proxy, protocol, ioe);
-            Log.i("zkw", "connectFailed-> " + call.toString() + ", thread:" + Thread.currentThread().getName());
-        }
-
-        @Override
-        public void connectionAcquired(Call call, Connection connection) {
-            super.connectionAcquired(call, connection);
-            Log.i("zkw", "connectionAcquired-> " + call.toString() + ", thread:" + Thread.currentThread().getName());
-        }
-
-        @Override
-        public void connectionReleased(Call call, Connection connection) {
-            super.connectionReleased(call, connection);
-            Log.i("zkw", "connectionReleased-> " + call.toString() + ", thread:" + Thread.currentThread().getName());
-        }
-
-        @Override
-        public void requestHeadersStart(Call call) {
-            super.requestHeadersStart(call);
-            Log.i("zkw", "requestHeadersStart-> " + call.toString() + ", thread:" + Thread.currentThread().getName());
-        }
-
-        @Override
-        public void responseHeadersStart(Call call) {
-            super.responseHeadersStart(call);
-            Log.i("zkw", "responseHeadersStart-> " + call.toString() + ", thread:" + Thread.currentThread().getName());
-        }
-
-        @Override
-        public void callEnd(Call call) {
-            super.callEnd(call);
-            Log.i("zkw", this.toString() + "callEnd-> " + call.toString() + ", thread:" + Thread.currentThread().getName());
-        }
-
-        @Override
-        public void callFailed(Call call, IOException ioe) {
-            super.callFailed(call, ioe);
-            Log.i("zkw", this.toString() + "callFailed-> " + call.toString() + ", thread:" + Thread.currentThread().getName());
-        }
     }
 
 }

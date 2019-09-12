@@ -1,1 +1,2 @@
-include ':app', ':jdi', ':adilib'
+include ':app', ':adilib'
+//include ':jdi'

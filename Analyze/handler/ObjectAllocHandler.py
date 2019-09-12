@@ -24,6 +24,7 @@ class ObjectAllocHandler(BaseHandler):
         event.threadName = baseList[1]
         event.objectName = baseList[2]
         event.objectSize = int(baseList[3])
+        event.objectTag = int(baseList[4])
         # 收集栈信息
         stack = str(segmentList[2]).replace(SEP_POWER, " ")
         event.stack = stack.split(SEP_COMMA)

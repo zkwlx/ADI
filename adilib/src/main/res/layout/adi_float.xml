@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+    <Button
+            android:id="@+id/adi_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="启动 ADI" />
+
+    <Button
+            android:id="@+id/adi_stop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="结束 ADI" />
+</LinearLayout>

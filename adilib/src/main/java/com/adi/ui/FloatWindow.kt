@@ -49,32 +49,30 @@ class FloatWindow(
     fun setLayout(view: View?) {
         mContentView = view
         // 接管悬浮窗的触摸事件，使之即可随手势拖动，又可处理点击动作
-        mContentView!!.setOnTouchListener(object : OnTouchListener {
+        mContentView!!.setOnTouchListener { v, event ->
             // 在发生触摸事件时触发
-            override fun onTouch(v: View, event: MotionEvent): Boolean {
-                mScreenX = event.rawX
-                mScreenY = event.rawY
-                when (event.action) {
-                    MotionEvent.ACTION_DOWN -> {
-                        mDownX = mScreenX
-                        mDownY = mScreenY
-                    }
-                    MotionEvent.ACTION_MOVE -> updateViewPosition() // 更新视图的位置
-                    MotionEvent.ACTION_UP -> {
-                        updateViewPosition() // 更新视图的位置
-                        // 响应悬浮窗的点击事件
-                        if (abs(mScreenX - mDownX) < 3 && abs(mScreenY - mDownY) < 3) {
-                            if (mListener != null) {
-                                mListener!!.onFloatClick(v)
-                            }
+            mScreenX = event.rawX
+            mScreenY = event.rawY
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    mDownX = mScreenX
+                    mDownY = mScreenY
+                }
+                MotionEvent.ACTION_MOVE -> updateViewPosition() // 更新视图的位置
+                MotionEvent.ACTION_UP -> {
+                    updateViewPosition() // 更新视图的位置
+                    // 响应悬浮窗的点击事件
+                    if (abs(mScreenX - mDownX) < 3 && abs(mScreenY - mDownY) < 3) {
+                        if (mListener != null) {
+                            mListener!!.onFloatClick(v)
                         }
                     }
                 }
-                mLastX = mScreenX
-                mLastY = mScreenY
-                return true
             }
-        })
+            mLastX = mScreenX
+            mLastY = mScreenY
+            true
+        }
     }
 
     // 更新悬浮窗的视图位置
@@ -101,7 +99,7 @@ class FloatWindow(
             wmParams!!.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
             wmParams!!.alpha = 1.0f // 1.0为完全不透明，0.0为完全透明
             // 对齐方式为靠左且靠上，因此悬浮窗的初始位置在屏幕的左上角
-            wmParams!!.gravity = Gravity.LEFT or Gravity.TOP
+            wmParams!!.gravity = Gravity.CENTER
             wmParams!!.x = 0
             wmParams!!.y = 0
             // 设置悬浮窗的宽度和高度为自适应

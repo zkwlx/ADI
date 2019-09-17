@@ -29,6 +29,7 @@ add_library( # Sets the name of the library.
         ${LOOPER_SRC}
         ${HANDLER_SRC}
         ${COMMON_SRC}
+
         )
 
 # Searches for a specified prebuilt library and stores the path as a

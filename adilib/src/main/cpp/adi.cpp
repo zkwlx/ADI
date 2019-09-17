@@ -10,6 +10,7 @@
 #include "handler/ThreadStartHandler.h"
 #include "handler/GCCallbackHandler.h"
 #include "handler/ObjectFreeHandler.h"
+#include "handler/MonitorContendedHandler.h"
 #include "handler/Config.h"
 #include "common/jdi_native.h"
 #include "common/log.h"
@@ -43,7 +44,13 @@ void SetAllCapabilities(jvmtiEnv *jvmti) {
     jvmtiCapabilities caps;
     jvmtiError error;
     error = jvmti->GetPotentialCapabilities(&caps);
+    if (error != JVMTI_ERROR_NONE) {
+        ALOGI("Error on GetPotentialCapabilities: %d", error);
+    }
     error = jvmti->AddCapabilities(&caps);
+    if (error != JVMTI_ERROR_NONE) {
+        ALOGI("Error on AddCapabilities: %d", error);
+    }
 }
 
 void SetEventNotification(jvmtiEnv *jvmti, jvmtiEventMode mode,
@@ -95,6 +102,7 @@ extern "C" JNIEXPORT jint JNICALL Agent_OnAttach(JavaVM *vm, char *options, void
 
     //TODO NativeMethodBind 比较特殊，需要时注意
 //    callbacks.NativeMethodBind = &JvmTINativeMethodBind;
+    //TODO 不知为何会发 调试信号 导致应用终止
 //    callbacks.MethodEntry = &MethodEntry;
     callbacks.ClassFileLoadHook = &ClassTransform;
     callbacks.VMObjectAlloc = &ObjectAllocCallback;
@@ -102,6 +110,8 @@ extern "C" JNIEXPORT jint JNICALL Agent_OnAttach(JavaVM *vm, char *options, void
     callbacks.GarbageCollectionFinish = &GCFinishCallback;
     callbacks.ObjectFree = &ObjectFree;
     callbacks.ThreadStart = &ThreadStart;
+    callbacks.MonitorContendedEnter = &MonitorContendedEnter;
+    callbacks.MonitorContendedEntered = &MonitorContendedEntered;
     int error = jvmti_env->SetEventCallbacks(&callbacks, sizeof(callbacks));
     if (error != JVMTI_ERROR_NONE) {
         ALOGI("Error on Agent_OnAttach: %d", error);

@@ -7,22 +7,10 @@
         tools:context=".MainActivity">
 
     <Button
-            android:id="@+id/sample_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="初始化 JVMTI Agent" />
-
-    <Button
             android:id="@+id/adi_start"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="启动 ADI" />
-
-    <Button
-            android:id="@+id/adi_stop"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="停止 ADI" />
+            android:text="启动 ADI Float" />
 
     <Button
             android:id="@+id/button_start_looper_test"
@@ -35,6 +23,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="停止 Looper 测试" />
+
+    <Button
+            android:id="@+id/monitor_test"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" 测试锁竞争" />
 
     <Button
             android:id="@+id/button_gc"

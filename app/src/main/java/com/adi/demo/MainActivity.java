@@ -23,13 +23,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        findViewById(R.id.sample_text).setOnClickListener(v -> ADIManager.init(MainActivity.this));
-        findViewById(R.id.adi_start).setOnClickListener(v -> {
-            ADIFloatManager.INSTANCE.showADIFloat(this);
-//            ADIManager.startForDefaultEvents(MainActivity.this, 1)
-        });
-        findViewById(R.id.adi_stop).setOnClickListener(v -> ADIManager.stopForDefaultEvents());
-
+        findViewById(R.id.adi_start).setOnClickListener(v -> ADIFloatManager.INSTANCE.showADIFloat(this));
         findViewById(R.id.button_gc).setOnClickListener(v -> {
             System.gc();
             System.runFinalization();
@@ -43,6 +37,47 @@ public class MainActivity extends Activity {
             }
             Object o = new DemoObject();
             Log.i("adi", "=======+>" + Thread.currentThread().getName() + ": " + Thread.currentThread().getId());
+        });
+        findViewById(R.id.monitor_test).setOnClickListener(v -> {
+            Object a = new Object();
+            Object b = new Object();
+            Thread t1 = new Thread(() -> {
+                synchronized (a) {
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    synchronized (b) {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+            t1.setName("monitor_test_thread1");
+            t1.start();
+            Thread t2 = new Thread(() -> {
+                synchronized (b) {
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    synchronized (a) {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+            });
+            t2.setName("monitor_test_thread2");
+            t2.start();
         });
         findViewById(R.id.call_system_service).setOnClickListener(v -> {
             for (int i = 0; i < 5; i++) {

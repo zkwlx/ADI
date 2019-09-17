@@ -14,6 +14,8 @@ import java.nio.file.Paths;
 
 import static com.adi.Constant.JVMTI_EVENT_GARBAGE_COLLECTION_FINISH;
 import static com.adi.Constant.JVMTI_EVENT_GARBAGE_COLLECTION_START;
+import static com.adi.Constant.JVMTI_EVENT_MONITOR_CONTENDED_ENTER;
+import static com.adi.Constant.JVMTI_EVENT_MONITOR_CONTENDED_ENTERED;
 import static com.adi.Constant.JVMTI_EVENT_NATIVE_METHOD_BIND;
 import static com.adi.Constant.JVMTI_EVENT_OBJECT_FREE;
 import static com.adi.Constant.JVMTI_EVENT_THREAD_START;
@@ -118,6 +120,16 @@ public class ADIManager {
         disableEvents(events);
     }
 
+    private static int[] DEFAULT_EVENTS = {
+            JVMTI_EVENT_GARBAGE_COLLECTION_START,
+            JVMTI_EVENT_GARBAGE_COLLECTION_FINISH,
+//                JVMTI_EVENT_NATIVE_METHOD_BIND,
+            JVMTI_EVENT_VM_OBJECT_ALLOC,
+            JVMTI_EVENT_THREAD_START,
+            JVMTI_EVENT_OBJECT_FREE,
+            JVMTI_EVENT_MONITOR_CONTENDED_ENTER,
+            JVMTI_EVENT_MONITOR_CONTENDED_ENTERED};
+
     /**
      * 启动 Dumper，并开启默认的 JVMTI 事件监听
      *
@@ -125,25 +137,14 @@ public class ADIManager {
      * @param sampleMs
      */
     public static void startForDefaultEvents(Context context, float sampleMs) {
-        start(context, sampleMs,
-                JVMTI_EVENT_GARBAGE_COLLECTION_START,
-                JVMTI_EVENT_GARBAGE_COLLECTION_FINISH,
-//                JVMTI_EVENT_NATIVE_METHOD_BIND,
-                JVMTI_EVENT_VM_OBJECT_ALLOC,
-                JVMTI_EVENT_THREAD_START,
-                JVMTI_EVENT_OBJECT_FREE);
+        start(context, sampleMs, DEFAULT_EVENTS);
     }
 
     /**
      * 停止 Dumper 线程，并关闭默认的 JVMTI 事件监听
      */
     public static void stopForDefaultEvents() {
-        stop(JVMTI_EVENT_GARBAGE_COLLECTION_START,
-                JVMTI_EVENT_GARBAGE_COLLECTION_FINISH,
-//                JVMTI_EVENT_NATIVE_METHOD_BIND,
-                JVMTI_EVENT_VM_OBJECT_ALLOC,
-                JVMTI_EVENT_THREAD_START,
-                JVMTI_EVENT_OBJECT_FREE);
+        stop(DEFAULT_EVENTS);
     }
 
     public static long getObjSize(Object obj) {

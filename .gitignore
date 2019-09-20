@@ -113,4 +113,5 @@ sourcecode.properties
 */.settings
 
 adilib/.externalNativeBuild
-.log
+*/.log
+*/.html

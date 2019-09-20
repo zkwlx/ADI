@@ -6,9 +6,9 @@
 import difflib
 
 from aggregate.AggregateObject import AggregateObject
+from event.MonitorContendedEvent import MonitorContendedEvent
 from event.ObjectAllocEvent import ObjectAllocEvent
 from event.ObjectFreeEvent import ObjectFreeEvent
-from event.StackEvent import StackEvent
 from event.ThreadStartEvent import ThreadStartEvent
 from utils.JVMUtils import convertClassDesc, convertMethodDesc
 
@@ -18,6 +18,37 @@ aggregateObjectList: list = []
 objectTagDict: dict = {}
 
 threadCount = 0
+
+monitorObjDict: dict = {}
+monitorObjIdCounter = 0
+contendThreadDict: dict = {}
+contendThreadIdCounter = 0
+
+
+def aggregateMCEDEvent(event: MonitorContendedEvent) -> (int, int):
+    if event.monitorObjHash in monitorObjDict:
+        monitorObjId = monitorObjDict[event.monitorObjHash]
+    else:
+        global monitorObjIdCounter
+        monitorObjIdCounter += 1
+        monitorObjDict[event.monitorObjHash] = monitorObjIdCounter
+        monitorObjId = monitorObjIdCounter
+
+    if event.contendThreadName in contendThreadDict:
+        contendThreadId = contendThreadDict[event.contendThreadName]
+    else:
+        global contendThreadIdCounter
+        contendThreadIdCounter += 1
+        contendThreadDict[event.contendThreadName] = contendThreadIdCounter
+        contendThreadId = contendThreadIdCounter
+    return monitorObjId, contendThreadId
+
+
+def aggregateMCEEvent(event: MonitorContendedEvent) -> (str, str):
+    # monitorObjId, contendThreadId = aggregateMCEDEvent(event)
+    contendStack = convertNiceStack(event.contendStack)
+    ownerStack = convertNiceStack(event.ownerStack)
+    return contendStack, ownerStack
 
 
 def aggregateOFEvent(event: ObjectFreeEvent) -> (int, int, str, int):
@@ -85,19 +116,19 @@ def aggregateOAStack(e: ObjectAllocEvent) -> str:
     :return:
     """
     header = "%s %s\n" % (convertClassDesc(e.objectName), e.threadName)
-    niceStack = convertNiceStack(e)
+    niceStack = convertNiceStack(e.stack)
     # print(header)
     return header + niceStack
 
 
-def convertNiceStack(e: StackEvent) -> str:
+def convertNiceStack(stackList: list) -> str:
     """
     将原始 Stack 信息转换成更加可读的样子
-    :param e:
+    :param stackList:
     :return:
     """
     niceStack = ""
-    for line in e.stack:
+    for line in stackList:
         if "(null)" in line:
             niceStack = line
         else:

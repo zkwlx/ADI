@@ -3,47 +3,55 @@
 # @Time    : 2019/9/10 5:00 下午
 # @Author  : kewen
 # @File    : aggregate_to_json.py
-from aggregate.event_aggregation import aggregateOAEvent, aggregateTSEvent, aggregateOFEvent
+from aggregate.event_aggregation import aggregateOAEvent, aggregateTSEvent, aggregateOFEvent, aggregateMCEEvent
 
 
 def aggToJson(event, startTime: int) -> dict:
-    json = None
-    if event.eventName == "OA":
+    eventName = event.eventName
+    json = {"timestamp": event.timestamp,
+            "time": (event.timestamp - startTime),
+            "eventName": eventName}
+    if eventName == "OA":
         (aggId, count, niceStack, totalSize) = aggregateOAEvent(event)
-        json = {
-            "timestamp": event.timestamp,
-            "time": (event.timestamp - startTime),
-            "eventName": event.eventName,
-            "threadName": event.threadName,
-            "objectName": event.objectName,
-            "objectSize": event.objectSize,
-            "originStack": event.stackStr,
-            "aggregateId": aggId,
-            "count": count,
-            "aggNiceStack": niceStack,
-            "totalSize": totalSize,
-            "objTag": event.objectTag,
-        }
-    if event.eventName == "OF":
+        json["threadName"] = event.threadName
+        json["objectName"] = event.objectName
+        json["objectSize"] = event.objectSize
+        json["originStack"] = event.stackStr
+        json["aggregateId"] = aggId
+        json["count"] = count
+        json["aggNiceStack"] = niceStack
+        json["totalSize"] = totalSize
+        json["objTag"] = event.objectTag
+    elif eventName == "OF":
         (aggId, count, niceStack, totalSize) = aggregateOFEvent(event)
-        json = {
-            "timestamp": event.timestamp,
-            "time": (event.timestamp - startTime),
-            "eventName": event.eventName,
-            "objTag": event.tag,
-            "aggregateId": aggId,
-            "count": count,
-            "aggNiceStack": niceStack,
-            "totalSize": totalSize,
-        }
-    if event.eventName == "TS":
+        json["objTag"] = event.tag
+        json["aggregateId"] = aggId
+        json["count"] = count
+        json["aggNiceStack"] = niceStack
+        json["totalSize"] = totalSize
+    elif eventName in "MCE":
+        json["contendThreadName"] = event.contendThreadName
+        json["monitorObjHash"] = event.monitorObjHash
+        json["ownerThreadName"] = event.ownerThreadName
+        json["entryCount"] = event.entryCount
+        json["waiterCount"] = event.waiterCount
+        json["notifyWaiterCount"] = event.notifyWaiterCount
+        contendStack, ownerStack = aggregateMCEEvent(event)
+        json["contendStack"] = contendStack
+        json["ownerStack"] = ownerStack
+        # (monitorObjId, contendThreadId) = aggregateMCEEvent(event)
+        # json["monitorObjId"] = monitorObjId
+        # json["contendThreadId"] = contendThreadId
+    elif eventName in "MCED":
+        json["contendThreadName"] = event.contendThreadName
+        json["monitorObjHash"] = event.monitorObjHash
+        # (monitorObjId, contendThreadId) = aggregateMCEEvent(event)
+        # json["monitorObjId"] = monitorObjId
+        # json["contendThreadId"] = contendThreadId
+    elif eventName == "TS":
         count = aggregateTSEvent(event)
-        json = {
-            "timestamp": event.timestamp,
-            "time": (event.timestamp - startTime),
-            "eventName": event.eventName,
-            "startThreadName": event.startThreadName,
-            "curTotalCount": count,
-        }
-
+        json["startThreadName"] = event.startThreadName
+        json["curTotalCount"] = count
+    else:
+        json = None
     return json

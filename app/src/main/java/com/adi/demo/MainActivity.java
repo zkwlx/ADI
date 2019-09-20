@@ -93,7 +93,7 @@ public class MainActivity extends Activity {
         });
         findViewById(R.id.thread_start).setOnClickListener(v -> {
             for (int i = 0; i < 5; i++) {
-                new Thread("TTT_" + i).start();
+                Thread t = new Thread("TTT_" + i);
             }
         });
         //===============用于 Looper 的测试方法 =============

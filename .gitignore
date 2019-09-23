@@ -102,7 +102,7 @@ crashlytics.properties
 crashlytics-build.properties
 
 # Others
-.DS_Store
+*.DS_Store
 .directory
 
 sourcecode.properties
@@ -113,5 +113,5 @@ sourcecode.properties
 */.settings
 
 adilib/.externalNativeBuild
-*/.log
-*/.html
+*.log
+*.html

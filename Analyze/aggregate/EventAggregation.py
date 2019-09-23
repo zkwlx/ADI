@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # @Time    : 2019/9/3 11:57 上午
 # @Author  : kewen
-# @File    : event_aggregation.py
+# @File    : EventAggregation.py
 import difflib
 
 from aggregate.AggregateObject import AggregateObject
@@ -10,7 +10,7 @@ from event.MonitorContendedEvent import MonitorContendedEvent
 from event.ObjectAllocEvent import ObjectAllocEvent
 from event.ObjectFreeEvent import ObjectFreeEvent
 from event.ThreadStartEvent import ThreadStartEvent
-from utils.JVMUtils import convertClassDesc, convertMethodDesc
+from utils.JVMUtils import convertClassDesc, convertNiceStack
 
 idCounter = 1000
 
@@ -44,11 +44,12 @@ def aggregateMCEDEvent(event: MonitorContendedEvent) -> (int, int):
     return monitorObjId, contendThreadId
 
 
-def aggregateMCEEvent(event: MonitorContendedEvent) -> (str, str):
+def aggregateMCEEvent(event: MonitorContendedEvent) -> (str, str, str):
     # monitorObjId, contendThreadId = aggregateMCEDEvent(event)
+    monitorObjName = convertClassDesc(event.monitorObjName)
     contendStack = convertNiceStack(event.contendStack)
     ownerStack = convertNiceStack(event.ownerStack)
-    return contendStack, ownerStack
+    return monitorObjName, contendStack, ownerStack
 
 
 def aggregateOFEvent(event: ObjectFreeEvent) -> (int, int, str, int):
@@ -119,25 +120,6 @@ def aggregateOAStack(e: ObjectAllocEvent) -> str:
     niceStack = convertNiceStack(e.stack)
     # print(header)
     return header + niceStack
-
-
-def convertNiceStack(stackList: list) -> str:
-    """
-    将原始 Stack 信息转换成更加可读的样子
-    :param stackList:
-    :return:
-    """
-    niceStack = ""
-    for line in stackList:
-        if "(null)" in line:
-            niceStack = line
-        else:
-            args = line.split(" ")
-            if len(args) == 3:
-                niceStack += "at    " + convertClassDesc(args[0]) + "." + args[1] + convertMethodDesc(args[2]) + "\n"
-            else:
-                niceStack += "at    " + line
-    return niceStack
 
 
 def matcherScoreQuick(str1, str2):

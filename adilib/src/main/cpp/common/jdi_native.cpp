@@ -49,8 +49,8 @@ JavaVM *getJavaVM(JNIEnv *env) {
 }
 
 /**
- * 根据线程和指定深度获取调用栈，不包含方法签名，示例：
- * Lcom/demo/android/app/ui/fragment/BaseFragment;^^^onCreate(),,,Lcom/demo/android/app/ui/fragment/SupportSystemBarFragment;^^^onCreate(),,,Lcom/demo/android/app/market/fragment/MarketFragment;^^^onCreate()
+ * 根据线程和指定深度获取调用栈，不包含方法参数签名，示例：
+ * Lcom/demo/android/app/ui/fragment/BaseFragment;^^^onCreate,,,Lcom/demo/android/app/ui/fragment/SupportSystemBarFragment;^^^onCreate,,,Lcom/demo/android/app/market/fragment/MarketFragment;^^^onCreate
  * @param jvmti
  * @param env
  * @param thread
@@ -96,10 +96,10 @@ char *createStackInfo(jvmtiEnv *jvmti, JNIEnv *env, jthread thread, int stackDep
         }
 
         if (result == nullptr) {
-            asprintf(&result, "%s%s%s()", classSignature, SEP_POWER, methodName);
+            asprintf(&result, "%s%s%s", classSignature, SEP_POWER, methodName);
         } else {
             char *stack;
-            asprintf(&stack, "%s%s%s%s%s()",
+            asprintf(&stack, "%s%s%s%s%s",
                      result, SEP_COMMA,
                      classSignature, SEP_POWER,
                      methodName);

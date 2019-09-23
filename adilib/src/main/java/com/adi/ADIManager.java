@@ -1,7 +1,6 @@
 package com.adi;
 
 import android.annotation.SuppressLint;
-import android.app.Instrumentation;
 import android.content.Context;
 import android.os.Build;
 import android.os.Debug;
@@ -12,14 +11,13 @@ import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static com.adi.Constant.JVMTI_EVENT_GARBAGE_COLLECTION_FINISH;
-import static com.adi.Constant.JVMTI_EVENT_GARBAGE_COLLECTION_START;
-import static com.adi.Constant.JVMTI_EVENT_MONITOR_CONTENDED_ENTER;
-import static com.adi.Constant.JVMTI_EVENT_MONITOR_CONTENDED_ENTERED;
-import static com.adi.Constant.JVMTI_EVENT_NATIVE_METHOD_BIND;
-import static com.adi.Constant.JVMTI_EVENT_OBJECT_FREE;
-import static com.adi.Constant.JVMTI_EVENT_THREAD_START;
-import static com.adi.Constant.JVMTI_EVENT_VM_OBJECT_ALLOC;
+import static com.adi.JVMTIConstant.JVMTI_EVENT_GARBAGE_COLLECTION_FINISH;
+import static com.adi.JVMTIConstant.JVMTI_EVENT_GARBAGE_COLLECTION_START;
+import static com.adi.JVMTIConstant.JVMTI_EVENT_MONITOR_CONTENDED_ENTER;
+import static com.adi.JVMTIConstant.JVMTI_EVENT_MONITOR_CONTENDED_ENTERED;
+import static com.adi.JVMTIConstant.JVMTI_EVENT_OBJECT_FREE;
+import static com.adi.JVMTIConstant.JVMTI_EVENT_THREAD_START;
+import static com.adi.JVMTIConstant.JVMTI_EVENT_VM_OBJECT_ALLOC;
 
 /**
  * @author zhoukewen
@@ -32,6 +30,8 @@ public class ADIManager {
     private static final String LIB_NAME = "adi_agent";
 
     private static boolean isInited = false;
+
+    private static ADIConfig adiConfig = null;
 
     // jni 层用到
     private static String packageCodePath = "";
@@ -95,56 +95,25 @@ public class ADIManager {
      * 启动 Dumper，并开启 JVMTI 事件监听
      *
      * @param context
-     * @param sampleMs
-     * @param events
+     * @param config
      */
-    public static void start(Context context, float sampleMs, int... events) {
+    public static void start(Context context, ADIConfig config) {
+        adiConfig = config;
         File file = context.getExternalCacheDir();
         File root = new File(file.getAbsolutePath(), "ADI/");
         Log.i(TAG, root.getAbsolutePath());
         root.mkdirs();
         startDump(root.getAbsolutePath());
 
-        ADIConfig.Builder builder = new ADIConfig.Builder();
-        ADIConfig config = builder.setSampleIntervalMs(sampleMs).build();
-        enableEvents(config, events);
+        enableEvents(adiConfig, adiConfig.getEvents());
     }
 
     /**
      * 停止 Dumper 线程，并关闭 JVMTI 事件监听
-     *
-     * @param events
      */
-    public static void stop(int... events) {
+    public static void stop() {
         stopDump();
-        disableEvents(events);
-    }
-
-    private static int[] DEFAULT_EVENTS = {
-            JVMTI_EVENT_GARBAGE_COLLECTION_START,
-            JVMTI_EVENT_GARBAGE_COLLECTION_FINISH,
-//                JVMTI_EVENT_NATIVE_METHOD_BIND,
-            JVMTI_EVENT_VM_OBJECT_ALLOC,
-            JVMTI_EVENT_THREAD_START,
-            JVMTI_EVENT_OBJECT_FREE,
-            JVMTI_EVENT_MONITOR_CONTENDED_ENTER,
-            JVMTI_EVENT_MONITOR_CONTENDED_ENTERED};
-
-    /**
-     * 启动 Dumper，并开启默认的 JVMTI 事件监听
-     *
-     * @param context
-     * @param sampleMs
-     */
-    public static void startForDefaultEvents(Context context, float sampleMs) {
-        start(context, sampleMs, DEFAULT_EVENTS);
-    }
-
-    /**
-     * 停止 Dumper 线程，并关闭默认的 JVMTI 事件监听
-     */
-    public static void stopForDefaultEvents() {
-        stop(DEFAULT_EVENTS);
+        disableEvents(adiConfig.getEvents());
     }
 
     public static long getObjSize(Object obj) {
@@ -166,14 +135,14 @@ public class ADIManager {
     /**
      * 开启 JVMTI 的事件监听
      *
-     * @param events 事件集合，参考 {@link Constant} 中的常量
+     * @param events 事件集合，参考 {@link JVMTIConstant} 中的常量
      */
     private static native void enableEvents(ADIConfig config, int... events);
 
     /**
      * 停止 JVMTI 的事件监听
      *
-     * @param events 事件集合，参考 {@link Constant} 中的常量
+     * @param events 事件集合，参考 {@link JVMTIConstant} 中的常量
      */
     private static native void disableEvents(int... events);
 
@@ -183,7 +152,7 @@ public class ADIManager {
 
     private static boolean isLoaded = false;
 
-    public static void startTest() {
+    private static void startTest() {
         if (!isLoaded) {
             System.loadLibrary(LIB_NAME);
             isLoaded = true;
@@ -193,9 +162,9 @@ public class ADIManager {
 
     private static native void startLooperForTest();
 
-    public static native void pushToLooperForTest(String data);
+    private static native void pushToLooperForTest(String data);
 
-    public static native void stopLooperForTest();
+    private static native void stopLooperForTest();
 
     //===============用于 Looper 的测试方法 End=============
 

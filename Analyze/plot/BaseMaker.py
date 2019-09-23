@@ -3,6 +3,7 @@
 # @Time    : 2019/9/20 4:06 下午
 # @Author  : kewen
 # @File    : BaseMaker.py
+from aggregate.GlobalAggregateInfo import GlobalAggregateInfo
 
 
 class BaseMaker:
@@ -10,5 +11,5 @@ class BaseMaker:
     def __init__(self):
         pass
 
-    def make(self, jsonList: list):
+    def make(self, globalAggInfo: GlobalAggregateInfo, jsonList: list):
         return

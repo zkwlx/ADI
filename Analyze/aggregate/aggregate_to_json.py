@@ -3,7 +3,7 @@
 # @Time    : 2019/9/10 5:00 下午
 # @Author  : kewen
 # @File    : aggregate_to_json.py
-from aggregate.event_aggregation import aggregateOAEvent, aggregateTSEvent, aggregateOFEvent, aggregateMCEEvent
+from aggregate.EventAggregation import aggregateOAEvent, aggregateTSEvent, aggregateOFEvent, aggregateMCEEvent
 
 
 def aggToJson(event, startTime: int) -> dict:
@@ -36,18 +36,13 @@ def aggToJson(event, startTime: int) -> dict:
         json["entryCount"] = event.entryCount
         json["waiterCount"] = event.waiterCount
         json["notifyWaiterCount"] = event.notifyWaiterCount
-        contendStack, ownerStack = aggregateMCEEvent(event)
+        monitorObjName, contendStack, ownerStack = aggregateMCEEvent(event)
+        json["monitorObjName"] = monitorObjName + "@" + str(event.monitorObjHash)
         json["contendStack"] = contendStack
         json["ownerStack"] = ownerStack
-        # (monitorObjId, contendThreadId) = aggregateMCEEvent(event)
-        # json["monitorObjId"] = monitorObjId
-        # json["contendThreadId"] = contendThreadId
     elif eventName in "MCED":
         json["contendThreadName"] = event.contendThreadName
         json["monitorObjHash"] = event.monitorObjHash
-        # (monitorObjId, contendThreadId) = aggregateMCEEvent(event)
-        # json["monitorObjId"] = monitorObjId
-        # json["contendThreadId"] = contendThreadId
     elif eventName == "TS":
         count = aggregateTSEvent(event)
         json["startThreadName"] = event.startThreadName

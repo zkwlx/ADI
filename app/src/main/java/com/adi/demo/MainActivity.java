@@ -39,45 +39,8 @@ public class MainActivity extends Activity {
             Log.i("adi", "=======+>" + Thread.currentThread().getName() + ": " + Thread.currentThread().getId());
         });
         findViewById(R.id.monitor_test).setOnClickListener(v -> {
-            Object a = new Object();
-            Object b = new Object();
-            Thread t1 = new Thread(() -> {
-                synchronized (a) {
-                    try {
-                        Thread.sleep(3000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    synchronized (b) {
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            });
-            t1.setName("monitor_test_thread1");
-            t1.start();
-            Thread t2 = new Thread(() -> {
-                synchronized (b) {
-                    try {
-                        Thread.sleep(3000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    synchronized (a) {
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-
-            });
-            t2.setName("monitor_test_thread2");
-            t2.start();
+            testMonitorContend(false);
+            testMonitorContend(true);
         });
         findViewById(R.id.call_system_service).setOnClickListener(v -> {
             for (int i = 0; i < 5; i++) {
@@ -98,13 +61,12 @@ public class MainActivity extends Activity {
         });
         //===============用于 Looper 的测试方法 =============
         findViewById(R.id.button_start_looper_test).setOnClickListener(v -> {
-            ADIManager.startTest();
+//            ADIManager.startTest();
 
             startPushToLooperForTest();
         });
         findViewById(R.id.button_stop_looper_test).setOnClickListener(v -> {
-            ADIManager.stopLooperForTest();
-//                onRequest();
+//            ADIManager.stopLooperForTest();
         });
     }
 
@@ -116,7 +78,7 @@ public class MainActivity extends Activity {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                ADIManager.pushToLooperForTest(Thread.currentThread().getName() + ": " + i);
+//                ADIManager.pushToLooperForTest(Thread.currentThread().getName() + ": " + i);
             }
         });
         t1.setName("Thread_1");
@@ -129,7 +91,7 @@ public class MainActivity extends Activity {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                ADIManager.pushToLooperForTest(Thread.currentThread().getName() + ": " + i);
+//                ADIManager.pushToLooperForTest(Thread.currentThread().getName() + ": " + i);
             }
         });
         t2.setName("Thread_2");
@@ -142,7 +104,7 @@ public class MainActivity extends Activity {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                ADIManager.pushToLooperForTest(Thread.currentThread().getName() + ": " + i);
+//                ADIManager.pushToLooperForTest(Thread.currentThread().getName() + ": " + i);
             }
         });
         t3.setName("Thread_3");
@@ -170,6 +132,51 @@ public class MainActivity extends Activity {
             }
         }
         return null;
+    }
+
+    private void testMonitorContend(boolean isDeadlock) {
+        String threadNamePrefix = isDeadlock ? "monitor_deadlock_thread" : "monitor_thread";
+        Object a = new Object();
+        Object b = new Object();
+        Thread t1 = new Thread(() -> {
+            synchronized (a) {
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (isDeadlock) {
+                    synchronized (b) {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        });
+        t1.setName(threadNamePrefix + "1");
+        t1.start();
+        Thread t2 = new Thread(() -> {
+            synchronized (b) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                synchronized (a) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+        });
+        t2.setName(threadNamePrefix + "2");
+        t2.start();
     }
 
 }

@@ -12,9 +12,10 @@ class PlotSegment:
         self.y0 = []
         self.x1 = []
         self.y1 = []
+        self.durations = []
         self.legend = ""
         self.color = ""
         self.ownerThread = []
-        self.monitorId = []
+        self.monitorObjNames = []
         self.contendStack = []
         self.ownerStack = []

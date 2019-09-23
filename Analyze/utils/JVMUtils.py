@@ -5,6 +5,36 @@
 # @File    : JVMUtils.py
 
 
+def convertNiceStack(stackList: list) -> str:
+    """
+    将原始 Stack 信息转换成更加可读的样子
+    例如将：\n
+    Ljava/util/Arrays; copyOf ([CI)[C\n
+    Ljava/lang/AbstractStringBuilder; ensureCapacityInternal (I)V\n
+    Ljava/lang/StringBuilder; append()\n
+    转换成：\n
+    java.util.Arrays.copyOf(char[],int)\n
+    java.lang.AbstractStringBuilder.ensureCapacityInternal(int)\n
+    java.lang.StringBuilder.append()\n
+    :param stackList:
+    :return:
+    """
+    niceStack = ""
+    for line in stackList:
+        if "(null)" in line:
+            niceStack = line
+        else:
+            args = line.split(" ")
+            argsLen = len(args)
+            if argsLen == 3:
+                niceStack += "at    " + convertClassDesc(args[0]) + "." + args[1] + convertMethodDesc(args[2]) + "\n"
+            elif argsLen == 2:
+                niceStack += "at    " + convertClassDesc(args[0]) + "." + args[1] + "()\n"
+            else:
+                niceStack += "at    " + line
+    return niceStack
+
+
 def convertClassDesc(classDesc: str) -> str:
     """
     将 JVM 中类签名字节码转换成可读形式，例如：\n

@@ -4,7 +4,7 @@ package com.adi;
  * @author zhoukewen
  * @since 2019-09-05
  */
-public interface Constant {
+interface JVMTIConstant {
 
     // ------------------- JVMTI EVENT --------------------
 

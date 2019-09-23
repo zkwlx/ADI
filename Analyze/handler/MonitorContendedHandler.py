@@ -30,8 +30,9 @@ class MonitorContendedHandler(BaseHandler):
         event.timestamp = int(baseList[0])
         event.contendThreadName = baseList[1]
         event.monitorObjHash = int(baseList[2])
-        # 只有 MCE 有锁信息，MCED 没有
+        # 只有 MCE 有，MCED 没有的信息
         if event.eventName == MonitorContended:
+            event.monitorObjName = baseList[3]
             # 收集锁信息
             monitor = segmentList[2]
             monitorList = monitor.split(SEP_POWER)

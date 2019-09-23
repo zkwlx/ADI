@@ -12,6 +12,7 @@ import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
+import com.adi.ADIConfig
 import com.adi.ADIManager
 import com.adi.R
 
@@ -44,7 +45,7 @@ object ADIFloatManager {
                         WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR or
                         WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
                 f.updateParams()
-                ADIManager.stopForDefaultEvents()
+                ADIManager.stop()
                 started = false
             } else {
                 progress.visibility = View.VISIBLE
@@ -62,7 +63,10 @@ object ADIFloatManager {
                         WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR or
                         WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
                 f.updateParams()
-                ADIManager.startForDefaultEvents(activity, sample.toFloat())
+                val builder = ADIConfig.Builder()
+                builder.setEventType(ADIConfig.Type.THREAD_MONITOR_CONTEND)
+                    .setSampleIntervalForObjectAlloc(sample.toFloat())
+                ADIManager.start(activity, builder.build())
                 started = true
             }
 

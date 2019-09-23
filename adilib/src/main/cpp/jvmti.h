@@ -1731,7 +1731,7 @@ typedef struct jvmtiInterface_1_ {
     jint* minor_version_ptr,
     jint* major_version_ptr);
 
-  /*   146 : Get Constant Pool */
+  /*   146 : Get JVMTIConstant Pool */
   jvmtiError (JNICALL *GetConstantPool) (jvmtiEnv* env,
     jclass klass,
     jint* constant_pool_count_ptr,

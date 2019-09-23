@@ -48,7 +48,81 @@ JavaVM *getJavaVM(JNIEnv *env) {
     return javaVm;
 }
 
+/**
+ * 根据线程和指定深度获取调用栈，不包含方法签名，示例：
+ * Lcom/demo/android/app/ui/fragment/BaseFragment;^^^onCreate(),,,Lcom/demo/android/app/ui/fragment/SupportSystemBarFragment;^^^onCreate(),,,Lcom/demo/android/app/market/fragment/MarketFragment;^^^onCreate()
+ * @param jvmti
+ * @param env
+ * @param thread
+ * @param stackDepth
+ * @return
+ */
 char *createStackInfo(jvmtiEnv *jvmti, JNIEnv *env, jthread thread, int stackDepth) {
+    char *result = nullptr;
+    jvmtiFrameInfo frames[stackDepth];
+    jint count;
+    jvmtiError err;
+
+    err = jvmti->GetStackTrace(thread, 0, stackDepth, frames, &count);
+    if (err != JVMTI_ERROR_NONE) {
+        ALOGE("[JVMTI ERROR on GetStackTrace]: %i", err);
+        return result;
+    }
+    if (count <= 0) {
+        return result;
+    }
+    for (int i = 0; i < count; i++) {
+        jvmtiFrameInfo info = frames[i];
+        char *classSignature;
+        char *methodName;
+        //获取方法签名
+        err = jvmti->GetMethodName(info.method, &methodName, nullptr, nullptr);
+        if (err != JVMTI_ERROR_NONE) {
+            ALOGE("[JVMTI ERROR on GetMethodName]:%i", err);
+            break;
+        }
+        //获取方法所在类
+        jclass declaringClass;
+        err = jvmti->GetMethodDeclaringClass(info.method, &declaringClass);
+        if (err != JVMTI_ERROR_NONE) {
+            ALOGE("[JVMTI ERROR on GetMethodDeclaringClass]:%i", err);
+            break;
+        }
+        //获取方法所在类的签名
+        err = jvmti->GetClassSignature(declaringClass, &classSignature, nullptr);
+        if (err != JVMTI_ERROR_NONE) {
+            ALOGE("[JVMTI ERROR on GetClassSignature]:%i", err);
+            break;
+        }
+
+        if (result == nullptr) {
+            asprintf(&result, "%s%s%s()", classSignature, SEP_POWER, methodName);
+        } else {
+            char *stack;
+            asprintf(&stack, "%s%s%s%s%s()",
+                     result, SEP_COMMA,
+                     classSignature, SEP_POWER,
+                     methodName);
+            free(result);
+            result = stack;
+        }
+        jvmti->Deallocate((unsigned char *) classSignature);
+        jvmti->Deallocate((unsigned char *) methodName);
+    }
+    return result;
+}
+
+/**
+ * 根据线程和指定深度获取调用栈，包含方法签名，示例：
+ * Lcom/demo/android/app/ui/fragment/BaseFragment;^^^onCreate^^^(Landroid/os/Bundle;)V,,,Lcom/demo/android/app/ui/fragment/SupportSystemBarFragment;^^^onCreate^^^(Landroid/os/Bundle;)V,,,Lcom/demo/android/app/market/fragment/MarketFragment;^^^onCreate^^^(Landroid/os/Bundle;)V
+ * @deprecated 方法签名占用资源较大，暂时隐藏该方法
+ * @param jvmti
+ * @param env
+ * @param thread
+ * @param stackDepth
+ * @return
+ */
+char *createStackInfoForMethodSign(jvmtiEnv *jvmti, JNIEnv *env, jthread thread, int stackDepth) {
     char *result = nullptr;
     jvmtiFrameInfo frames[stackDepth];
     jint count;

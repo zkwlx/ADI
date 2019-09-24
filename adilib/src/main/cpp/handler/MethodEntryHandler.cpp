@@ -19,44 +19,7 @@ extern "C" {
 #define LOG_TAG "MethodEntry"
 
 static char *createMethodInfo(jvmtiEnv *jvmti, JNIEnv *env, jthread thread, jmethodID method) {
-    char *result = nullptr;
-    jvmtiError err;
-//    char *classSignature = nullptr;
-    char *methodName = nullptr;
-//    char *methodSignature = nullptr;
-    err = jvmti->GetMethodName(method, &methodName, nullptr, nullptr);
-    if (err != JVMTI_ERROR_NONE) {
-        ALOGE("[JVMTI ERROR on GetMethodName]:%i", err);
-        return result;
-    }
-//    jclass declaringClass = nullptr;
-//    err = jvmti->GetMethodDeclaringClass(method, &declaringClass);
-//    if (err != JVMTI_ERROR_NONE) {
-//        ALOGE("[JVMTI ERROR on GetMethodDeclaringClass]:%i", err);
-//        return result;
-//    }
-
-//            jclass cls = env->FindClass("java/lang/Class");
-//            jmethodID mid_getName = env->GetMethodID(cls, "getName", "()Ljava/lang/String;");
-//            jstring name = static_cast<jstring>(env->CallObjectMethod(declaringClass, mid_getName));
-//            const char *className = env->GetStringUTFChars(name, JNI_FALSE);
-//            ALOGI("-----------------%s", className);
-//            if (strcmp(className, "com.android.internal.os.ZygoteInit") == 0) {
-//                break;
-//            }
-//            env->ReleaseStringUTFChars(name, className);
-
-//    err = jvmti->GetClassSignature(declaringClass, &classSignature, nullptr);
-//    if (err != JVMTI_ERROR_NONE) {
-//        ALOGE("[JVMTI ERROR on GetClassSignature]:%i", err);
-//        return result;
-//    }
-
-//    asprintf(&result, "%s", methodName);
-    ALOGI("++++: %s", methodName);
-//    jvmti->Deallocate((unsigned char *) classSignature);
-    jvmti->Deallocate((unsigned char *) methodName);
-//    jvmti->Deallocate((unsigned char *) methodSignature);
+    return const_cast<char *>("");
 }
 
 static char *createBaseInfo(jvmtiEnv *jvmti, jthread thread) {

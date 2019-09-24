@@ -163,9 +163,12 @@ enableEvents(JNIEnv *env, jclass jclazz, jobject configObj, jintArray jevents) {
     }
     // 解析 Config
     jclass configClass = env->GetObjectClass(configObj);
-    jfieldID filedId = env->GetFieldID(configClass, "sampleIntervalMs", "F");
-    jfloat sampleInterval = env->GetFloatField(configObj, filedId);
+    jfieldID sampleField = env->GetFieldID(configClass, "sampleIntervalMs", "F");
+    jfloat sampleInterval = env->GetFloatField(configObj, sampleField);
+    jfieldID stackDepthField = env->GetFieldID(configClass, "stackDepth", "I");
+    jint stackDepth = env->GetIntField(configObj, stackDepthField);
     setSampleIntervalMs(sampleInterval);
+    setStackDepth(stackDepth);
 
     jint events[len];
     env->GetIntArrayRegion(jevents, 0, len, events);

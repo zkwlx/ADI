@@ -17,11 +17,13 @@ extern "C" {
 #include <unistd.h>
 #include "../common/log.h"
 #include "../common/jdi_native.h"
+#include "Config.h"
 
 
 #define LOG_TAG "OA"
 
 static float sampleInterval = 0;
+static int stackDepth = 0;
 static int64_t startTime = 0;
 
 static char *
@@ -63,7 +65,10 @@ static jlong createObjectTag() {
 void ObjectAllocCallback(jvmtiEnv *jvmti, JNIEnv *env, jthread thread, jobject object, jclass klass,
                          jlong size) {
     int64_t now = currentTimeMicro();
-    if (now - startTime <= sampleInterval) {
+    if (sampleInterval == 0) {
+        sampleInterval = getSampleIntervalUs();
+    }
+    if (now - startTime <= getSampleIntervalUs()) {
         ALOGI("----Object Alloc too fast!----");
         return;
     }
@@ -74,7 +79,11 @@ void ObjectAllocCallback(jvmtiEnv *jvmti, JNIEnv *env, jthread thread, jobject o
     ALOGI("==========Object Alloc dump~ tag: %lld =========", tag);
 
     char *baseInfo = createBaseInfo(jvmti, env, thread, object, klass, size, tag);
-    char *stackInfo = createStackInfo(jvmti, env, thread, 10);
+
+    if (stackDepth == 0) {
+        stackDepth = getStackDepth();
+    }
+    char *stackInfo = createStackInfo(jvmti, env, thread, stackDepth);
     char *line;
     asprintf(&line, "%s|%s|%s\n", LOG_TAG, baseInfo, stackInfo);
     free(baseInfo);
@@ -82,8 +91,4 @@ void ObjectAllocCallback(jvmtiEnv *jvmti, JNIEnv *env, jthread thread, jobject o
     ALOGI("%s", line);
     dumper_add(line);
 
-}
-
-void setVMObjectAllocSampleInterval(float intervalMs) {
-    sampleInterval = intervalMs * 1000;
 }

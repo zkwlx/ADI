@@ -63,9 +63,11 @@ object ADIFloatManager {
                         WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR or
                         WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
                 f.updateParams()
+                //TODO 改成动态配置！！！
                 val builder = ADIConfig.Builder()
-                builder.setEventType(ADIConfig.Type.THREAD_MONITOR_CONTEND)
-                    .setSampleIntervalForObjectAlloc(sample.toFloat())
+                builder.setEventType(ADIConfig.Type.OBJECT_ALLOC_AND_FREE)
+                    .setSampleInterval(sample.toFloat())
+                    .setStackDepth(50)
                 ADIManager.start(activity, builder.build())
                 started = true
             }

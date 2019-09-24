@@ -3,9 +3,23 @@
 //
 
 #include "Config.h"
-#include "VMObjectAllocHandler.h"
+
+static float sampleIntervalUs;
+static int stackDepth;
 
 void setSampleIntervalMs(float ms) {
-    setVMObjectAllocSampleInterval(ms);
+    sampleIntervalUs = ms * 1000;
+}
+
+float getSampleIntervalUs() {
+    return sampleIntervalUs;
+}
+
+void setStackDepth(int depth) {
+    stackDepth = depth;
+}
+
+int getStackDepth() {
+    return stackDepth;
 }
 

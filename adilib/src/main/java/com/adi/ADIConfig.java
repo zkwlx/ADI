@@ -43,6 +43,8 @@ public class ADIConfig {
 
     private float sampleIntervalMs;
 
+    private int stackDepth;
+
     private int[] events;
 
     public float getSampleIntervalMs() {
@@ -51,6 +53,10 @@ public class ADIConfig {
 
     public int[] getEvents() {
         return events;
+    }
+
+    public int getStackDepth() {
+        return stackDepth;
     }
 
     private ADIConfig() {
@@ -62,13 +68,16 @@ public class ADIConfig {
 
         private int[] events;
 
+        private int stackDepth = 10;
+
         /**
-         * 设置 Object Alloc 事件监控的采样，单位毫秒，默认值是 0.8 毫秒
+         * 设置事件监控的采样，单位毫秒，默认值是 0.8 毫秒。
+         * <br><b>支持事件类型：<br></b>OBJECT_ALLOC_AND_FREE
          *
          * @param ms
          * @return
          */
-        public Builder setSampleIntervalForObjectAlloc(float ms) {
+        public Builder setSampleInterval(float ms) {
             sampleIntervalMs = ms;
             return this;
         }
@@ -84,10 +93,23 @@ public class ADIConfig {
             return this;
         }
 
+        /**
+         * 设置获取调用栈的深度，默认 10。
+         * <br><b>支持事件类型：<br></b>
+         * OBJECT_ALLOC_AND_FREE、THREAD_MONITOR_CONTEND
+         *
+         * @param stackDepth
+         */
+        public Builder setStackDepth(int stackDepth) {
+            this.stackDepth = stackDepth;
+            return this;
+        }
+
         public ADIConfig build() {
             ADIConfig config = new ADIConfig();
             config.sampleIntervalMs = this.sampleIntervalMs;
             config.events = this.events;
+            config.stackDepth = this.stackDepth;
             return config;
         }
     }

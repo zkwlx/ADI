@@ -7,6 +7,7 @@
 #include "MonitorContendedHandler.h"
 #include "../common/log.h"
 #include "../common/jdi_native.h"
+#include "Config.h"
 
 
 extern "C" {
@@ -102,6 +103,8 @@ createMonitorInfo(jvmtiEnv *jvmti_env, JNIEnv *jni_env, jthread thread,
     return monitorInfo;
 }
 
+static int stackDepth = 0;
+
 void JNICALL
 MonitorContendedEnter(jvmtiEnv *jvmti_env, JNIEnv *jni_env, jthread thread, jobject object) {
     ALOGI("======MonitorContendedEnter=======");
@@ -109,10 +112,13 @@ MonitorContendedEnter(jvmtiEnv *jvmti_env, JNIEnv *jni_env, jthread thread, jobj
     jvmtiMonitorUsage monitorUsage;
     jvmti_env->GetObjectMonitorUsage(object, &monitorUsage);
     char *monitorInfo = createMonitorInfo(jvmti_env, jni_env, thread, monitorUsage);
+    if (stackDepth == 0) {
+        stackDepth = getStackDepth();
+    }
     // 获取竞争线程的调用栈
-    char *contendStackInfo = createStackInfo(jvmti_env, jni_env, thread, 15);
+    char *contendStackInfo = createStackInfo(jvmti_env, jni_env, thread, stackDepth);
     // 获取持有锁线程的调用栈
-    char *ownerStackInfo = createStackInfo(jvmti_env, jni_env, monitorUsage.owner, 15);
+    char *ownerStackInfo = createStackInfo(jvmti_env, jni_env, monitorUsage.owner, stackDepth);
     char *line;
     asprintf(&line, "%s|%s|%s|%s|%s\n", LOG_TAG, baseInfo, monitorInfo, contendStackInfo,
              ownerStackInfo);

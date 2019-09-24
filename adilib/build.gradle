@@ -5,7 +5,7 @@ apply plugin: 'maven'
 
 group = "zhihu.adi"
 archivesBaseName = "adi"
-version = '0.0.3.6'
+version = '0.0.3.7'
 uploadArchives {
     doFirst {
         System.out.println("============uploadArchives for local")

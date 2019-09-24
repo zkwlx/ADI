@@ -6,7 +6,7 @@
 import sys
 
 from aggregate.GlobalAggregateInfo import GlobalAggregateInfo
-from aggregate.aggregate_to_json import aggToJson
+from aggregate.aggregate_to_json import aggregateToJson
 from event.Event import Event
 from handler.GCHandler import GCHandler
 from handler.MonitorContendedHandler import MonitorContendedHandler
@@ -74,7 +74,7 @@ def aggregateEvents(originEventList: list) -> (GlobalAggregateInfo, list):
     totalCount = len(originEventList)
     currCount = 0
     for event in originEventList:
-        json = aggToJson(event, startTime)
+        json = aggregateToJson(event, globalInfo)
         if json is not None:
             eventJsonList.append(json)
         currCount += 1

@@ -17,4 +17,3 @@ def aggregateToJson(event, globalInfo: GlobalAggregateInfo) -> dict:
     for handler in handlerList:
         if handler.shouldHandle(event.eventName):
             return handler.handle(event, globalInfo)
-    print("-------->>解析 json 时没找到 %s" % event.eventName)

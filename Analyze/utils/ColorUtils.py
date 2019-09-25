@@ -5,13 +5,19 @@
 # @File    : ColorUtils.py
 import colorsys
 from random import random
+from random import shuffle
 
 
 def toHex(rgb) -> str:
     str_rgb = "#"
     for c in rgb:
-        # 每次转换之后只取0x7b的后两位，拼接到strs中
-        str_rgb += str(hex(c))[-2:]
+        if c < 16:
+            # 处理 0xf 这种情况
+            x = "0" + str(hex(c))[-1:]
+        else:
+            # 处理 0xff 这种情况
+            x = str(hex(c))[-2:]
+        str_rgb += x
     return str_rgb
 
 
@@ -39,5 +45,5 @@ def get_n_rgb_colors(num) -> list:
         _r, _g, _b = colorsys.hls_to_rgb(hlsc[0], hlsc[1], hlsc[2])
         r, g, b = [int(x * 255.0) for x in (_r, _g, _b)]
         rgb_colors.append(toHex([r, g, b]))
-
+    shuffle(rgb_colors)
     return rgb_colors

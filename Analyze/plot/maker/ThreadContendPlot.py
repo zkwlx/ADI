@@ -20,8 +20,7 @@ class ThreadContendPlot(BaseMaker):
     def make(self, globalAggInfo: GlobalAggregateInfo, jsonList: list):
         return self.drawMonitorGraph(globalAggInfo, jsonList)
 
-    @staticmethod
-    def drawMonitorGraph(globalAggInfo: GlobalAggregateInfo, jsonList: list):
+    def drawMonitorGraph(self, globalAggInfo: GlobalAggregateInfo, jsonList: list):
         output_file(globalAggInfo.fileName + ".html")
         threadNames = set()
         monitorObjs = set()
@@ -29,6 +28,10 @@ class ThreadContendPlot(BaseMaker):
             if json["eventName"] in ["MCE", "MCED"]:
                 threadNames.add(json["contendThreadName"][0:40])
                 monitorObjs.add(json["monitorObjHash"])
+
+        if not threadNames or not monitorObjs:
+            return None
+
         colors = get_n_rgb_colors(len(monitorObjs))
         monitorObjColorDict = dict(zip(monitorObjs, colors))
 
@@ -70,6 +73,11 @@ class ThreadContendPlot(BaseMaker):
             x1Array = numpy.array(plot.x1)
             plot.durations = list(x1Array - x0Array)
 
+        title = "多线程竞争图表，总时长：%d 毫秒，日志文件：%s" % (globalAggInfo.totalTime, globalAggInfo.fileName)
+        return self.makeContendPlot(title, threadNames, plotSegments)
+
+    @staticmethod
+    def makeContendPlot(title: str, threadNames: set, plotSegments: dict):
         hoverToolHtml = """
         <div>
             <div>
@@ -98,7 +106,6 @@ class ThreadContendPlot(BaseMaker):
             </div>
         </div>
         """
-        title = "多线程竞争图表，总时长：%d 毫秒，日志文件：%s" % (globalAggInfo.totalTime, globalAggInfo.fileName)
         graph = figure(plot_width=1200, plot_height=800, y_range=list(threadNames), title=title,
                        x_axis_label="时间 毫秒",
                        y_axis_label="线程名字", tooltips=hoverToolHtml)

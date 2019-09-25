@@ -5,7 +5,7 @@
 # @File    : JVMUtils.py
 
 
-def convertNiceStack(stackList: object) -> object:
+def convertNiceStack(stackList: list) -> str:
     """
     将原始 Stack 信息转换成更加可读的样子
     例如将：\n

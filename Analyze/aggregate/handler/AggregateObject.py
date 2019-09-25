@@ -13,6 +13,7 @@ class AggregateObject:
         self.threadName = ""
         self.stackStr = ""
         self.niceStack = ""
+        self.niceObjectName = ""
         self.aggId = 0
         self.count = 1
         self.totalSize = 0

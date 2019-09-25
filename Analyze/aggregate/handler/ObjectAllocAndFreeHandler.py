@@ -49,9 +49,9 @@ class ObjectAllocAndFreeHandler(BaseHandler):
                 "time": (event.timestamp - globalInfo.startTimestamp),
                 "eventName": eventName}
         if eventName == "OA":
-            (aggId, count, niceStack, totalSize) = self.aggregateOAEvent(event)
+            (aggId, count, niceStack, totalSize, niceObjectName) = self.aggregateOAEvent(event)
             json["threadName"] = event.threadName
-            json["objectName"] = event.objectName
+            json["objectName"] = niceObjectName
             json["objectSize"] = event.objectSize
             json["originStack"] = event.stackStr
             json["aggregateId"] = aggId
@@ -60,12 +60,14 @@ class ObjectAllocAndFreeHandler(BaseHandler):
             json["totalSize"] = totalSize
             json["objTag"] = event.objectTag
         elif eventName == "OF":
-            (aggId, count, niceStack, totalSize) = self.aggregateOFEvent(event)
+            (aggId, count, niceStack, totalSize, niceObjectName, threadName) = self.aggregateOFEvent(event)
             json["objTag"] = event.tag
             json["aggregateId"] = aggId
             json["count"] = count
             json["aggNiceStack"] = niceStack
             json["totalSize"] = totalSize
+            json["threadName"] = threadName
+            json["objectName"] = niceObjectName
         return json
 
     def aggregateOAEvent(self, event: ObjectAllocEvent) -> (int, int, str, int):
@@ -90,7 +92,8 @@ class ObjectAllocAndFreeHandler(BaseHandler):
             self.idCounter += 1
             newAggObj.aggId = self.idCounter
             newAggObj.tags.append(event.objectTag)
-            newAggObj.niceStack = self.aggregateOAStack(event)
+            newAggObj.niceStack = convertNiceStack(event.stack)
+            newAggObj.niceObjectName = convertClassDesc(event.objectName)
             self.aggregateObjectList.append(newAggObj)
         else:
             marchedAggObj.count += 1
@@ -101,9 +104,9 @@ class ObjectAllocAndFreeHandler(BaseHandler):
                 marchedAggObj.tags.append(event.objectTag)
             newAggObj = marchedAggObj
 
-        return newAggObj.aggId, newAggObj.count, newAggObj.niceStack, newAggObj.totalSize
+        return newAggObj.aggId, newAggObj.count, newAggObj.niceStack, newAggObj.totalSize, newAggObj.niceObjectName
 
-    def aggregateOFEvent(self, event: ObjectFreeEvent) -> (int, int, str, int):
+    def aggregateOFEvent(self, event: ObjectFreeEvent) -> (int, int, str, int, str, str):
         objEvent = self.objectTagDict[event.tag]
         freeSize = objEvent.objectSize
         marchedObj = None
@@ -115,15 +118,5 @@ class ObjectAllocAndFreeHandler(BaseHandler):
                 break
         if marchedObj is None:
             print("!!!!! aggregateOFEvent: not found OFEvent tag: %d" % event.tag)
-        return marchedObj.aggId, marchedObj.count, marchedObj.niceStack, marchedObj.totalSize
-
-    @staticmethod
-    def aggregateOAStack(e: ObjectAllocEvent) -> str:
-        """
-        聚合 Object Alloc Event 的栈信息
-        :param e:
-        :return:
-        """
-        header = "%s %s\n" % (convertClassDesc(e.objectName), e.threadName)
-        niceStack = convertNiceStack(e.stack)
-        return header + niceStack
+        return marchedObj.aggId, marchedObj.count, marchedObj.niceStack, marchedObj.totalSize, \
+               marchedObj.niceObjectName, marchedObj.threadName

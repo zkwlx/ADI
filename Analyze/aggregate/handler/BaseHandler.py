@@ -12,4 +12,4 @@ class BaseHandler:
         return False
 
     def handle(self, event, globalInfo: GlobalAggregateInfo) -> dict:
-        return {}
+        pass

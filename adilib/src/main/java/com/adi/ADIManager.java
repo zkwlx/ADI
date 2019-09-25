@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Debug;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -102,6 +103,7 @@ public class ADIManager {
         File file = context.getExternalCacheDir();
         File root = new File(file.getAbsolutePath(), "ADI/");
         Log.i(TAG, root.getAbsolutePath());
+        Toast.makeText(context, "ADI 日志存放在 " + root.getAbsolutePath() + " 目录下", Toast.LENGTH_LONG).show();
         root.mkdirs();
         startDump(root.getAbsolutePath());
 

@@ -15,4 +15,4 @@ class BaseHandler:
         return False
 
     def handle(self, segmentList) -> Event:
-        return
+        pass

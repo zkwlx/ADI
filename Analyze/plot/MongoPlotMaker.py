@@ -5,6 +5,7 @@
 # @File    : MongoPlotMaker.py
 import pymongo
 
+from aggregate.GlobalAggregateInfo import GlobalAggregateInfo
 from plot.BaseMaker import BaseMaker
 
 
@@ -16,7 +17,7 @@ class MongoPlotMaker(BaseMaker):
         db = mongo['adi_analyze']
         self.collection = db[logName]
 
-    def make(self, jsonList: list):
+    def make(self, globalAggInfo: GlobalAggregateInfo, jsonList: list):
         # 插入到 MongoDB
         print("\n聚合完毕，批量存入到数据库...")
         self.collection.insert(jsonList)

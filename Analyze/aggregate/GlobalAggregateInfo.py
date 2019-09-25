@@ -11,6 +11,8 @@ class GlobalAggregateInfo:
     """
 
     def __init__(self):
+        # 日志文件名
+        self.fileName = ""
         # 日志开始事件时间戳
         self.startTimestamp = 0
         # 日志最后事件的时间戳

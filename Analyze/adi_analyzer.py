@@ -66,6 +66,7 @@ def aggregateEvents(originEventList: list) -> (GlobalAggregateInfo, list):
     endTime = originEventList[-1].timestamp
     # 创建全局聚合信息
     globalInfo = GlobalAggregateInfo()
+    globalInfo.fileName = FILE_NAME
     globalInfo.startTimestamp = startTime
     globalInfo.endTimestamp = endTime
     globalInfo.totalTime = endTime - startTime
@@ -86,7 +87,7 @@ def aggregateEvents(originEventList: list) -> (GlobalAggregateInfo, list):
 
 def makePlot(globalAggInfo: GlobalAggregateInfo, aggJsonList: list):
     # maker = MongoPlotMaker(FILE_NAME)
-    maker = BokehPlotMaker(FILE_NAME)
+    maker = BokehPlotMaker()
     maker.make(globalAggInfo, aggJsonList)
 
 

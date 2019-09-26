@@ -25,6 +25,11 @@ class BokehPlotMaker(BaseMaker):
         for maker in self.makerList:
             plot = maker.make(globalAggInfo, jsonList)
             if plot:
-                plotList.append(maker.make(globalAggInfo, jsonList))
+                if type(plot) is tuple:
+                    for p in plot:
+                        plotList.append(p)
+                else:
+                    plotList.append(plot)
         # TODO 展示所有 Plot
+
         show(column(plotList))

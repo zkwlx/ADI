@@ -5,7 +5,7 @@
 # @File    : PlotSegment.py
 
 
-class PlotSegment:
+class ThreadContendSegment:
 
     def __init__(self):
         self.x0 = []

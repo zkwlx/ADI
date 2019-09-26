@@ -7,8 +7,11 @@ from bokeh.plotting import figure, output_file
 
 from aggregate.GlobalAggregateInfo import GlobalAggregateInfo
 from plot.BaseMaker import BaseMaker
-from plot.PlotLineObjectAllocFree import PlotLineObjectAllocFree
+from plot.maker.ObjectAllocLine import ObjectAllocLine
 from utils.ColorUtils import get_n_rgb_colors
+
+OBJECT_COUNT_PLOT = 1
+OBJECT_SIZE_PLOT = 2
 
 
 class ObjectAllocPlot(BaseMaker):
@@ -27,7 +30,7 @@ class ObjectAllocPlot(BaseMaker):
                 aggId = json["aggregateId"]
                 plotLine = plotLineDict.get(aggId, None)
                 if plotLine is None:
-                    plotLine = PlotLineObjectAllocFree()
+                    plotLine = ObjectAllocLine()
                     plotLine.aggId = aggId
                     plotLineDict[aggId] = plotLine
                 plotLine.timeList.append(json["time"])
@@ -35,7 +38,6 @@ class ObjectAllocPlot(BaseMaker):
                 plotLine.objectSizeList.append(json["totalSize"])
                 plotLine.objectNameList.append(json["objectName"])
                 plotLine.threadNameList.append(json["threadName"])
-                plotLine.aggIdList.append(aggId)
                 if json["eventName"] == "OF":
                     plotLine.eventNameList.append("Free")
                     plotLine.stackList.append("")
@@ -49,16 +51,15 @@ class ObjectAllocPlot(BaseMaker):
             ids = plotLineDict.keys()
             colors = get_n_rgb_colors(len(ids))
             idColorDict = dict(zip(ids, colors))
-            countPlot = self.makeObjectCountPlot("", plotLineDict, idColorDict)
-            return countPlot
+            countTitle = "对象分配数量报表，总时长：%d 毫秒，日志文件：%s" % (globalAggInfo.totalTime, globalAggInfo.fileName)
+            sizeTitle = "对象分配大小报表，总时长：%d 毫秒，日志文件：%s" % (globalAggInfo.totalTime, globalAggInfo.fileName)
+            countPlot = self.makeObjectPlot(OBJECT_COUNT_PLOT, countTitle, plotLineDict, idColorDict)
+            sizePlot = self.makeObjectPlot(OBJECT_SIZE_PLOT, sizeTitle, plotLineDict, idColorDict)
+            return countPlot, sizePlot
 
-    def makeObjectCountPlot(self, title: str, plotLineDict: dict, idColorDict: dict):
+    def makeObjectPlot(self, plotType: int, title: str, plotLineDict: dict, idColorDict: dict):
         hoverToolHtml = """
                 <div>
-                    <div>
-                        <span style="font-size: 5px; font-weight: bold;">aggregate id:</span>
-                        <span style="font-size: 6px;">@aggIdList</span>
-                    </div>
                     <div>
                         <span style="font-size: 6px;">object </span>
                         <span style="font-size: 5px; font-weight: bold;">@eventNameList</span>
@@ -89,14 +90,23 @@ class ObjectAllocPlot(BaseMaker):
                     </div>
                 </div>
                 """
+        if plotType == OBJECT_SIZE_PLOT:
+            y_label = "对象大小 Byte"
+        else:
+            y_label = "对象数量"
         graph = figure(plot_width=1200, plot_height=800, title=title,
                        x_axis_label="时间 毫秒",
-                       y_axis_label="对象数量", tooltips=hoverToolHtml)
+                       y_axis_label=y_label, tooltips=hoverToolHtml)
 
         for _, plot in plotLineDict.items():
-            data = dict(x=plot.timeList, y=plot.countList, objectNameList=plot.objectNameList,
+            if plotType == OBJECT_SIZE_PLOT:
+                plotY = plot.objectSizeList
+            else:
+                plotY = plot.countList
+
+            data = dict(x=plot.timeList, y=plotY, objectNameList=plot.objectNameList,
                         threadNameList=plot.threadNameList, stackList=plot.stackList,
-                        objectSizeList=plot.objectSizeList, eventNameList=plot.eventNameList,
-                        aggIdList=plot.aggIdList)
-            graph.line(source=data, x="x", y="y", color=idColorDict[plot.aggId], line_width=3)
+                        objectSizeList=plot.objectSizeList, eventNameList=plot.eventNameList)
+            graph.line(source=data, x="x", y="y", color=idColorDict[plot.aggId], line_width=2)
+
         return graph

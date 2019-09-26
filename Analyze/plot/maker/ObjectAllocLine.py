@@ -5,7 +5,7 @@
 # @File    : PlotLine.py
 
 
-class PlotLineObjectAllocFree:
+class ObjectAllocLine:
 
     def __init__(self):
         self.eventNameList = []
@@ -16,4 +16,3 @@ class PlotLineObjectAllocFree:
         self.objectNameList = []
         self.threadNameList = []
         self.stackList = []
-        self.aggIdList = []

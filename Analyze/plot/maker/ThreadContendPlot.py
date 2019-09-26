@@ -8,7 +8,7 @@ from bokeh.plotting import figure, output_file
 
 from aggregate.GlobalAggregateInfo import GlobalAggregateInfo
 from plot.BaseMaker import BaseMaker
-from plot.PlotSegment import PlotSegment
+from plot.maker.ThreadContendSegment import ThreadContendSegment
 from utils.ColorUtils import get_n_rgb_colors
 
 
@@ -42,7 +42,7 @@ class ThreadContendPlot(BaseMaker):
                 monitorObj = json["monitorObjHash"]
                 plotSeg = plotSegments.get(monitorObj, None)
                 if plotSeg is None:
-                    plotSeg = PlotSegment()
+                    plotSeg = ThreadContendSegment()
                     plotSeg.color = monitorObjColorDict[monitorObj]
                     plotSeg.legend = str(monitorObj)
                     plotSegments[monitorObj] = plotSeg

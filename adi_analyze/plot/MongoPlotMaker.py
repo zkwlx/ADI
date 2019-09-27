@@ -10,6 +10,9 @@ from plot.BaseMaker import BaseMaker
 
 
 class MongoPlotMaker(BaseMaker):
+    """
+    仅供开发调试用，普通用户无需关心
+    """
 
     def __init__(self, logName: str):
         super().__init__()

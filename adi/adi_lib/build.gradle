@@ -3,7 +3,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-android'
 apply plugin: 'maven'
 
-group = "zhihu.adi"
+group = "zkw.adi"
 archivesBaseName = "adi"
 version = '0.0.3.9'
 uploadArchives {

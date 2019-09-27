@@ -1,0 +1,73 @@
+[
+{
+  "directory": "/Users/kewen/my_project/ADI/adilib/.externalNativeBuild/cmake/release/x86",
+  "command": "/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=i686-none-linux-android26 --gcc-toolchain=/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/sysroot  -Dadi_agent_EXPORTS  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security  -std=c++11 -frtti -fexceptions -std=c++11 -frtti -O2 -DNDEBUG  -fPIC   -o CMakeFiles/adi_agent.dir/src/main/cpp/adi.cpp.o -c /Users/kewen/my_project/ADI/adilib/src/main/cpp/adi.cpp",
+  "file": "/Users/kewen/my_project/ADI/adilib/src/main/cpp/adi.cpp"
+},
+
+{
+  "directory": "/Users/kewen/my_project/ADI/adilib/.externalNativeBuild/cmake/release/x86",
+  "command": "/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang --target=i686-none-linux-android26 --gcc-toolchain=/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Dadi_agent_EXPORTS  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security  -O2 -DNDEBUG  -fPIC   -o CMakeFiles/adi_agent.dir/src/main/cpp/dumper.c.o   -c /Users/kewen/my_project/ADI/adilib/src/main/cpp/dumper.c",
+  "file": "/Users/kewen/my_project/ADI/adilib/src/main/cpp/dumper.c"
+},
+
+{
+  "directory": "/Users/kewen/my_project/ADI/adilib/.externalNativeBuild/cmake/release/x86",
+  "command": "/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang --target=i686-none-linux-android26 --gcc-toolchain=/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Dadi_agent_EXPORTS  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security  -O2 -DNDEBUG  -fPIC   -o CMakeFiles/adi_agent.dir/src/main/cpp/clooper/looper.c.o   -c /Users/kewen/my_project/ADI/adilib/src/main/cpp/clooper/looper.c",
+  "file": "/Users/kewen/my_project/ADI/adilib/src/main/cpp/clooper/looper.c"
+},
+
+{
+  "directory": "/Users/kewen/my_project/ADI/adilib/.externalNativeBuild/cmake/release/x86",
+  "command": "/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang --target=i686-none-linux-android26 --gcc-toolchain=/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Dadi_agent_EXPORTS  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security  -O2 -DNDEBUG  -fPIC   -o CMakeFiles/adi_agent.dir/src/main/cpp/clooper/looper_test.c.o   -c /Users/kewen/my_project/ADI/adilib/src/main/cpp/clooper/looper_test.c",
+  "file": "/Users/kewen/my_project/ADI/adilib/src/main/cpp/clooper/looper_test.c"
+},
+
+{
+  "directory": "/Users/kewen/my_project/ADI/adilib/.externalNativeBuild/cmake/release/x86",
+  "command": "/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=i686-none-linux-android26 --gcc-toolchain=/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/sysroot  -Dadi_agent_EXPORTS  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security  -std=c++11 -frtti -fexceptions -std=c++11 -frtti -O2 -DNDEBUG  -fPIC   -o CMakeFiles/adi_agent.dir/src/main/cpp/handler/Config.cpp.o -c /Users/kewen/my_project/ADI/adilib/src/main/cpp/handler/Config.cpp",
+  "file": "/Users/kewen/my_project/ADI/adilib/src/main/cpp/handler/Config.cpp"
+},
+
+{
+  "directory": "/Users/kewen/my_project/ADI/adilib/.externalNativeBuild/cmake/release/x86",
+  "command": "/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=i686-none-linux-android26 --gcc-toolchain=/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/sysroot  -Dadi_agent_EXPORTS  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security  -std=c++11 -frtti -fexceptions -std=c++11 -frtti -O2 -DNDEBUG  -fPIC   -o CMakeFiles/adi_agent.dir/src/main/cpp/handler/GCCallbackHandler.cpp.o -c /Users/kewen/my_project/ADI/adilib/src/main/cpp/handler/GCCallbackHandler.cpp",
+  "file": "/Users/kewen/my_project/ADI/adilib/src/main/cpp/handler/GCCallbackHandler.cpp"
+},
+
+{
+  "directory": "/Users/kewen/my_project/ADI/adilib/.externalNativeBuild/cmake/release/x86",
+  "command": "/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=i686-none-linux-android26 --gcc-toolchain=/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/sysroot  -Dadi_agent_EXPORTS  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security  -std=c++11 -frtti -fexceptions -std=c++11 -frtti -O2 -DNDEBUG  -fPIC   -o CMakeFiles/adi_agent.dir/src/main/cpp/handler/MethodEntryHandler.cpp.o -c /Users/kewen/my_project/ADI/adilib/src/main/cpp/handler/MethodEntryHandler.cpp",
+  "file": "/Users/kewen/my_project/ADI/adilib/src/main/cpp/handler/MethodEntryHandler.cpp"
+},
+
+{
+  "directory": "/Users/kewen/my_project/ADI/adilib/.externalNativeBuild/cmake/release/x86",
+  "command": "/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=i686-none-linux-android26 --gcc-toolchain=/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/sysroot  -Dadi_agent_EXPORTS  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security  -std=c++11 -frtti -fexceptions -std=c++11 -frtti -O2 -DNDEBUG  -fPIC   -o CMakeFiles/adi_agent.dir/src/main/cpp/handler/ObjectFreeHandler.cpp.o -c /Users/kewen/my_project/ADI/adilib/src/main/cpp/handler/ObjectFreeHandler.cpp",
+  "file": "/Users/kewen/my_project/ADI/adilib/src/main/cpp/handler/ObjectFreeHandler.cpp"
+},
+
+{
+  "directory": "/Users/kewen/my_project/ADI/adilib/.externalNativeBuild/cmake/release/x86",
+  "command": "/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=i686-none-linux-android26 --gcc-toolchain=/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/sysroot  -Dadi_agent_EXPORTS  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security  -std=c++11 -frtti -fexceptions -std=c++11 -frtti -O2 -DNDEBUG  -fPIC   -o CMakeFiles/adi_agent.dir/src/main/cpp/handler/ThreadStartHandler.cpp.o -c /Users/kewen/my_project/ADI/adilib/src/main/cpp/handler/ThreadStartHandler.cpp",
+  "file": "/Users/kewen/my_project/ADI/adilib/src/main/cpp/handler/ThreadStartHandler.cpp"
+},
+
+{
+  "directory": "/Users/kewen/my_project/ADI/adilib/.externalNativeBuild/cmake/release/x86",
+  "command": "/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=i686-none-linux-android26 --gcc-toolchain=/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/sysroot  -Dadi_agent_EXPORTS  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security  -std=c++11 -frtti -fexceptions -std=c++11 -frtti -O2 -DNDEBUG  -fPIC   -o CMakeFiles/adi_agent.dir/src/main/cpp/handler/VMObjectAllocHandler.cpp.o -c /Users/kewen/my_project/ADI/adilib/src/main/cpp/handler/VMObjectAllocHandler.cpp",
+  "file": "/Users/kewen/my_project/ADI/adilib/src/main/cpp/handler/VMObjectAllocHandler.cpp"
+},
+
+{
+  "directory": "/Users/kewen/my_project/ADI/adilib/.externalNativeBuild/cmake/release/x86",
+  "command": "/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=i686-none-linux-android26 --gcc-toolchain=/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/sysroot  -Dadi_agent_EXPORTS  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security  -std=c++11 -frtti -fexceptions -std=c++11 -frtti -O2 -DNDEBUG  -fPIC   -o CMakeFiles/adi_agent.dir/src/main/cpp/common/jdi_native.cpp.o -c /Users/kewen/my_project/ADI/adilib/src/main/cpp/common/jdi_native.cpp",
+  "file": "/Users/kewen/my_project/ADI/adilib/src/main/cpp/common/jdi_native.cpp"
+},
+
+{
+  "directory": "/Users/kewen/my_project/ADI/adilib/.externalNativeBuild/cmake/release/x86",
+  "command": "/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang --target=i686-none-linux-android26 --gcc-toolchain=/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Dadi_agent_EXPORTS  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security  -O2 -DNDEBUG  -fPIC   -o CMakeFiles/adi_agent.dir/src/main/cpp/common/utils.c.o   -c /Users/kewen/my_project/ADI/adilib/src/main/cpp/common/utils.c",
+  "file": "/Users/kewen/my_project/ADI/adilib/src/main/cpp/common/utils.c"
+}
+]

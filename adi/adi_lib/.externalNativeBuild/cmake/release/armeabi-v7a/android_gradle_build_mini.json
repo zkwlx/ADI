@@ -1,0 +1,18 @@
+{
+  "buildFiles": [
+    "/Users/kewen/my_project/ADI/adilib/../../../Library/Android/sdk/ndk-bundle/build/cmake/android.toolchain.cmake",
+    "/Users/kewen/my_project/ADI/adilib/CMakeLists.txt",
+    "/Users/kewen/my_project/ADI/adilib/../../../Library/Android/sdk/ndk-bundle/build/cmake/platforms.cmake"
+  ],
+  "cleanCommands": [
+    "/Users/kewen/Library/Android/sdk/cmake/3.10.2.4988404/bin/cmake --build /Users/kewen/my_project/ADI/adilib/.externalNativeBuild/cmake/release/armeabi-v7a --target clean"
+  ],
+  "libraries": {
+    "adi_agent-Release-armeabi-v7a": {
+      "artifactName": "adi_agent",
+      "buildCommand": "/Users/kewen/Library/Android/sdk/cmake/3.10.2.4988404/bin/cmake --build /Users/kewen/my_project/ADI/adilib/.externalNativeBuild/cmake/release/armeabi-v7a --target adi_agent",
+      "abi": "armeabi-v7a",
+      "output": "/Users/kewen/my_project/ADI/adilib/build/intermediates/cmake/release/obj/armeabi-v7a/libadi_agent.so"
+    }
+  }
+}

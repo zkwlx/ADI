@@ -1,0 +1,18 @@
+{
+  "buildFiles": [
+    "/Users/kewen/my_project/ADI/adilib/../../../Library/Android/sdk/ndk-bundle/build/cmake/android.toolchain.cmake",
+    "/Users/kewen/my_project/ADI/adilib/CMakeLists.txt",
+    "/Users/kewen/my_project/ADI/adilib/../../../Library/Android/sdk/ndk-bundle/build/cmake/platforms.cmake"
+  ],
+  "cleanCommands": [
+    "/Users/kewen/Library/Android/sdk/cmake/3.10.2.4988404/bin/cmake --build /Users/kewen/my_project/ADI/adilib/.externalNativeBuild/cmake/release/x86 --target clean"
+  ],
+  "libraries": {
+    "adi_agent-Release-x86": {
+      "artifactName": "adi_agent",
+      "buildCommand": "/Users/kewen/Library/Android/sdk/cmake/3.10.2.4988404/bin/cmake --build /Users/kewen/my_project/ADI/adilib/.externalNativeBuild/cmake/release/x86 --target adi_agent",
+      "abi": "x86",
+      "output": "/Users/kewen/my_project/ADI/adilib/build/intermediates/cmake/release/obj/x86/libadi_agent.so"
+    }
+  }
+}

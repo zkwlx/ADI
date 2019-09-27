@@ -1,0 +1,99 @@
+{
+  "stringTable": {
+    "0": "/Users/kewen/my_project/ADI/adilib/.externalNativeBuild/cmake/debug/arm64-v8a",
+    "1": "--target=aarch64-none-linux-android26 --gcc-toolchain=/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Dadi_agent_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security -std=c++11 -frtti -fexceptions -std=c++11 -frtti -O0 -fno-limit-debug-info -fPIC",
+    "2": "--target=aarch64-none-linux-android26 --gcc-toolchain=/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Dadi_agent_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security -O0 -fno-limit-debug-info -fPIC"
+  },
+  "buildFiles": [
+    "/Users/kewen/my_project/ADI/adilib/../../../Library/Android/sdk/ndk-bundle/build/cmake/android.toolchain.cmake",
+    "/Users/kewen/my_project/ADI/adilib/CMakeLists.txt",
+    "/Users/kewen/my_project/ADI/adilib/../../../Library/Android/sdk/ndk-bundle/build/cmake/platforms.cmake"
+  ],
+  "cleanCommands": [
+    "/Users/kewen/Library/Android/sdk/cmake/3.10.2.4988404/bin/cmake --build /Users/kewen/my_project/ADI/adilib/.externalNativeBuild/cmake/debug/arm64-v8a --target clean"
+  ],
+  "libraries": {
+    "adi_agent-Debug-arm64-v8a": {
+      "buildCommand": "/Users/kewen/Library/Android/sdk/cmake/3.10.2.4988404/bin/cmake --build /Users/kewen/my_project/ADI/adilib/.externalNativeBuild/cmake/debug/arm64-v8a --target adi_agent",
+      "buildType": "debug",
+      "toolchain": "2898716768",
+      "abi": "arm64-v8a",
+      "artifactName": "adi_agent",
+      "files": [
+        {
+          "src": "/Users/kewen/my_project/ADI/adilib/src/main/cpp/dumper.c",
+          "flagsOrdinal": 2,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/kewen/my_project/ADI/adilib/src/main/cpp/clooper/looper.c",
+          "flagsOrdinal": 2,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/kewen/my_project/ADI/adilib/src/main/cpp/clooper/looper_test.c",
+          "flagsOrdinal": 2,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/kewen/my_project/ADI/adilib/src/main/cpp/common/utils.c",
+          "flagsOrdinal": 2,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/kewen/my_project/ADI/adilib/src/main/cpp/adi.cpp",
+          "flagsOrdinal": 1,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/kewen/my_project/ADI/adilib/src/main/cpp/handler/Config.cpp",
+          "flagsOrdinal": 1,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/kewen/my_project/ADI/adilib/src/main/cpp/handler/GCCallbackHandler.cpp",
+          "flagsOrdinal": 1,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/kewen/my_project/ADI/adilib/src/main/cpp/handler/MethodEntryHandler.cpp",
+          "flagsOrdinal": 1,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/kewen/my_project/ADI/adilib/src/main/cpp/handler/ObjectFreeHandler.cpp",
+          "flagsOrdinal": 1,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/kewen/my_project/ADI/adilib/src/main/cpp/handler/ThreadStartHandler.cpp",
+          "flagsOrdinal": 1,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/kewen/my_project/ADI/adilib/src/main/cpp/handler/VMObjectAllocHandler.cpp",
+          "flagsOrdinal": 1,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/kewen/my_project/ADI/adilib/src/main/cpp/common/jdi_native.cpp",
+          "flagsOrdinal": 1,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/kewen/my_project/ADI/adilib/build/intermediates/cmake/debug/obj/arm64-v8a/libadi_agent.so"
+    }
+  },
+  "toolchains": {
+    "2898716768": {
+      "cCompilerExecutable": "/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang",
+      "cppCompilerExecutable": "/Users/kewen/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++"
+    }
+  },
+  "cFileExtensions": [
+    "c"
+  ],
+  "cppFileExtensions": [
+    "cpp"
+  ]
+}

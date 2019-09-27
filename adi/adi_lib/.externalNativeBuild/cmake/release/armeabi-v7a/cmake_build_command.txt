@@ -1,0 +1,20 @@
+Executable : /Users/kewen/Library/Android/sdk/cmake/3.10.2.4988404/bin/cmake
+arguments : 
+-H/Users/kewen/my_project/ADI/adilib
+-B/Users/kewen/my_project/ADI/adilib/.externalNativeBuild/cmake/release/armeabi-v7a
+-DANDROID_ABI=armeabi-v7a
+-DANDROID_PLATFORM=android-26
+-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=/Users/kewen/my_project/ADI/adilib/build/intermediates/cmake/release/obj/armeabi-v7a
+-DCMAKE_BUILD_TYPE=Release
+-DANDROID_NDK=/Users/kewen/Library/Android/sdk/ndk-bundle
+-DCMAKE_CXX_FLAGS=-std=c++11 -frtti -fexceptions
+-DCMAKE_SYSTEM_NAME=Android
+-DCMAKE_ANDROID_ARCH_ABI=armeabi-v7a
+-DCMAKE_SYSTEM_VERSION=26
+-DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+-DCMAKE_ANDROID_NDK=/Users/kewen/Library/Android/sdk/ndk-bundle
+-DCMAKE_TOOLCHAIN_FILE=/Users/kewen/Library/Android/sdk/ndk-bundle/build/cmake/android.toolchain.cmake
+-G Ninja
+-DCMAKE_MAKE_PROGRAM=/Users/kewen/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja
+jvmArgs : 
+

@@ -1,0 +1,14 @@
+# ninja log v5
+1	103	1568105534	CMakeFiles/adi_agent.dir/src/main/cpp/clooper/looper_test.c.o	36746cff5ff56e94
+2	127	1568105534	CMakeFiles/adi_agent.dir/src/main/cpp/handler/Config.cpp.o	f4fd4bc11211dca9
+2	128	1568105534	CMakeFiles/adi_agent.dir/src/main/cpp/handler/ObjectFreeHandler.cpp.o	1f877f2f26ae624e
+1	132	1568105534	CMakeFiles/adi_agent.dir/src/main/cpp/dumper.c.o	29ede5bff8c08c26
+3	155	1568105534	CMakeFiles/adi_agent.dir/src/main/cpp/handler/ThreadStartHandler.cpp.o	b7f993bc9e10a882
+2	156	1568105534	CMakeFiles/adi_agent.dir/src/main/cpp/handler/GCCallbackHandler.cpp.o	e7f98e28aa4859c4
+1	160	1568105534	CMakeFiles/adi_agent.dir/src/main/cpp/clooper/looper.c.o	be59a9e9cbbcf7c0
+127	183	1568105534	CMakeFiles/adi_agent.dir/src/main/cpp/common/utils.c.o	225937863df091a4
+104	236	1568105534	CMakeFiles/adi_agent.dir/src/main/cpp/common/jdi_native.cpp.o	e097c19a5799e3d0
+2	556	1568105534	CMakeFiles/adi_agent.dir/src/main/cpp/handler/MethodEntryHandler.cpp.o	5b787ca257065416
+4	565	1568105534	CMakeFiles/adi_agent.dir/src/main/cpp/handler/VMObjectAllocHandler.cpp.o	7d4cf7a11195c8b9
+1	602	1568105534	CMakeFiles/adi_agent.dir/src/main/cpp/adi.cpp.o	d8bae1655bd5dd80
+602	668	1568105535	../../../../build/intermediates/cmake/release/obj/arm64-v8a/libadi_agent.so	8f361f0c48f3c787

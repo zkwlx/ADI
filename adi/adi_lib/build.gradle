@@ -5,10 +5,10 @@ apply plugin: 'maven'
 
 group = "zkw.adi"
 archivesBaseName = "adi"
-version = '0.0.3.9'
+version = '0.9.1'
 uploadArchives {
     doFirst {
-        System.out.println("============uploadArchives for local")
+        System.out.println("============uploadArchives for local: $version")
     }
     repositories {
         mavenDeployer {

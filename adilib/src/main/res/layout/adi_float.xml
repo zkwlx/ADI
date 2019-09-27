@@ -5,15 +5,63 @@
         android:background="@drawable/window_back"
         android:orientation="vertical">
 
+    <RadioGroup
+            android:id="@+id/adi_enable_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        <RadioButton
+                android:id="@+id/object_alloc_check"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="2dp"
+                android:background="@android:color/background_light"
+                android:paddingRight="2dp"
+                android:text="对象分配监控"
+                android:textSize="10sp" />
+
+        <RadioButton
+                android:id="@+id/thread_contend_check"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="2dp"
+                android:background="@android:color/background_light"
+                android:checked="true"
+                android:paddingRight="2dp"
+                android:text="线程竞争监控"
+                android:textSize="10sp" />
+    </RadioGroup>
+
     <EditText
             android:id="@+id/sample_edit"
-            android:layout_width="70dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@id/adi_enable_group"
+            android:layout_centerHorizontal="true"
             android:layout_marginStart="2dp"
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="2dp"
             android:background="@android:color/background_light"
-            android:hint="默认0.8ms"
+            android:hint="采样默认0.8ms"
+            android:inputType="numberDecimal|number"
+            android:textSize="12sp" />
+
+    <EditText
+            android:id="@+id/depth_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/sample_edit"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="2dp"
+            android:background="@android:color/background_light"
+            android:hint="栈深度 默认10"
             android:inputType="numberDecimal|number"
             android:textSize="12sp" />
 
@@ -21,7 +69,7 @@
             android:id="@+id/adi_btn"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:layout_below="@id/sample_edit"
+            android:layout_below="@id/depth_edit"
             android:layout_centerHorizontal="true"
             android:layout_margin="2dp"
             android:background="@android:drawable/ic_media_play"
@@ -32,7 +80,7 @@
             style="?android:attr/progressBarStyle"
             android:layout_width="17dp"
             android:layout_height="17dp"
-            android:layout_below="@id/sample_edit"
+            android:layout_below="@id/depth_edit"
             android:layout_alignStart="@id/sample_edit"
             android:layout_alignBottom="@id/adi_btn"
             android:layout_marginStart="5dp"

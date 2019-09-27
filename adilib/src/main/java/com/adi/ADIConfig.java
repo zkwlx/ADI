@@ -2,7 +2,10 @@ package com.adi;
 
 import java.util.Arrays;
 
-import static com.adi.JVMTIConstant.*;
+import static com.adi.JVMTIConstant.JVMTI_EVENT_MONITOR_CONTENDED_ENTER;
+import static com.adi.JVMTIConstant.JVMTI_EVENT_MONITOR_CONTENDED_ENTERED;
+import static com.adi.JVMTIConstant.JVMTI_EVENT_OBJECT_FREE;
+import static com.adi.JVMTIConstant.JVMTI_EVENT_VM_OBJECT_ALLOC;
 
 public class ADIConfig {
 

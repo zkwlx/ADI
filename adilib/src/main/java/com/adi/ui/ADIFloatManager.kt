@@ -1,8 +1,10 @@
 package com.adi.ui
 
+import android.annotation.TargetApi
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.provider.Settings
 import android.text.InputType
 import android.text.TextUtils
@@ -21,6 +23,7 @@ import com.adi.R
  */
 object ADIFloatManager {
 
+    @TargetApi(Build.VERSION_CODES.M)
     fun showADIFloat(activity: Activity) {
         if (!Settings.canDrawOverlays(activity)) {
             val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)

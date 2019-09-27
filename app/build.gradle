@@ -6,7 +6,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.adi.demo"
-        minSdkVersion 26
+        minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -33,8 +33,8 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
-//    implementation "com.adi:adilib:1.0"
-    implementation project(':adilib')
+    implementation "zhihu.adi:adi:0.0.3.8"
+//    implementation project(':adilib')
 
 
     api "com.squareup.okhttp3:okhttp:3.14.2"

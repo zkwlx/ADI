@@ -5,7 +5,7 @@ apply plugin: 'maven'
 
 group = "zhihu.adi"
 archivesBaseName = "adi"
-version = '0.0.3.7'
+version = '0.0.3.9'
 uploadArchives {
     doFirst {
         System.out.println("============uploadArchives for local")
@@ -23,7 +23,7 @@ android {
 
 
     defaultConfig {
-        minSdkVersion 26
+        minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"

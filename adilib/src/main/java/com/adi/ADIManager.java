@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Build;
 import android.os.Debug;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -42,6 +43,11 @@ public class ADIManager {
         if (isInited) {
             return;
         }
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            Toast.makeText(context, "ADI 初始化失败：最低支持 Android 8.0!", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         String path = createDuplicateLib(context);
         System.load(path);
         attachJvmtiAgent(path, context.getClassLoader());
@@ -63,6 +69,7 @@ public class ADIManager {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private static String createDuplicateLib(Context context) {
         // Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
         try {

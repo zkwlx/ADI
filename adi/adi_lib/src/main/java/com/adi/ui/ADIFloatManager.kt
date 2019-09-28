@@ -33,6 +33,7 @@ object ADIFloatManager {
             val view = LayoutInflater.from(activity).inflate(R.layout.adi_float, null)
             val sampleEdit = view.findViewById<EditText>(R.id.sample_edit)
             val adiBtn = view.findViewById<Button>(R.id.adi_btn)
+            val adiCloseBtn = view.findViewById<Button>(R.id.adi_close)
             val progress = view.findViewById<ProgressBar>(R.id.progress_bar)
             val defaultInputType = sampleEdit.inputType
             val threadContendCheck = view.findViewById<RadioButton>(R.id.thread_contend_check)
@@ -68,6 +69,15 @@ object ADIFloatManager {
                         WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR or
                         WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
                 floatWindow.updateParams()
+            }
+
+            adiCloseBtn.setOnClickListener {
+                if (started) {
+                    updateForStop()
+                    ADIManager.stop()
+                    started = false
+                }
+                floatWindow.close()
             }
 
             adiBtn.setOnClickListener {

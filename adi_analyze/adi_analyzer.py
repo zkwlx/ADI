@@ -15,7 +15,7 @@ from handler.ObjectFreeHandler import ObjectFreeHandler
 from handler.ThreadStartHandler import ThreadStartHandler
 from plot.BokehPlotMaker import BokehPlotMaker
 
-FILE_NAME = "adi_15.log"
+FILE_NAME = "depth50_object.log"
 
 # TODO 在这里配置需要解析的 Event
 handlerList = [ObjectAllocHandler(),

@@ -1,22 +1,29 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-android'
-apply plugin: 'maven'
+apply plugin: 'com.github.dcendents.android-maven'// for jitpack
+//apply plugin: 'maven'
 
-group = "zkw.adi"
-archivesBaseName = "adi"
-version = '0.9.1'
-uploadArchives {
-    doFirst {
-        System.out.println("============uploadArchives for local: $version")
-    }
-    repositories {
-        mavenDeployer {
-            repository(url: mavenLocal().url)
-        }
-    }
-    finalizedBy(clean)
+repositories {
+    mavenCentral()
+    google()
+    jcenter()
+    maven { url "https://jitpack.io" }
 }
+
+group = "com.github.zkwlx"
+version = '0.9.1'
+//uploadArchives {
+//    doFirst {
+//        System.out.println("============uploadArchives for local: $version")
+//    }
+//    repositories {
+//        mavenDeployer {
+//            repository(url: mavenLocal().url)
+//        }
+//    }
+//    finalizedBy(clean)
+//}
 
 android {
     compileSdkVersion 28
@@ -67,6 +74,28 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
-repositories {
-    mavenCentral()
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.sourceFiles
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.sourceFiles
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+task classesJar(type: Jar) {
+    from "$buildDir/intermediates/classes/release"
+}
+
+artifacts {
+    archives classesJar
+    archives javadocJar
+    archives sourcesJar
 }

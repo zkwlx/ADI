@@ -3,7 +3,6 @@ package com.adi.ui
 import android.annotation.TargetApi
 import android.app.Activity
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.Settings
 import android.text.InputType
@@ -114,23 +113,6 @@ object ADIFloatManager {
             floatWindow.setLayout(view)
             floatWindow.show()
         }
-    }
-
-    private const val PERMISSIONS_REQUEST_CODE = 10086
-    private val PERMISSIONS = arrayOf(
-        "android.permission.SYSTEM_ALERT_WINDOW"
-    )
-
-    fun verifyAllPermissions(activity: Activity) {
-        val tempPermissions = mutableListOf<String>()
-        PERMISSIONS.forEach { permission ->
-            val result = activity.checkSelfPermission(permission)
-            if (result != PackageManager.PERMISSION_GRANTED) {
-                tempPermissions.add(permission)
-            }
-        }
-        activity.requestPermissions(tempPermissions.toTypedArray(), PERMISSIONS_REQUEST_CODE)
-
     }
 
 }

@@ -4,7 +4,7 @@ buildscript {
     ext.kotlin_version = '1.3.50'
 
     repositories {
-        mavenLocal()
+//        mavenLocal()
         google()
         jcenter()
     }
@@ -22,7 +22,7 @@ buildscript {
 
 allprojects {
     repositories {
-        mavenLocal()
+//        mavenLocal()
         google()
         jcenter()
         // for jitpack

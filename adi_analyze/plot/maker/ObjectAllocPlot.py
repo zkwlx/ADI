@@ -3,7 +3,7 @@
 # @Time    : 2019/9/25 11:02 上午
 # @Author  : kewen
 # @File    : ObjectAllocPlot.py
-from bokeh.plotting import figure, output_file
+from bokeh.plotting import figure
 
 from aggregate.GlobalAggregateInfo import GlobalAggregateInfo
 from plot.BaseMaker import BaseMaker
@@ -23,7 +23,6 @@ class ObjectAllocPlot(BaseMaker):
         return self.drawObjectAllocGraph(globalAggInfo, jsonList)
 
     def drawObjectAllocGraph(self, globalAggInfo: GlobalAggregateInfo, jsonList: list):
-        output_file(globalAggInfo.fileName + ".html")
         plotLineDict = {}
         for json in jsonList:
             if json["eventName"] in ["OA", "OF"]:
@@ -73,7 +72,7 @@ class ObjectAllocPlot(BaseMaker):
                         <span style="font-size: 6px;">@threadNameList</span>
                     </div>
                     <div>
-                        <span style="font-size: 5px; font-weight: bold;">aobject size:</span>
+                        <span style="font-size: 5px; font-weight: bold;">object size:</span>
                         <span style="font-size: 6px;">@objectSizeList Byte</span>
                     </div>
                     <div>

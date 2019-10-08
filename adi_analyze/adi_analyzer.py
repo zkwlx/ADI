@@ -3,6 +3,7 @@
 # @Time    : 2019/9/2 11:24 上午
 # @Author  : kewen
 # @File    : adi_analyzer.py
+import os
 import sys
 
 from aggregate.GlobalAggregateInfo import GlobalAggregateInfo
@@ -15,7 +16,8 @@ from handler.ObjectFreeHandler import ObjectFreeHandler
 from handler.ThreadStartHandler import ThreadStartHandler
 from plot.BokehPlotMaker import BokehPlotMaker
 
-FILE_NAME = "depth50_object.log"
+LOG_NAME = ""
+LOG_PATH = ""
 
 # TODO 在这里配置需要解析的 Event
 handlerList = [ObjectAllocHandler(),
@@ -31,7 +33,7 @@ def handleTraceFile() -> list:
     :return:
     """
     originEventList = []
-    with open(FILE_NAME, "r") as file:
+    with open(LOG_PATH, "r") as file:
         count = 0
         for line in file:
             count += 1
@@ -66,7 +68,8 @@ def aggregateEvents(originEventList: list) -> (GlobalAggregateInfo, list):
     endTime = originEventList[-1].timestamp
     # 创建全局聚合信息
     globalInfo = GlobalAggregateInfo()
-    globalInfo.fileName = FILE_NAME
+    globalInfo.fileName = LOG_NAME
+    globalInfo.filePath = LOG_PATH
     globalInfo.startTimestamp = startTime
     globalInfo.endTimestamp = endTime
     globalInfo.totalTime = endTime - startTime
@@ -86,12 +89,22 @@ def aggregateEvents(originEventList: list) -> (GlobalAggregateInfo, list):
 
 
 def makePlot(globalAggInfo: GlobalAggregateInfo, aggJsonList: list):
-    # maker = MongoPlotMaker(FILE_NAME)
+    # maker = MongoPlotMaker(FILE_PATH)
     maker = BokehPlotMaker()
     maker.make(globalAggInfo, aggJsonList)
 
 
-def main():
+def parseArgv(argv):
+    if len(argv) != 1:
+        print("usage: adi_analyzer.py <log file>")
+        sys.exit(2)
+    global LOG_PATH, LOG_NAME
+    LOG_PATH = os.path.expanduser(argv[0])
+    LOG_NAME = os.path.basename(LOG_PATH)
+
+
+def main(argv):
+    parseArgv(argv)
     originEventList = handleTraceFile()
     print("原始数据解析完毕，总共 %d 条" % len(originEventList))
     globalAggInfo, aggJsonList = aggregateEvents(originEventList)
@@ -101,4 +114,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])

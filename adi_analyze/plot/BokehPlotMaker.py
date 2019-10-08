@@ -4,7 +4,7 @@
 # @Author  : kewen
 # @File    : BokehPlotMaker.py
 from bokeh.layouts import column
-from bokeh.plotting import show
+from bokeh.plotting import show, output_file
 
 from aggregate.GlobalAggregateInfo import GlobalAggregateInfo
 from plot.BaseMaker import BaseMaker
@@ -16,11 +16,10 @@ class BokehPlotMaker(BaseMaker):
 
     def __init__(self, ):
         super().__init__()
-        self.globalInfo = None
         self.makerList = [ThreadContendPlot(), ObjectAllocPlot()]
 
     def make(self, globalAggInfo: GlobalAggregateInfo, jsonList: list):
-        self.globalInfo = globalAggInfo
+        output_file(globalAggInfo.filePath + ".html")
         plotList = []
         for maker in self.makerList:
             plot = maker.make(globalAggInfo, jsonList)
@@ -30,6 +29,6 @@ class BokehPlotMaker(BaseMaker):
                         plotList.append(p)
                 else:
                     plotList.append(plot)
-        # TODO 展示所有 Plot
 
+        # 展示所有 Plot
         show(column(plotList))

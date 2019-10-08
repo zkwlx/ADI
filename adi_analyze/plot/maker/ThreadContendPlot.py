@@ -4,7 +4,7 @@
 # @Author  : kewen
 # @File    : ThreadContendPlot.py
 import numpy
-from bokeh.plotting import figure, output_file
+from bokeh.plotting import figure
 
 from aggregate.GlobalAggregateInfo import GlobalAggregateInfo
 from plot.BaseMaker import BaseMaker
@@ -21,7 +21,6 @@ class ThreadContendPlot(BaseMaker):
         return self.drawMonitorGraph(globalAggInfo, jsonList)
 
     def drawMonitorGraph(self, globalAggInfo: GlobalAggregateInfo, jsonList: list):
-        output_file(globalAggInfo.fileName + ".html")
         threadNames = set()
         monitorObjs = set()
         for json in jsonList:

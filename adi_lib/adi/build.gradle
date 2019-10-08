@@ -1,35 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-android'
-//apply plugin: 'maven'
-//group = "zkw.adi"
-//archivesBaseName = "adi"
-//version = '0.9.1'
-//uploadArchives {
-//    doFirst {
-//        System.out.println("============uploadArchives for local: $version")
-//    }
-//    repositories {
-//        mavenDeployer {
-//            repository(url: mavenLocal().url)
-//        }
-//    }
-//    finalizedBy(clean)
-//}
-
-group = "com.github.zkwlx"
-version = '0.9.1'
-//uploadArchives {
-//    doFirst {
-//        System.out.println("============uploadArchives for local: $version")
-//    }
-//    repositories {
-//        mavenDeployer {
-//            repository(url: mavenLocal().url)
-//        }
-//    }
-//    finalizedBy(clean)
-//}
 
 android {
     compileSdkVersion 28
@@ -81,6 +52,24 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
+// maven local ======
+//apply plugin: 'maven'
+//group = "zkw.adi"
+//archivesBaseName = "adi"
+//version = '0.9.1'
+//uploadArchives {
+//    doFirst {
+//        System.out.println("============uploadArchives for local: $version")
+//    }
+//    repositories {
+//        mavenDeployer {
+//            repository(url: mavenLocal().url)
+//        }
+//    }
+//    finalizedBy(clean)
+//}
+// maven local =======
+
 // upload to jcenter ===================================
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
@@ -96,7 +85,7 @@ ext {
     publishedGroupId = 'zkw.adi'
     //最好和libraryName保持一致
     artifact = 'adi'
-    libraryVersion = '0.9.1'
+    libraryVersion = '0.9.2'
 
     //库描述
     libraryDescription = 'A powerful tool to help Android engineers optimize their performance'

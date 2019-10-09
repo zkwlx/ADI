@@ -5,20 +5,22 @@
 <tr>
 
   <td>
-  <a href="doc/adi_对象分配.html">
-  <img alt="colormapped image plot thumbnail" src="doc/对象分配与释放.png" />
+  <a href="https://zkwlx.github.io/ADI/docs/adi_对象分配.html">
+  <img width="400" height="460" alt="对象分配与释放的样例" src="docs/对象分配与释放.png"  />
   </a>
+  点击体验样例
   </td>
 
   <td>
-  <a href="https://bokeh.pydata.org/en/latest/docs/gallery/anscombe.html">
-  <img alt="anscombe plot thumbnail" src="doc/多线程竞争.png" />
+  <a href="https://zkwlx.github.io/ADI/docs/adi_线程竞争.html">
+  <img width="400" height="460" alt="多线程竞争样例" src="docs/多线程竞争.png" />
   </a>
+  点击体验样例
   </td>
 
   <td>
-  <a href="https://bokeh.pydata.org/en/latest/docs/gallery/stocks.html">
-  <img alt="stocks plot thumbnail" src="doc/adi_screenshot.png" />
+  <a href="https://github.com/zkwlx/ADI/blob/master/docs/adi_screenshot.png">
+  <img width="400" height="460" alt="APP 集成样例截图" src="docs/adi_screenshot.png" />
   </a>
   </td>
 

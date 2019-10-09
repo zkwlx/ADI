@@ -43,7 +43,7 @@ class ThreadContendPlot(BaseMaker):
                 if plotSeg is None:
                     plotSeg = ThreadContendSegment()
                     plotSeg.color = monitorObjColorDict[monitorObj]
-                    plotSeg.legend = str(monitorObj)
+                    plotSeg.legend = monitorObj
                     plotSegments[monitorObj] = plotSeg
                 plotSeg.x0.append(json["time"])
                 contendThread = json["contendThreadName"][0:40]
@@ -53,19 +53,21 @@ class ThreadContendPlot(BaseMaker):
                 plotSeg.monitorObjNames.append(json["monitorObjName"])
                 plotSeg.contendStack.append(json["contendStack"])
                 plotSeg.ownerStack.append(json["ownerStack"])
+                plotSeg.contendOwnedMonitors.append(json["contendOwnedMonitors"])
             elif name == "MCED":
                 monitorObj = json["monitorObjHash"]
                 plotSeg = plotSegments.get(monitorObj, None)
                 if plotSeg is None:
-                    print("what!?!?!?!?!??!?!?!")
+                    print("what!?!?!?!?!??!?!?!: " + monitorObj)
                 else:
                     plotSeg.x1.append(json["time"])
 
-        # 某些没有结束时间（没有 MCED）的填充结束时间为日志总时长
+        # 计算每一项的 duration
         for _, plot in plotSegments.items():
             x0Len = len(plot.x0)
             x1Len = len(plot.x1)
             if x0Len > x1Len:
+                # 某些没有结束时间（没有 MCED）的填充结束时间为日志总时长
                 totalTime = globalAggInfo.totalTime
                 plot.x1 += [totalTime for _ in range(x0Len - x1Len)]
             x0Array = numpy.array(plot.x0)
@@ -92,6 +94,10 @@ class ThreadContendPlot(BaseMaker):
                 <span style="font-size: 6px;">@y0</span>
             </div>
             <div>
+                <span style="font-size: 5px; font-weight: bold;">contend thread owned:</span>
+                <span style="font-size: 6px;">@contendOwnedMonitors</span>
+            </div>
+            <div>
                 <span style="font-size: 5px; font-weight: bold;">contend stack:</span>
                 <span style="font-size: 6px; white-space: pre-wrap;">\n@contendStack</span>
             </div>
@@ -111,6 +117,7 @@ class ThreadContendPlot(BaseMaker):
         for _, plot in plotSegments.items():
             data = dict(x0=plot.x0, y0=plot.y0, x1=plot.x1, y1=plot.y1, ownerThread=plot.ownerThread,
                         monitorNames=plot.monitorObjNames, contendStack=plot.contendStack,
-                        ownerStack=plot.ownerStack, durations=plot.durations)
+                        ownerStack=plot.ownerStack, durations=plot.durations,
+                        contendOwnedMonitors=plot.contendOwnedMonitors)
             graph.segment(source=data, x0="x0", x1="x1", y0="y0", y1="y1", line_width=10, color=plot.color)
         return graph

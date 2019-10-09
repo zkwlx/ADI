@@ -4,6 +4,7 @@
 
 #include <cstdio>
 #include <pthread.h>
+#include <cstdlib>
 #include "MonitorContendedHandler.h"
 #include "../common/log.h"
 #include "../common/jdi_native.h"
@@ -40,7 +41,7 @@ createMCEBaseInfo(jvmtiEnv *jvmti_env, JNIEnv *jni_env, jthread thread, jobject 
     jvmti_env->GetThreadInfo(thread, &threadInfo);
     char *baseInfo;
     int64_t timeMillis = currentTimeMillis();
-    asprintf(&baseInfo, "%lld%s%s%s%d%s%s",
+    asprintf(&baseInfo, "%lld%s%s%s%x%s%s",
              timeMillis, SEP_POWER,
              threadInfo.name, SEP_POWER,
              hashcode, SEP_POWER,
@@ -48,6 +49,45 @@ createMCEBaseInfo(jvmtiEnv *jvmti_env, JNIEnv *jni_env, jthread thread, jobject 
     jvmti_env->Deallocate((unsigned char *) signature);
     return baseInfo;
 }
+
+/**
+ * 创建竞争线程所持有的锁对象信息
+ * 格式：
+ * 锁对象1 hash^^^锁对象2 hash^^^锁对象3 hash
+ * 示例：
+ * 75353688^^^143356788^^^22456578
+ *
+ * @param jvmti_env
+ * @param jni_env
+ * @param thread
+ * @return
+ */
+static char *
+createContendThreadMonitorInfo(jvmtiEnv *jvmti_env, JNIEnv *jni_env, jthread thread) {
+    char *result = nullptr;
+    jint count;
+    jobject *monitors;
+    jvmti_env->GetOwnedMonitorInfo(thread, &count, &monitors);
+    if (count <= 0) {
+        return result;
+    }
+    for (int i = 0; i < count; i++) {
+        jint hashcode;
+        jobject monitorObj = monitors[i];
+        jvmti_env->GetObjectHashCode(monitorObj, &hashcode);
+        if (result == nullptr) {
+            asprintf(&result, "%x", hashcode);
+        } else {
+            char *temp;
+            asprintf(&temp, "%s%s%x", result, SEP_POWER, hashcode);
+            free(result);
+            result = temp;
+        }
+    }
+    jvmti_env->Deallocate((unsigned char *) monitors);
+    return result;
+}
+
 
 /**
  * 创建 MCED 事件的基础信息
@@ -70,7 +110,7 @@ createMCEDBaseInfo(jvmtiEnv *jvmti_env, JNIEnv *jni_env, jthread thread, jobject
     jvmti_env->GetThreadInfo(thread, &threadInfo);
     char *baseInfo;
     int64_t timeMillis = currentTimeMillis();
-    asprintf(&baseInfo, "%lld%s%s%s%d",
+    asprintf(&baseInfo, "%lld%s%s%s%x",
              timeMillis, SEP_POWER,
              threadInfo.name, SEP_POWER,
              hashcode);
@@ -108,7 +148,11 @@ static int stackDepth = 0;
 void JNICALL
 MonitorContendedEnter(jvmtiEnv *jvmti_env, JNIEnv *jni_env, jthread thread, jobject object) {
     ALOGI("======MonitorContendedEnter=======");
+    // 获取竞争线程的基本信息
     char *baseInfo = createMCEBaseInfo(jvmti_env, jni_env, thread, object);
+    // 获取竞争线程所持有的锁对象列表
+    char *ownedInfo = createContendThreadMonitorInfo(jvmti_env, jni_env, thread);
+    // 获取锁的持有状态信息
     jvmtiMonitorUsage monitorUsage;
     jvmti_env->GetObjectMonitorUsage(object, &monitorUsage);
     char *monitorInfo = createMonitorInfo(jvmti_env, jni_env, thread, monitorUsage);
@@ -120,7 +164,8 @@ MonitorContendedEnter(jvmtiEnv *jvmti_env, JNIEnv *jni_env, jthread thread, jobj
     // 获取持有锁线程的调用栈
     char *ownerStackInfo = createStackInfo(jvmti_env, jni_env, monitorUsage.owner, stackDepth);
     char *line;
-    asprintf(&line, "%s|%s|%s|%s|%s\n", LOG_TAG, baseInfo, monitorInfo, contendStackInfo,
+    asprintf(&line, "%s|%s|%s|%s|%s|%s\n", LOG_TAG, baseInfo, ownedInfo, monitorInfo,
+             contendStackInfo,
              ownerStackInfo);
     dumper_add(line);
 }

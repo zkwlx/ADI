@@ -19,3 +19,4 @@ class ThreadContendSegment:
         self.monitorObjNames = []
         self.contendStack = []
         self.ownerStack = []
+        self.contendOwnedMonitors = []

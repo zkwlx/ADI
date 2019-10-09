@@ -14,8 +14,9 @@ class MonitorContendedEvent(Event):
     def __init__(self):
         super().__init__()
         self.contendThreadName = ""
-        self.monitorObjHash = 0
+        self.monitorObjHash = ""
         self.monitorObjName = ""
+        self.contendOwnedMonitors = []
         self.contendStack = []
         self.ownerThreadName = ""
         self.entryCount = 0

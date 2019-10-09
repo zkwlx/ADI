@@ -37,8 +37,9 @@ class ThreadContendHandler(BaseHandler):
             json["entryCount"] = event.entryCount
             json["waiterCount"] = event.waiterCount
             json["notifyWaiterCount"] = event.notifyWaiterCount
+            json["contendOwnedMonitors"] = "[" + ", ".join(event.contendOwnedMonitors) + "]"
             monitorObjName, contendStack, ownerStack = aggregateMCEEvent(event)
-            json["monitorObjName"] = monitorObjName + "@" + str(event.monitorObjHash)
+            json["monitorObjName"] = monitorObjName + "@" + event.monitorObjHash
             json["contendStack"] = contendStack
             json["ownerStack"] = ownerStack
         elif eventName in "MCED":

@@ -64,8 +64,9 @@ class MainActivity : Activity() {
             }
         }
         findViewById<View>(R.id.monitor_test).setOnClickListener {
-            testMonitorContend(false)
             testMonitorContend(true)
+            Thread.sleep(1000)
+            testMonitorContend(false)
         }
         findViewById<View>(R.id.call_system_service).setOnClickListener {
             for (i in 0..4) {
@@ -98,12 +99,7 @@ class MainActivity : Activity() {
     private fun startPushToLooperForTest() {
         val t1 = Thread {
             for (i in 0..4) {
-                try {
-                    Thread.sleep(50)
-                } catch (e: InterruptedException) {
-                    e.printStackTrace()
-                }
-
+                Thread.sleep(50)
                 //                ADIManager.pushToLooperForTest(Thread.currentThread().getName() + ": " + i);
             }
         }
@@ -112,12 +108,7 @@ class MainActivity : Activity() {
 
         val t2 = Thread {
             for (i in 0..4) {
-                try {
-                    Thread.sleep(10)
-                } catch (e: InterruptedException) {
-                    e.printStackTrace()
-                }
-
+                Thread.sleep(10)
                 //                ADIManager.pushToLooperForTest(Thread.currentThread().getName() + ": " + i);
             }
         }
@@ -126,12 +117,7 @@ class MainActivity : Activity() {
 
         val t3 = Thread {
             for (i in 0..4) {
-                try {
-                    Thread.sleep(30)
-                } catch (e: InterruptedException) {
-                    e.printStackTrace()
-                }
-
+                Thread.sleep(30)
                 //                ADIManager.pushToLooperForTest(Thread.currentThread().getName() + ": " + i);
             }
         }
@@ -146,20 +132,16 @@ class MainActivity : Activity() {
         val b = Any()
         val t1 = Thread {
             synchronized(a) {
-                try {
-                    Thread.sleep(3000)
-                } catch (e: InterruptedException) {
-                    e.printStackTrace()
-                }
-
-                if (isDeadlock) {
-                    synchronized(b) {
-                        try {
-                            Thread.sleep(1000)
-                        } catch (e: InterruptedException) {
-                            e.printStackTrace()
+                val z = Any()
+                synchronized(z) {
+                    Thread.sleep(300)
+                    val k = Any()
+                    synchronized(k) {
+                        if (isDeadlock) {
+                            synchronized(b) {
+                                Thread.sleep(100)
+                            }
                         }
-
                     }
                 }
             }
@@ -168,19 +150,16 @@ class MainActivity : Activity() {
         t1.start()
         val t2 = Thread {
             synchronized(b) {
-                try {
-                    Thread.sleep(1000)
-                } catch (e: InterruptedException) {
-                    e.printStackTrace()
-                }
-
-                synchronized(a) {
-                    try {
-                        Thread.sleep(1000)
-                    } catch (e: InterruptedException) {
-                        e.printStackTrace()
+                val z = Any()
+                synchronized(z) {
+                    Thread.sleep(100)
+                    val k = Any()
+                    synchronized(k) {
+                        Log.i("", "")
+                        synchronized(a) {
+                            Thread.sleep(100)
+                        }
                     }
-
                 }
             }
 

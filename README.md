@@ -8,14 +8,14 @@
   <a href="https://zkwlx.github.io/ADI/docs/adi_对象分配.html">
   <img width="400" height="460" alt="对象分配与释放的样例" src="docs/对象分配与释放.png"  />
   </a>
-  点击图片体验样例
+  对象分配图表，点击图片体验
   </td>
 
   <td>
   <a href="https://zkwlx.github.io/ADI/docs/adi_线程竞争.html">
   <img width="400" height="460" alt="多线程竞争样例" src="docs/多线程竞争.png" />
   </a>
-  点击图片体验样例
+  线程竞争图表，点击图片体验
   </td>
 
   <td>

@@ -6,7 +6,7 @@
 
   <td>
   <a href="https://zkwlx.github.io/ADI/docs/adi_对象分配.html">
-  <img width="300" height="440" alt="对象分配与释放的样例" src="docs/对象分配与释放.png"  />
+  <img alt="对象分配与释放的样例" src="docs/对象分配与释放.png"  />
     <p/>对象分配图表 点击体验
   </a>
 
@@ -14,14 +14,15 @@
 
   <td>
   <a href="https://zkwlx.github.io/ADI/docs/adi_线程竞争.html">
-  <img width="300" height="440" alt="多线程竞争样例" src="docs/多线程竞争.png" />
+  <img alt="多线程竞争样例" src="docs/多线程竞争.png" />
     <p/>线程竞争图表 点击体验
   </a>
   </td>
 
   <td>
   <a href="https://github.com/zkwlx/ADI/blob/master/docs/adi_screenshot.png">
-  <img width="300" height="440" alt="APP 集成样例截图" src="docs/adi_screenshot.png" />
+  <img alt="APP 集成样例截图" src="docs/adi_screenshot.png" />
+    <p/>ADI 控制窗
   </a>
   </td>
 

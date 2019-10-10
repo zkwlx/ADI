@@ -76,8 +76,10 @@ ADIManager.stop()
 // 在 Activity 中调用
 ADIFloatManager.showADIFloat(activity)
 ```
-控制窗的使用方法情参考图解    
+控制窗的使用方法情参考图解
+
 <img width="300" height="232" alt="控制窗图解" src="docs/adi_float.png" />
+
 ### 解析 Log 文件并生成图表
 采集的内容存放在 `Context.getExternalCacheDir()`/ADI 目录下，例如
 ```bash
@@ -88,10 +90,27 @@ ADIFloatManager.showADIFloat(activity)
 ```bash
 python3 adi_analyzer.py ~/adi_1570605092.log
 ```
-图表生成后会自动启动浏览器打开图表文件，效果如封面。
+adi_analyzer.py 会创建 .html 结尾的图表文件，之后会自动启动浏览器打开图表文件，图表效果请参考封面。
+
 # 功能详解
 ## 对象分配监控
+在监控对象分配时，ADI 会监控所有 Java 层对象的创建事件，有几点需要注意：
+* 频繁创建对象可能会导致 App 卡顿甚至卡死，可以通过 [ADIConfig.sampleIntervalMs](https://github.com/zkwlx/ADI/blob/master/adi_lib/adi/src/main/java/com/adi/ADIConfig.java#L68) 配置采样间隔（默认 0.8ms）
+* 调用栈的深度默认是 10，可以通过 [ADIConfig.stackDepth](https://github.com/zkwlx/ADI/blob/master/adi_lib/adi/src/main/java/com/adi/ADIConfig.java#L68) 修改
+* 如果生成的 Log 文件过大会严重影响图表生成时间，此时建议增加采样间隔或减少整体采样时长
+
+ADI 会为对象事件的 Log 生成两个图表：对象分配数量图表和对象分配大小图表。下面用对象分配数量图表介绍下图表的使用方式。
+<a href="https://zkwlx.github.io/ADI/docs/adi_对象分配.html">
+ <img alt="图表图解" src="docs/对象分配图表图解.png" />
+ <p/>点击体验
+</a>
+
 ## 多线程竞争监控
+在监控多线程竞争时，ADI 会监控所有 Java 层 `synchronized` 关键字导致的多线程锁竞争事件，以下几点需要注意：
+* 调用栈的深度默认是 10，可以通过 [ADIConfig.stackDepth](https://github.com/zkwlx/ADI/blob/master/adi_lib/adi/src/main/java/com/adi/ADIConfig.java#L68) 修改
+* 如果生成的 Log 文件过大会严重影响图表生成时间，此时建议减少采样时长
+
+多线程竞争图表的 Y 轴是发生竞争的线程名字，X 轴是时间，具体说明请看图解。
 
 # License
 ```

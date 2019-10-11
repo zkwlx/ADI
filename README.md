@@ -1,4 +1,10 @@
 # ADI 简介
+<a href='https://bintray.com/zkwlx/ADI/zkw.adi/0.9.3/link'>
+  <img src='https://api.bintray.com/packages/zkwlx/ADI/zkw.adi/images/download.svg?version=0.9.3'>
+</a>
+<a href='https://github.com/zkwlx/ADI/blob/master/LICENSE'>
+  <img src='https://img.shields.io/github/license/zkwlx/ADI'>
+</a>
 
 <p>
 <table cellspacing="10">
@@ -52,7 +58,7 @@ allprojects {
 ```
 然后 APP 工程集成 adi 库：
 ```gradle
-implementation 'zkw.adi:adi:0.9.2'
+implementation 'zkw.adi:adi:0.9.3'
 ```
 ### 生成 Log 文件
 集成 adi 库之后便能够对 App 进行性能数据采集，采集方式有两种。
@@ -95,8 +101,8 @@ adi_analyzer.py 会创建 .html 结尾的图表文件，之后会自动启动浏
 # 功能详解
 ## 对象分配监控
 在监控对象分配时，ADI 会监控所有 Java 层对象的创建事件，有几点需要注意：
-* 频繁创建对象可能会导致 App 卡顿甚至卡死，可以通过 [ADIConfig.sampleIntervalMs](https://github.com/zkwlx/ADI/blob/master/adi_lib/adi/src/main/java/com/adi/ADIConfig.java#L68) 配置采样间隔（默认 0.8ms）
-* 调用栈的深度默认是 10，可以通过 [ADIConfig.stackDepth](https://github.com/zkwlx/ADI/blob/master/adi_lib/adi/src/main/java/com/adi/ADIConfig.java#L68) 修改
+* 频繁创建对象可能会导致 App 卡顿甚至卡死，可以通过 [ADIConfig.sampleIntervalMs](https://github.com/zkwlx/ADI/blob/master/adi_lib/adi/src/main/java/com/adi/ADIConfig.java#L68) 或控制窗配置采样间隔（默认 0.8ms）
+* 调用栈的深度默认是 10，可以通过 [ADIConfig.stackDepth](https://github.com/zkwlx/ADI/blob/master/adi_lib/adi/src/main/java/com/adi/ADIConfig.java#L68) 或控制窗修改
 * 如果生成的 Log 文件过大会严重影响图表生成时间，此时建议增加采样间隔或减少整体采样时长
 
 ADI 会为对象事件的 Log 生成两个图表：对象分配数量图表和对象分配大小图表。下面用对象分配数量图表介绍下图表的使用方式。
@@ -107,10 +113,14 @@ ADI 会为对象事件的 Log 生成两个图表：对象分配数量图表和�
 
 ## 多线程竞争监控
 在监控多线程竞争时，ADI 会监控所有 Java 层 `synchronized` 关键字导致的多线程锁竞争事件，以下几点需要注意：
-* 调用栈的深度默认是 10，可以通过 [ADIConfig.stackDepth](https://github.com/zkwlx/ADI/blob/master/adi_lib/adi/src/main/java/com/adi/ADIConfig.java#L68) 修改
+* 调用栈的深度默认是 10，可以通过 [ADIConfig.stackDepth](https://github.com/zkwlx/ADI/blob/master/adi_lib/adi/src/main/java/com/adi/ADIConfig.java#L68) 或控制窗修改
 * 如果生成的 Log 文件过大会严重影响图表生成时间，此时建议减少采样时长
 
 多线程竞争图表的 Y 轴是发生竞争的线程名字，X 轴是时间，具体说明请看图解。
+<a href="https://zkwlx.github.io/ADI/docs/adi_线程竞争.html">
+ <img alt="图表图解" src="docs/线程竞争图表图解.png" />
+ <p/>点击体验
+</a>
 
 # License
 ```

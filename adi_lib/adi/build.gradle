@@ -85,7 +85,7 @@ ext {
     publishedGroupId = 'zkw.adi'
     //最好和libraryName保持一致
     artifact = 'adi'
-    libraryVersion = '0.9.2'
+    libraryVersion = '0.9.3'
 
     //库描述
     libraryDescription = 'A powerful tool to help Android engineers optimize their performance'

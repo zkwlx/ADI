@@ -37,3 +37,26 @@ subprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+ext {
+    //发布到bintray上仓库名，执行上传前必须手动创建同名到仓库，否则上传会失败
+    bintrayRepo = 'ADI'
+
+    //群组id
+    publishedGroupId = 'zkw.adi'
+    libraryVersion = '0.9.3'
+
+    //库描述
+    libraryDescription = 'A powerful tool to help Android engineers optimize their performance'
+
+    siteUrl = 'https://github.com/zkwlx/ADI'
+    gitUrl = 'https://github.com/zkwlx/ADI.git'
+
+    developerId = 'zkwlx'
+    developerName = 'zkwlx'
+    developerEmail = 'zkwlixue@163.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}

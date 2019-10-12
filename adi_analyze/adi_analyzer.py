@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # @Time    : 2019/9/2 11:24 上午
 # @Author  : kewen

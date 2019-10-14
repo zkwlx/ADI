@@ -103,7 +103,8 @@ def parseArgv(argv):
     LOG_NAME = os.path.basename(LOG_PATH)
 
 
-def main(argv):
+def main():
+    argv = sys.argv[1:]
     parseArgv(argv)
     originEventList = handleTraceFile()
     print("原始数据解析完毕，总共 %d 条" % len(originEventList))
@@ -114,4 +115,4 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()

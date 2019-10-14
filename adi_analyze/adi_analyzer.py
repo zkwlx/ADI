@@ -4,9 +4,7 @@
 # @Author  : kewen
 # @File    : adi_analyzer.py
 
-import sys
-
 from main import analyzer
 
 if __name__ == "__main__":
-    analyzer.main(sys.argv[1:])
+    analyzer.main()

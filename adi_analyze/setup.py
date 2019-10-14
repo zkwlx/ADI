@@ -7,8 +7,9 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='adi_analyzer',
-    version='0.9.0',
+    name='adi-analyzer',
+    #TODO 版本号要维护起来！~
+    version='0.9.3',
     author='zkwlx',
     author_email='zkwlixue@163.com',
     url='https://github.com/zkwlx/ADI',
@@ -17,7 +18,7 @@ setup(
     install_requires=['bokeh'],
     entry_points={
         'console_scripts': [
-            'adi_analyzer=main.analyzer:main'
+            'adi-analyzer=main.analyzer:main'
         ]
     },
     # See https://pypi.python.org/pypi?%3Aaction=list_classifiers

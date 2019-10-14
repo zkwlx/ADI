@@ -91,12 +91,15 @@ ADIFloatManager.showADIFloat(activity)
 ```bash
 /sdcard/Android/data/APP 包名/cache/ADI/adi_1570605092.log
 ```
-取出 log 文件后，使用`adi_analyze/adi_analyzer.py`分析 log 并生成图表，命令如下
-> 使用 adi_analyzer.py 前请先安装 [bokeh](https://docs.bokeh.org/en/latest/docs/installation.html): `pip install bokeh`
+取出 log 文件后，需要用`adi-analyzer`工具分析 log 并生成图表，通过 pip3 安装：
 ```bash
-python3 adi_analyzer.py ~/adi_1570605092.log
+pip3 install adi-analyzer
 ```
-adi_analyzer.py 会创建 .html 结尾的图表文件，之后会自动启动浏览器打开图表文件，图表效果请参考封面。
+之后运行 adi-analyzer 并将 log 文件传入：
+```bash
+adi-analyzer ~/adi_1570605092.log
+```
+adi-analyzer 会创建 .html 结尾的图表文件，之后会自动启动浏览器打开图表文件，图表效果请参考封面。
 
 # 功能详解
 ## 对象分配监控

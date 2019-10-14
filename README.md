@@ -36,7 +36,7 @@
 </table>
 </p>
 
-ADI(Android Debug Intensive) 是 Android 应用开发调试的增强工具集，目前主要提供性能相关的监控能力。  
+ADI(Android Debug Intensive) 是通过 JVMTI 实现的 Android 应用开发调试的增强工具集，目前主要提供性能相关的监控能力。  
 ADI 对运行时的 App 进行性能数据收集，并提供工具用于生成分析图表。目前提供如下功能：
 * 监控 ART 运行过程中对象的分配与释放，包括对象大小、创建对象调用栈等信息
 * 监控 ART 运行过程中多线程之间的锁竞争，包括发生竞争时的调用栈、当前竞争线程的等待时长、当前持有锁的线程等信息
@@ -58,7 +58,8 @@ allprojects {
 ```
 然后 APP 工程集成 adi 库：
 ```gradle
-implementation 'zkw.adi:adi:0.9.3'
+debugImplementation 'zkw.adi:adi:0.9.3'
+releaseImplementation 'zkw.adi:adi-nop:0.9.3'
 ```
 ### 生成 Log 文件
 集成 adi 库之后便能够对 App 进行性能数据采集，采集方式有两种。

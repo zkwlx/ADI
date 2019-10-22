@@ -77,7 +77,7 @@ class ObjectAllocPlot(BaseMaker):
                     </div>
                     <div>
                         <span style="font-size: 5px; font-weight: bold;">object count:</span>
-                        <span style="font-size: 6px;">@y</span>
+                        <span style="font-size: 6px;">@objectCountList</span>
                     </div>
                     <div>
                         <span style="font-size: 5px; font-weight: bold;">timestamp:</span>
@@ -105,7 +105,8 @@ class ObjectAllocPlot(BaseMaker):
 
             data = dict(x=plot.timeList, y=plotY, objectNameList=plot.objectNameList,
                         threadNameList=plot.threadNameList, stackList=plot.stackList,
-                        objectSizeList=plot.objectSizeList, eventNameList=plot.eventNameList)
+                        objectSizeList=plot.objectSizeList, eventNameList=plot.eventNameList,
+                        objectCountList=plot.countList)
             graph.line(source=data, x="x", y="y", color=idColorDict[plot.aggId], line_width=2)
 
         return graph

@@ -106,8 +106,9 @@ def parseArgv(argv):
 def main():
     argv = sys.argv[1:]
     parseArgv(argv)
+    print("开始解析...")
     originEventList = handleTraceFile()
-    print("原始数据解析完毕，总共 %d 条" % len(originEventList))
+    print("原始数据解析完毕，总共 %d 条，开始聚合..." % len(originEventList))
     globalAggInfo, aggJsonList = aggregateEvents(originEventList)
     print("\n聚合完毕，生成图表...")
     makePlot(globalAggInfo, aggJsonList)

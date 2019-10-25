@@ -50,6 +50,8 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        ADIManager.init(this)
+
         findViewById<View>(R.id.adi_start).setOnClickListener {
             ADIFloatManager.showADIFloat(this)
         }
@@ -76,15 +78,16 @@ class MainActivity : Activity() {
             }
         }
 
-        findViewById<View>(R.id.object_size).setOnClickListener {
+        findViewById<View>(R.id.retransform_test).setOnClickListener {
             val o = TestObject()
-            val size = ADIManager.getObjSize(o)
-            Log.i("zkw", "============>>$size")
+            ADIManager.retransformClass(arrayOf(TestObject::class.java))
         }
         findViewById<View>(R.id.thread_start).setOnClickListener {
-            for (i in 0..4) {
-                val t = Thread("TTT_$i")
-            }
+//            for (i in 0..4) {
+//                val t = Thread("TTT_$i")
+//            }
+            val ooo = TestObject()
+            ooo.a()
         }
         //===============用于 Looper 的测试方法 =============
         findViewById<View>(R.id.button_start_looper_test).setOnClickListener {

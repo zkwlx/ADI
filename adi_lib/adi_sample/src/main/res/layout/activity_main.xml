@@ -55,8 +55,8 @@
             android:text="创建线程" />
 
     <Button
-            android:id="@+id/object_size"
+            android:id="@+id/retransform_test"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="查看对象 Size" />
+            android:text="测试字节码修改" />
 </LinearLayout>

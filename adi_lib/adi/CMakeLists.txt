@@ -10,6 +10,7 @@ aux_source_directory(./src/main/cpp NATIVE_SRC)
 aux_source_directory(./src/main/cpp/clooper LOOPER_SRC)
 aux_source_directory(./src/main/cpp/handler HANDLER_SRC)
 aux_source_directory(src/main/cpp/common COMMON_SRC)
+aux_source_directory(src/main/cpp/dex_slicer DEX_SLICER_SRC)
 
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
@@ -17,6 +18,15 @@ aux_source_directory(src/main/cpp/common COMMON_SRC)
 # Gradle automatically packages shared libraries with your APK.
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -frtti -Wall -Wno-unused-parameter -Wno-unused-variable -Wno-shift-count-overflow -Wno-error=non-virtual-dtor -Wno-sign-compare -Wno-switch -Wno-missing-braces")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -frtti")
+
+add_library(
+        dex_slicer
+        STATIC
+        ${DEX_SLICER_SRC})
+
+include_directories(src/main/cpp/dex_slicer/export/)
+
+target_link_libraries(dex_slicer z)
 
 add_library( # Sets the name of the library.
         adi_agent
@@ -50,6 +60,8 @@ find_library( # Sets the name of the path variable.
 # build script, prebuilt third-party libraries, or system libraries.
 target_link_libraries( # Specifies the target library.
         adi_agent
+        # dex slicer
+        dex_slicer
         # Links the target library to the log library
         # included in the NDK.
         ${log-lib})

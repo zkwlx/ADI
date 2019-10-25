@@ -14,31 +14,13 @@
 #include "handler/Config.h"
 #include "common/jdi_native.h"
 #include "common/log.h"
+#include "handler/ClassFileLoadHookHandler.h"
 
 extern "C" {
 #include "dumper.h"
 }
 
 static jvmtiEnv *jvmti_env;
-
-static void ClassTransform(jvmtiEnv *jvmti_env,
-                           JNIEnv *env,
-                           jclass classBeingRedefined,
-                           jobject loader,
-                           const char *name,
-                           jobject protectionDomain,
-                           jint classDataLen,
-                           const unsigned char *classData,
-                           jint *newClassDataLen,
-                           unsigned char **newClassData) {
-
-    if (!strcmp(name, "android/app/Activity")) {
-        if (loader == nullptr) {
-            ALOGI("==========bootclassloader=============");
-        }
-        ALOGI("==========ClassTransform %s=======", name);
-    }
-}
 
 void SetAllCapabilities(jvmtiEnv *jvmti) {
     jvmtiCapabilities caps;
@@ -104,7 +86,7 @@ extern "C" JNIEXPORT jint JNICALL Agent_OnAttach(JavaVM *vm, char *options, void
 //    callbacks.NativeMethodBind = &JvmTINativeMethodBind;
     //TODO 不知为何会发 调试信号 导致应用终止
 //    callbacks.MethodEntry = &MethodEntry;
-    callbacks.ClassFileLoadHook = &ClassTransform;
+    callbacks.ClassFileLoadHook = &ClassFileLoadHook;
     callbacks.VMObjectAlloc = &ObjectAllocCallback;
     callbacks.GarbageCollectionStart = &GCStartCallback;
     callbacks.GarbageCollectionFinish = &GCFinishCallback;
@@ -137,22 +119,16 @@ extern "C" JNIEXPORT void JNICALL stopDump(JNIEnv *env, jclass jclazz) {
     dumper_stop();
 }
 
-//===============用于 Looper 的测试方法 =============
-extern "C" {
-#include "clooper/looper_test.h"
-}
-extern "C" JNIEXPORT void JNICALL startLooper(JNIEnv *env, jclass jclazz) {
-    test_looper_start();
-}
-
-extern "C" JNIEXPORT void JNICALL pushToLooper(JNIEnv *env, jclass jclazz, jstring data) {
-    char *dataChar = const_cast<char *>(env->GetStringUTFChars(data, JNI_FALSE));
-    test_looper_push(dataChar);
-    env->ReleaseStringUTFChars(data, dataChar);
-}
-
-extern "C" JNIEXPORT void JNICALL stopLooper(JNIEnv *env, jclass jclazz) {
-    test_looper_destroy();
+extern "C" JNIEXPORT void JNICALL disableEvents(JNIEnv *env, jclass jclazz, jintArray jevents) {
+    jint len = env->GetArrayLength(jevents);
+    if (len == 0) {
+        return;
+    }
+    jint events[len];
+    env->GetIntArrayRegion(jevents, 0, len, events);
+    for (int i : events) {
+        SetEventNotification(jvmti_env, JVMTI_DISABLE, jvmtiEvent(i));
+    }
 }
 
 extern "C" JNIEXPORT void JNICALL
@@ -177,26 +153,52 @@ enableEvents(JNIEnv *env, jclass jclazz, jobject configObj, jintArray jevents) {
     }
 }
 
-extern "C" JNIEXPORT void JNICALL disableEvents(JNIEnv *env, jclass jclazz, jintArray jevents) {
-    jint len = env->GetArrayLength(jevents);
-    if (len == 0) {
-        return;
-    }
-    jint events[len];
-    env->GetIntArrayRegion(jevents, 0, len, events);
-    for (int i : events) {
-        SetEventNotification(jvmti_env, JVMTI_DISABLE, jvmtiEvent(i));
-    }
+//===============用于 Looper 的测试方法 start =============
+extern "C" {
+#include "clooper/looper_test.h"
+}
+extern "C" JNIEXPORT void JNICALL startLooper(JNIEnv *env, jclass jclazz) {
+    test_looper_start();
 }
 
-//===============用于 Looper 的测试方法 =============
+extern "C" JNIEXPORT void JNICALL pushToLooper(JNIEnv *env, jclass jclazz, jstring data) {
+    char *dataChar = const_cast<char *>(env->GetStringUTFChars(data, JNI_FALSE));
+    test_looper_push(dataChar);
+    env->ReleaseStringUTFChars(data, dataChar);
+}
+
+extern "C" JNIEXPORT void JNICALL stopLooper(JNIEnv *env, jclass jclazz) {
+    test_looper_destroy();
+}
+//===============用于 Looper 的测试方法 end =============
+
+//===========用于 retransformClasses 测试 start ========
+extern "C" JNIEXPORT void JNICALL
+retransformClasses(JNIEnv *env, jclass jclazz, jobjectArray jclasses) {
+    jsize len = env->GetArrayLength(jclasses);
+    auto *classes = (jclass *) malloc(len * sizeof(jclass));
+
+    for (int i = 0; i < len; i++) {
+        classes[i] = (jclass) env->NewGlobalRef(env->GetObjectArrayElement(jclasses, i));
+    }
+    jvmtiError error = jvmti_env->RetransformClasses(len, classes);
+    if (error != JVMTI_ERROR_NONE) {
+        ALOGI("Error on retransformClasses: %d", error);
+    }
+    for (int i = 0; i < len; i++) {
+        env->DeleteGlobalRef(classes[i]);
+    }
+    free(classes);
+}
+//===========用于 retransformClasses 测试 end ========
 
 static JNINativeMethod methods[] = {
-        {"startDump",     "(Ljava/lang/String;)V",    (void *) startDump},
-        {"stopDump",      "()V",                      (void *) stopDump},
-        {"getObjectSize", "(Ljava/lang/Object;)J",    (void *) getObjectSize},
-        {"enableEvents",  "(Lcom/adi/ADIConfig;[I)V", (void *) enableEvents},
-        {"disableEvents", "([I)V",                    (void *) disableEvents},
+        {"startDump",          "(Ljava/lang/String;)V",    (void *) startDump},
+        {"stopDump",           "()V",                      (void *) stopDump},
+        {"getObjectSize",      "(Ljava/lang/Object;)J",    (void *) getObjectSize},
+        {"enableEvents",       "(Lcom/adi/ADIConfig;[I)V", (void *) enableEvents},
+        {"disableEvents",      "([I)V",                    (void *) disableEvents},
+        {"retransformClasses", "([Ljava/lang/Class;)V",    (void *) retransformClasses},
         // 用于 Looper 的测试方法
 //        {"startLooperForTest",  "()V",                      (void *) startLooper},
 //        {"pushToLooperForTest", "(Ljava/lang/String;)V",    (void *) pushToLooper},

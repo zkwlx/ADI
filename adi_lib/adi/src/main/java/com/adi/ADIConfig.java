@@ -2,6 +2,7 @@ package com.adi;
 
 import java.util.Arrays;
 
+import static com.adi.JVMTIConstant.JVMTI_EVENT_CLASS_FILE_LOAD_HOOK;
 import static com.adi.JVMTIConstant.JVMTI_EVENT_MONITOR_CONTENDED_ENTER;
 import static com.adi.JVMTIConstant.JVMTI_EVENT_MONITOR_CONTENDED_ENTERED;
 import static com.adi.JVMTIConstant.JVMTI_EVENT_OBJECT_FREE;
@@ -23,6 +24,11 @@ public class ADIConfig {
          * 监控多线程锁竞争
          */
         THREAD_MONITOR_CONTEND(JVMTI_EVENT_MONITOR_CONTENDED_ENTER, JVMTI_EVENT_MONITOR_CONTENDED_ENTERED),
+
+        /**
+         * 只监控对象加载事件，调试用
+         */
+        _CLASS_LOAD(JVMTI_EVENT_CLASS_FILE_LOAD_HOOK),
         ;
 
         private int[] events;

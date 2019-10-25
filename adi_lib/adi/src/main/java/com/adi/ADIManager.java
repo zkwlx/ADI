@@ -13,13 +13,7 @@ import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static com.adi.JVMTIConstant.JVMTI_EVENT_GARBAGE_COLLECTION_FINISH;
-import static com.adi.JVMTIConstant.JVMTI_EVENT_GARBAGE_COLLECTION_START;
-import static com.adi.JVMTIConstant.JVMTI_EVENT_MONITOR_CONTENDED_ENTER;
-import static com.adi.JVMTIConstant.JVMTI_EVENT_MONITOR_CONTENDED_ENTERED;
-import static com.adi.JVMTIConstant.JVMTI_EVENT_OBJECT_FREE;
-import static com.adi.JVMTIConstant.JVMTI_EVENT_THREAD_START;
-import static com.adi.JVMTIConstant.JVMTI_EVENT_VM_OBJECT_ALLOC;
+import static com.adi.ADIConfig.Type._CLASS_LOAD;
 
 /**
  * @author zhoukewen
@@ -31,7 +25,7 @@ public class ADIManager {
 
     private static final String LIB_NAME = "adi_agent";
 
-    private static boolean isInited = false;
+    private static volatile boolean isInited = false;
 
     private static ADIConfig adiConfig = null;
 
@@ -47,11 +41,10 @@ public class ADIManager {
             Toast.makeText(context, "ADI 初始化失败：最低支持 Android 8.0!", Toast.LENGTH_LONG).show();
             return;
         }
-
+        isInited = true;
         String path = createDuplicateLib(context);
         System.load(path);
         attachJvmtiAgent(path, context.getClassLoader());
-        isInited = true;
     }
 
     private static void attachJvmtiAgent(String agentPath, ClassLoader classLoader) {
@@ -176,6 +169,19 @@ public class ADIManager {
     private static native void stopLooperForTest();
 
     //===============用于 Looper 的测试方法 End=============
+
+    //=============== 测试字节码增强 start ===========
+    public static void retransformClass(Class[] clazz) {
+        ADIConfig.Builder builder = new ADIConfig.Builder();
+        builder.setEventType(_CLASS_LOAD);
+        ADIConfig config = builder.build();
+        enableEvents(config, config.getEvents());
+        retransformClasses(clazz);
+    }
+
+    private static native void retransformClasses(Class[] classes);
+
+    //=============== 测试字节码增强 end ===========
 
 
 }

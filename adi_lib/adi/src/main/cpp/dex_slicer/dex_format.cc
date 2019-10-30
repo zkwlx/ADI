@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#include "export/dex_format.h"
-#include "export/common.h"
+#include "dex_format.h"
+#include "common.h"
 
 #include <zlib.h>
 #include <sstream>

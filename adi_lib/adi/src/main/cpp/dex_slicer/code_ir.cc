@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-#include "export/common.h"
-#include "export/code_ir.h"
-#include "export/dex_bytecode.h"
-#include "export/dex_format.h"
-#include "export/dex_ir.h"
-#include "export/dex_leb128.h"
-#include "export/bytecode_encoder.h"
-#include "export/debuginfo_encoder.h"
-#include "export/tryblocks_encoder.h"
+#include "common.h"
+#include "code_ir.h"
+#include "dex_bytecode.h"
+#include "dex_format.h"
+#include "dex_ir.h"
+#include "dex_leb128.h"
+#include "bytecode_encoder.h"
+#include "debuginfo_encoder.h"
+#include "tryblocks_encoder.h"
 
 #include <assert.h>
 #include <string.h>
@@ -422,8 +422,8 @@ ArrayData* CodeIr::DecodeArrayData(const dex::u2* ptr, dex::u4 offset) {
 }
 
 Operand* CodeIr::GetRegA(const dex::Instruction& dex_instr) {
-  auto flags = dex::GetFlagsFromOpcode(dex_instr.opcode);
-  if ((flags & dex::kInstrWideRegA) != 0) {
+  auto verify_flags = dex::GetVerifyFlagsFromOpcode(dex_instr.opcode);
+  if ((verify_flags & dex::kVerifyRegAWide) != 0) {
     return Alloc<VRegPair>(dex_instr.vA);
   } else {
     return Alloc<VReg>(dex_instr.vA);
@@ -431,8 +431,8 @@ Operand* CodeIr::GetRegA(const dex::Instruction& dex_instr) {
 }
 
 Operand* CodeIr::GetRegB(const dex::Instruction& dex_instr) {
-  auto flags = dex::GetFlagsFromOpcode(dex_instr.opcode);
-  if ((flags & dex::kInstrWideRegB) != 0) {
+  auto verify_flags = dex::GetVerifyFlagsFromOpcode(dex_instr.opcode);
+  if ((verify_flags & dex::kVerifyRegBWide) != 0) {
     return Alloc<VRegPair>(dex_instr.vB);
   } else {
     return Alloc<VReg>(dex_instr.vB);
@@ -440,8 +440,8 @@ Operand* CodeIr::GetRegB(const dex::Instruction& dex_instr) {
 }
 
 Operand* CodeIr::GetRegC(const dex::Instruction& dex_instr) {
-  auto flags = dex::GetFlagsFromOpcode(dex_instr.opcode);
-  if ((flags & dex::kInstrWideRegC) != 0) {
+  auto verify_flags = dex::GetVerifyFlagsFromOpcode(dex_instr.opcode);
+  if ((verify_flags & dex::kVerifyRegCWide) != 0) {
     return Alloc<VRegPair>(dex_instr.vC);
   } else {
     return Alloc<VReg>(dex_instr.vC);
@@ -457,37 +457,37 @@ Bytecode* CodeIr::DecodeBytecode(const dex::u2* ptr, dex::u4 offset) {
   auto index_type = dex::GetIndexTypeFromOpcode(dex_instr.opcode);
 
   switch (dex::GetFormatFromOpcode(dex_instr.opcode)) {
-    case dex::kFmt10x:  // op
+    case dex::k10x:  // op
       break;
 
-    case dex::kFmt12x:  // op vA, vB
-    case dex::kFmt22x:  // op vAA, vBBBB
-    case dex::kFmt32x:  // op vAAAA, vBBBB
+    case dex::k12x:  // op vA, vB
+    case dex::k22x:  // op vAA, vBBBB
+    case dex::k32x:  // op vAAAA, vBBBB
       instr->operands.push_back(GetRegA(dex_instr));
       instr->operands.push_back(GetRegB(dex_instr));
       break;
 
-    case dex::kFmt11n:  // op vA, #+B
-    case dex::kFmt21s:  // op vAA, #+BBBB
-    case dex::kFmt31i:  // op vAA, #+BBBBBBBB
+    case dex::k11n:  // op vA, #+B
+    case dex::k21s:  // op vAA, #+BBBB
+    case dex::k31i:  // op vAA, #+BBBBBBBB
       instr->operands.push_back(GetRegA(dex_instr));
       instr->operands.push_back(Alloc<Const32>(dex_instr.vB));
       break;
 
-    case dex::kFmt11x:  // op vAA
+    case dex::k11x:  // op vAA
       instr->operands.push_back(GetRegA(dex_instr));
       break;
 
-    case dex::kFmt10t:  // op +AA
-    case dex::kFmt20t:  // op +AAAA
-    case dex::kFmt30t:  // op +AAAAAAAA
+    case dex::k10t:  // op +AA
+    case dex::k20t:  // op +AAAA
+    case dex::k30t:  // op +AAAAAAAA
     {
       auto label = GetLabel(offset + dex::s4(dex_instr.vA));
       instr->operands.push_back(Alloc<CodeLocation>(label));
     } break;
 
-    case dex::kFmt21t:  // op vAA, +BBBB
-    case dex::kFmt31t:  // op vAA, +BBBBBBBB
+    case dex::k21t:  // op vAA, +BBBB
+    case dex::k31t:  // op vAA, +BBBBBBBB
     {
       dex::u4 targetOffset = offset + dex::s4(dex_instr.vB);
       instr->operands.push_back(GetRegA(dex_instr));
@@ -509,13 +509,13 @@ Bytecode* CodeIr::DecodeBytecode(const dex::u2* ptr, dex::u4 offset) {
       }
     } break;
 
-    case dex::kFmt23x:  // op vAA, vBB, vCC
+    case dex::k23x:  // op vAA, vBB, vCC
       instr->operands.push_back(GetRegA(dex_instr));
       instr->operands.push_back(GetRegB(dex_instr));
       instr->operands.push_back(GetRegC(dex_instr));
       break;
 
-    case dex::kFmt22t:  // op vA, vB, +CCCC
+    case dex::k22t:  // op vA, vB, +CCCC
     {
       instr->operands.push_back(GetRegA(dex_instr));
       instr->operands.push_back(GetRegB(dex_instr));
@@ -523,26 +523,26 @@ Bytecode* CodeIr::DecodeBytecode(const dex::u2* ptr, dex::u4 offset) {
       instr->operands.push_back(Alloc<CodeLocation>(label));
     } break;
 
-    case dex::kFmt22b:  // op vAA, vBB, #+CC
-    case dex::kFmt22s:  // op vA, vB, #+CCCC
+    case dex::k22b:  // op vAA, vBB, #+CC
+    case dex::k22s:  // op vA, vB, #+CCCC
       instr->operands.push_back(GetRegA(dex_instr));
       instr->operands.push_back(GetRegB(dex_instr));
       instr->operands.push_back(Alloc<Const32>(dex_instr.vC));
       break;
 
-    case dex::kFmt22c:  // op vA, vB, thing@CCCC
+    case dex::k22c:  // op vA, vB, thing@CCCC
       instr->operands.push_back(GetRegA(dex_instr));
       instr->operands.push_back(GetRegB(dex_instr));
       instr->operands.push_back(GetIndexedOperand(index_type, dex_instr.vC));
       break;
 
-    case dex::kFmt21c:  // op vAA, thing@BBBB
-    case dex::kFmt31c:  // op vAA, string@BBBBBBBB
+    case dex::k21c:  // op vAA, thing@BBBB
+    case dex::k31c:  // op vAA, string@BBBBBBBB
       instr->operands.push_back(GetRegA(dex_instr));
       instr->operands.push_back(GetIndexedOperand(index_type, dex_instr.vB));
       break;
 
-    case dex::kFmt35c:  // op {vC,vD,vE,vF,vG}, thing@BBBB
+    case dex::k35c:  // op {vC,vD,vE,vF,vG}, thing@BBBB
     {
       SLICER_CHECK(dex_instr.vA <= 5);
       auto vreg_list = Alloc<VRegList>();
@@ -553,14 +553,14 @@ Bytecode* CodeIr::DecodeBytecode(const dex::u2* ptr, dex::u4 offset) {
       instr->operands.push_back(GetIndexedOperand(index_type, dex_instr.vB));
     } break;
 
-    case dex::kFmt3rc:  // op {vCCCC .. v(CCCC+AA-1)}, thing@BBBB
+    case dex::k3rc:  // op {vCCCC .. v(CCCC+AA-1)}, thing@BBBB
     {
       auto vreg_range = Alloc<VRegRange>(dex_instr.vC, dex_instr.vA);
       instr->operands.push_back(vreg_range);
       instr->operands.push_back(GetIndexedOperand(index_type, dex_instr.vB));
     } break;
 
-    case dex::kFmt21h:  // op vAA, #+BBBB0000[00000000]
+    case dex::k21h:  // op vAA, #+BBBB0000[00000000]
       switch (dex_instr.opcode) {
         case dex::OP_CONST_HIGH16:
           instr->operands.push_back(GetRegA(dex_instr));
@@ -577,7 +577,7 @@ Bytecode* CodeIr::DecodeBytecode(const dex::u2* ptr, dex::u4 offset) {
       }
       break;
 
-    case dex::kFmt51l:  // op vAA, #+BBBBBBBBBBBBBBBB
+    case dex::k51l:  // op vAA, #+BBBBBBBBBBBBBBBB
       instr->operands.push_back(GetRegA(dex_instr));
       instr->operands.push_back(Alloc<Const64>(dex_instr.vB_wide));
       break;

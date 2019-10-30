@@ -180,6 +180,19 @@ static void throwRuntimeExpection(JNIEnv *env, const char *fmt, ...) {
 
 //================== tools end ==================
 
+/**
+ * 模拟器的 9.0 10.0 x86 x86_64 都可以，但模拟器 8.0 不行，真机全都不行，why！？
+ * @param jvmti_env
+ * @param jni_env
+ * @param class_being_redefined
+ * @param loader
+ * @param name
+ * @param protection_domain
+ * @param class_data_len
+ * @param class_data
+ * @param new_class_data_len
+ * @param new_class_data
+ */
 void JNICALL ClassFileLoadHook(jvmtiEnv *jvmti_env,
                                JNIEnv *jni_env,
                                jclass class_being_redefined,

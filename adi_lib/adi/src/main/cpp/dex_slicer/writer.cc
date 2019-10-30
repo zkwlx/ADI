@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#include "export/writer.h"
-#include "export/common.h"
-#include "export/scopeguard.h"
-#include "export/dex_bytecode.h"
-#include "export/dex_format.h"
-#include "export/dex_ir.h"
-#include "export/dex_leb128.h"
+#include "writer.h"
+#include "common.h"
+#include "scopeguard.h"
+#include "dex_bytecode.h"
+#include "dex_format.h"
+#include "dex_ir.h"
+#include "dex_leb128.h"
 
 #include <assert.h>
 #include <type_traits>
@@ -230,6 +230,13 @@ static void CopySection(const T& section, dex::u1* image, dex::u4 image_size) {
   SLICER_CHECK(offset + size <= image_size);
 
   ::memcpy(image + offset, section.data(), size);
+}
+
+static u4 ReadU4(const u2* ptr) { return ptr[0] | (u4(ptr[1]) << 16); }
+
+static void WriteU4(u2* ptr, u4 val) {
+  ptr[0] = val & 0xffff;
+  ptr[1] = val >> 16;
 }
 
 // This is the main interface for the .dex writer
@@ -822,21 +829,20 @@ void Writer::WriteInstructions(slicer::ArrayView<const dex::u2> instructions) {
   // relocate the instructions
   while (ptr < end) {
     auto opcode = dex::OpcodeFromBytecode(*ptr);
+    dex::u2* idx = &ptr[1];
 
-    dex::u2* index16 = nullptr;
-    dex::u4* index32 = nullptr;
-
+    size_t idx_size = 0;
     switch (dex::GetFormatFromOpcode(opcode)) {
-      case dex::kFmt20bc:
-      case dex::kFmt21c:
-      case dex::kFmt35c:
-      case dex::kFmt3rc:
-      case dex::kFmt22c:
-        index16 = &ptr[1];
+      case dex::k20bc:
+      case dex::k21c:
+      case dex::k35c:
+      case dex::k3rc:
+      case dex::k22c:
+        idx_size = 2;
         break;
 
-      case dex::kFmt31c:
-        index32 = reinterpret_cast<dex::u4*>(&ptr[1]);
+      case dex::k31c:
+        idx_size = 4;
         break;
 
       default:
@@ -845,41 +851,41 @@ void Writer::WriteInstructions(slicer::ArrayView<const dex::u2> instructions) {
 
     switch (dex::GetIndexTypeFromOpcode(opcode)) {
       case dex::kIndexStringRef:
-        if (index32 != nullptr) {
-          SLICER_CHECK(index16 == nullptr);
-          dex::u4 new_index = MapStringIndex(*index32);
+        if (idx_size == 4) {
+          dex::u4 new_index = MapStringIndex(ReadU4(idx));
           SLICER_CHECK(new_index != dex::kNoIndex);
-          *index32 = new_index;
+          WriteU4(idx, new_index);
         } else {
-          dex::u4 new_index = MapStringIndex(*index16);
+          SLICER_CHECK(idx_size == 2);
+          dex::u4 new_index = MapStringIndex(*idx);
           SLICER_CHECK(new_index != dex::kNoIndex);
           SLICER_CHECK(dex::u2(new_index) == new_index);
-          *index16 = dex::u2(new_index);
+          *idx = dex::u2(new_index);
         }
         break;
 
       case dex::kIndexTypeRef: {
-        SLICER_CHECK(index32 == nullptr);
-        dex::u4 new_index = MapTypeIndex(*index16);
+        SLICER_CHECK(idx_size == 2);
+        dex::u4 new_index = MapTypeIndex(*idx);
         SLICER_CHECK(new_index != dex::kNoIndex);
         SLICER_CHECK(dex::u2(new_index) == new_index);
-        *index16 = dex::u2(new_index);
+        *idx = dex::u2(new_index);
       } break;
 
       case dex::kIndexFieldRef: {
-        SLICER_CHECK(index32 == nullptr);
-        dex::u4 new_index = MapFieldIndex(*index16);
+        SLICER_CHECK(idx_size == 2);
+        dex::u4 new_index = MapFieldIndex(*idx);
         SLICER_CHECK(new_index != dex::kNoIndex);
         SLICER_CHECK(dex::u2(new_index) == new_index);
-        *index16 = dex::u2(new_index);
+        *idx = dex::u2(new_index);
       } break;
 
       case dex::kIndexMethodRef: {
-        SLICER_CHECK(index32 == nullptr);
-        dex::u4 new_index = MapMethodIndex(*index16);
+        SLICER_CHECK(idx_size == 2);
+        dex::u4 new_index = MapMethodIndex(*idx);
         SLICER_CHECK(new_index != dex::kNoIndex);
         SLICER_CHECK(dex::u2(new_index) == new_index);
-        *index16 = dex::u2(new_index);
+        *idx = dex::u2(new_index);
       } break;
 
       default:

@@ -14,10 +14,22 @@
  * limitations under the License.
  */
 
-#include "export/instrumentation.h"
-#include "export/dex_ir_builder.h"
+#include "instrumentation.h"
+#include "dex_ir_builder.h"
 
 namespace slicer {
+
+namespace {
+
+struct BytecodeConvertingVisitor : public lir::Visitor {
+  lir::Bytecode* out = nullptr;
+  bool Visit(lir::Bytecode* bytecode) {
+    out = bytecode;
+    return true;
+  }
+};
+
+}  // namespace
 
 bool EntryHook::Apply(lir::CodeIr* code_ir) {
   ir::Builder builder(code_ir->dex_ir);
@@ -61,7 +73,9 @@ bool EntryHook::Apply(lir::CodeIr* code_ir) {
 
   // insert the hook before the first bytecode in the method body
   for (auto instr : code_ir->instructions) {
-    auto bytecode = dynamic_cast<lir::Bytecode*>(instr);
+    BytecodeConvertingVisitor visitor;
+    instr->Accept(&visitor);
+    auto bytecode = visitor.out;
     if (bytecode == nullptr) {
       continue;
     }
@@ -96,7 +110,9 @@ bool ExitHook::Apply(lir::CodeIr* code_ir) {
 
   // find and instrument all return instructions
   for (auto instr : code_ir->instructions) {
-    auto bytecode = dynamic_cast<lir::Bytecode*>(instr);
+    BytecodeConvertingVisitor visitor;
+    instr->Accept(&visitor);
+    auto bytecode = visitor.out;
     if (bytecode == nullptr) {
       continue;
     }
@@ -158,29 +174,22 @@ bool ExitHook::Apply(lir::CodeIr* code_ir) {
   return true;
 }
 
-bool DetourVirtualInvoke::Apply(lir::CodeIr* code_ir) {
+bool DetourHook::Apply(lir::CodeIr* code_ir) {
   ir::Builder builder(code_ir->dex_ir);
 
   // search for matching invoke-virtual[/range] bytecodes
   for (auto instr : code_ir->instructions) {
-    auto bytecode = dynamic_cast<lir::Bytecode*>(instr);
+    BytecodeConvertingVisitor visitor;
+    instr->Accept(&visitor);
+    auto bytecode = visitor.out;
     if (bytecode == nullptr) {
       continue;
     }
 
-    dex::Opcode new_call_opcode = dex::OP_NOP;
-    switch (bytecode->opcode) {
-      case dex::OP_INVOKE_VIRTUAL:
-        new_call_opcode = dex::OP_INVOKE_STATIC;
-        break;
-      case dex::OP_INVOKE_VIRTUAL_RANGE:
-        new_call_opcode = dex::OP_INVOKE_STATIC_RANGE;
-        break;
-      default:
-        // skip instruction ...
-        continue;
+    dex::Opcode new_call_opcode = GetNewOpcode(bytecode->opcode);
+    if (new_call_opcode == dex::OP_NOP) {
+      continue;
     }
-    assert(new_call_opcode != dex::OP_NOP);
 
     auto orig_method = bytecode->CastOperand<lir::Method>(1)->ir_method;
     if (!orig_method_id_.Match(orig_method)) {
@@ -194,7 +203,8 @@ bool DetourVirtualInvoke::Apply(lir::CodeIr* code_ir) {
     param_types.push_back(orig_method->parent);
     if (orig_method->prototype->param_types != nullptr) {
       const auto& orig_param_types = orig_method->prototype->param_types->types;
-      param_types.insert(param_types.end(), orig_param_types.begin(), orig_param_types.end());
+      param_types.insert(param_types.end(), orig_param_types.begin(),
+                         orig_param_types.end());
     }
 
     auto ir_proto = builder.GetProto(orig_method->prototype->return_type,
@@ -204,7 +214,8 @@ bool DetourVirtualInvoke::Apply(lir::CodeIr* code_ir) {
         builder.GetAsciiString(detour_method_id_.method_name), ir_proto,
         builder.GetType(detour_method_id_.class_descriptor));
 
-    auto detour_method = code_ir->Alloc<lir::Method>(ir_method_decl, ir_method_decl->orig_index);
+    auto detour_method =
+        code_ir->Alloc<lir::Method>(ir_method_decl, ir_method_decl->orig_index);
 
     // We mutate the original invoke bytecode in-place: this is ok
     // because lir::Instructions can't be shared (referenced multiple times)
@@ -217,11 +228,35 @@ bool DetourVirtualInvoke::Apply(lir::CodeIr* code_ir) {
   return true;
 }
 
+dex::Opcode DetourVirtualInvoke::GetNewOpcode(dex::Opcode opcode) {
+  switch (opcode) {
+    case dex::OP_INVOKE_VIRTUAL:
+      return dex::OP_INVOKE_STATIC;
+    case dex::OP_INVOKE_VIRTUAL_RANGE:
+      return dex::OP_INVOKE_STATIC_RANGE;
+    default:
+      // skip instruction ...
+      return dex::OP_NOP;
+  }
+}
+
+dex::Opcode DetourInterfaceInvoke::GetNewOpcode(dex::Opcode opcode) {
+  switch (opcode) {
+    case dex::OP_INVOKE_INTERFACE:
+      return dex::OP_INVOKE_STATIC;
+    case dex::OP_INVOKE_INTERFACE_RANGE:
+      return dex::OP_INVOKE_STATIC_RANGE;
+    default:
+      // skip instruction ...
+      return dex::OP_NOP;
+  }
+}
+
 // Register re-numbering visitor
 // (renumbers vN to vN+shift)
 class RegsRenumberVisitor : public lir::Visitor {
  public:
-  RegsRenumberVisitor(int shift) : shift_(shift) {
+  explicit RegsRenumberVisitor(int shift) : shift_(shift) {
     SLICER_CHECK(shift > 0);
   }
 

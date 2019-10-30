@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "export/common.h"
+#include "common.h"
 
 #include <stdio.h>
 #include <stdlib.h>

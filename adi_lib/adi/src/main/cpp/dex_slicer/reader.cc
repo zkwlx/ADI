@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-#include "export/reader.h"
-#include "export/dex_bytecode.h"
-#include "export/chronometer.h"
-#include "export/dex_leb128.h"
+#include "reader.h"
+#include "dex_bytecode.h"
+#include "chronometer.h"
+#include "dex_leb128.h"
 
 #include <assert.h>
 #include <string.h>
@@ -882,15 +882,15 @@ void Reader::ParseInstructions(slicer::ArrayView<const dex::u2> code) {
 
     dex::u4 index = dex::kNoIndex;
     switch (dex::GetFormatFromOpcode(dex_instr.opcode)) {
-      case dex::kFmt20bc:
-      case dex::kFmt21c:
-      case dex::kFmt31c:
-      case dex::kFmt35c:
-      case dex::kFmt3rc:
+      case dex::k20bc:
+      case dex::k21c:
+      case dex::k31c:
+      case dex::k35c:
+      case dex::k3rc:
         index = dex_instr.vB;
         break;
 
-      case dex::kFmt22c:
+      case dex::k22c:
         index = dex_instr.vC;
         break;
 

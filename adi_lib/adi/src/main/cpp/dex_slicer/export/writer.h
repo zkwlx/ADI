@@ -32,7 +32,7 @@ namespace dex {
 // (tracking the section offset, section type, ...)
 class Section : public slicer::Buffer {
  public:
-  Section(dex::u2 mapEntryType) : map_entry_type_(mapEntryType) {}
+  explicit Section(dex::u2 mapEntryType) : map_entry_type_(mapEntryType) {}
   ~Section() = default;
 
   Section(const Section&) = delete;
@@ -76,7 +76,7 @@ class Section : public slicer::Buffer {
 template <class T>
 class Index {
  public:
-  Index(dex::u2 mapEntryType) : map_entry_type_(mapEntryType) {}
+  explicit Index(dex::u2 mapEntryType) : map_entry_type_(mapEntryType) {}
   ~Index() = default;
 
   Index(const Index&) = delete;
@@ -176,7 +176,7 @@ class Writer {
   };
 
  public:
-  Writer(std::shared_ptr<ir::DexFile> dex_ir) : dex_ir_(dex_ir) {}
+  explicit Writer(std::shared_ptr<ir::DexFile> dex_ir) : dex_ir_(dex_ir) {}
   ~Writer() = default;
 
   Writer(const Writer&) = delete;

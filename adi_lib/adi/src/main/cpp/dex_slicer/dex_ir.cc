@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-#include "export/dex_ir.h"
-#include "export/chronometer.h"
-#include "export/dex_utf8.h"
-#include "export/dex_format.h"
+#include "dex_ir.h"
+#include "chronometer.h"
+#include "dex_utf8.h"
+#include "dex_format.h"
 
 #include <algorithm>
 #include <cstdint>

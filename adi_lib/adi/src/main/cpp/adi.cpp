@@ -22,6 +22,55 @@ extern "C" {
 
 static jvmtiEnv *jvmti_env;
 
+/**
+ * 打印支持的能力，仅调试用~
+ * @param caps
+ */
+void printAllCapabilities(jvmtiCapabilities caps) {
+    ALOGI("----------->> can: %s:%d,%s:%d,%s:%d,%s:%d,%s:%d,%s:%d,%s:%d,%s:%d,%s:%d,%s:%d,%s:%d,%s:%d,%s:%d,%s:%d,%s:%d,%s:%d,%s:%d,%s:%d,%s:%d,%s:%d,%s:%d,%s:%d,%s:%d,%s:%d,%s:%d,%s:%d,%s:%d,%s:%d,%s:%d,%s:%d,%s:%d,%s:%d,%s:%d,%s:%d,%s:%d,%s:%d,%s:%d,%s:%d,%s:%d,%s:%d,%s:%d",
+          "1", caps.can_tag_objects,
+          "2", caps.can_generate_field_modification_events,
+          "3", caps.can_generate_field_access_events,
+          "4", caps.can_get_bytecodes,
+          "5", caps.can_get_synthetic_attribute,
+          "6", caps.can_get_owned_monitor_info,
+          "7", caps.can_get_current_contended_monitor,
+          "8", caps.can_get_monitor_info,
+          "9", caps.can_pop_frame,
+          "10", caps.can_redefine_classes,
+          "11", caps.can_signal_thread,
+          "12", caps.can_get_source_file_name,
+          "13", caps.can_get_line_numbers,
+          "14", caps.can_get_source_debug_extension,
+          "15", caps.can_access_local_variables,
+          "16", caps.can_maintain_original_method_order,
+          "17", caps.can_generate_single_step_events,
+          "18", caps.can_generate_exception_events,
+          "19", caps.can_generate_frame_pop_events,
+          "20", caps.can_generate_breakpoint_events,
+          "21", caps.can_suspend,
+          "22", caps.can_redefine_any_class,
+          "23", caps.can_get_current_thread_cpu_time,
+          "24", caps.can_get_thread_cpu_time,
+          "25", caps.can_generate_method_entry_events,
+          "26", caps.can_generate_method_exit_events,
+          "27", caps.can_generate_all_class_hook_events,
+          "28", caps.can_generate_compiled_method_load_events,
+          "29", caps.can_generate_monitor_events,
+          "30", caps.can_generate_vm_object_alloc_events,
+          "31", caps.can_generate_native_method_bind_events,
+          "32", caps.can_generate_garbage_collection_events,
+          "33", caps.can_generate_object_free_events,
+          "34", caps.can_force_early_return,
+          "35", caps.can_get_owned_monitor_stack_depth_info,
+          "36", caps.can_get_constant_pool,
+          "37", caps.can_set_native_method_prefix,
+          "38", caps.can_retransform_classes,
+          "39", caps.can_retransform_any_class,
+          "40", caps.can_generate_resource_exhaustion_heap_events,
+          "41", caps.can_generate_resource_exhaustion_threads_events);
+}
+
 void SetAllCapabilities(jvmtiEnv *jvmti) {
     jvmtiCapabilities caps;
     jvmtiError error;
@@ -29,6 +78,7 @@ void SetAllCapabilities(jvmtiEnv *jvmti) {
     if (error != JVMTI_ERROR_NONE) {
         ALOGI("Error on GetPotentialCapabilities: %d", error);
     }
+    printAllCapabilities(caps);
     error = jvmti->AddCapabilities(&caps);
     if (error != JVMTI_ERROR_NONE) {
         ALOGI("Error on AddCapabilities: %d", error);

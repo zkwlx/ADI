@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <dex_format.h>
+#include "dex_format.h"
 
 namespace dex {
 

@@ -44,5 +44,13 @@ void _fatal(const char* format, ...) __attribute__((noreturn));
 #define SLICER_EXTRA(x) x
 #endif
 
+#ifndef FALLTHROUGH_INTENDED
+#ifdef __clang__
+#define FALLTHROUGH_INTENDED [[clang::fallthrough]]
+#else
+#define FALLTHROUGH_INTENDED
+#endif // __clang__
+#endif // FALLTHROUGH_INTENDED
+
 } // namespace slicer
 

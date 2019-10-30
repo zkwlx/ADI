@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#include "export/control_flow_graph.h"
-#include "export/chronometer.h"
+#include "control_flow_graph.h"
+#include "chronometer.h"
 
 namespace lir {
 
@@ -56,16 +56,16 @@ bool BasicBlocksVisitor::Visit(Bytecode* bytecode) {
   const auto flags = dex::GetFlagsFromOpcode(bytecode->opcode);
   if (model_exceptions_) {
     constexpr auto exit_instr_flags =
-        dex::kInstrCanBranch |
-        dex::kInstrCanSwitch |
-        dex::kInstrCanThrow |
-        dex::kInstrCanReturn;
+        dex::kBranch |
+        dex::kSwitch |
+        dex::kThrow |
+        dex::kReturn;
     terminate_block = (flags & exit_instr_flags) != 0;
   } else {
     constexpr auto exit_instr_flags =
-        dex::kInstrCanBranch |
-        dex::kInstrCanSwitch |
-        dex::kInstrCanReturn;
+        dex::kBranch |
+        dex::kSwitch |
+        dex::kReturn;
     terminate_block = bytecode->opcode == dex::OP_THROW || (flags & exit_instr_flags) != 0;
   }
   if (terminate_block) {

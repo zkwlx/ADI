@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include "export/common.h"
-#include "export/debuginfo_encoder.h"
-#include "export/chronometer.h"
+#include "common.h"
+#include "debuginfo_encoder.h"
+#include "chronometer.h"
 
 #include <assert.h>
 

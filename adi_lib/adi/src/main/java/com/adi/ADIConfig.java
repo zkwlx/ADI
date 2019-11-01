@@ -3,9 +3,13 @@ package com.adi;
 import java.util.Arrays;
 
 import static com.adi.JVMTIConstant.JVMTI_EVENT_CLASS_FILE_LOAD_HOOK;
+import static com.adi.JVMTIConstant.JVMTI_EVENT_CLASS_PREPARE;
+import static com.adi.JVMTIConstant.JVMTI_EVENT_EXCEPTION_CATCH;
 import static com.adi.JVMTIConstant.JVMTI_EVENT_MONITOR_CONTENDED_ENTER;
 import static com.adi.JVMTIConstant.JVMTI_EVENT_MONITOR_CONTENDED_ENTERED;
 import static com.adi.JVMTIConstant.JVMTI_EVENT_OBJECT_FREE;
+import static com.adi.JVMTIConstant.JVMTI_EVENT_THREAD_END;
+import static com.adi.JVMTIConstant.JVMTI_EVENT_THREAD_START;
 import static com.adi.JVMTIConstant.JVMTI_EVENT_VM_OBJECT_ALLOC;
 
 public class ADIConfig {
@@ -27,8 +31,16 @@ public class ADIConfig {
 
         /**
          * 只监控对象加载事件，调试用
+         *
+         * @deprecated
          */
         _CLASS_LOAD(JVMTI_EVENT_CLASS_FILE_LOAD_HOOK),
+
+        /**
+         * 监控线程数量、Class 载入等事件
+         */
+        BRIEF_INFORMATION(JVMTI_EVENT_CLASS_PREPARE, JVMTI_EVENT_THREAD_START, JVMTI_EVENT_THREAD_END,
+                JVMTI_EVENT_EXCEPTION_CATCH),
         ;
 
         private int[] events;

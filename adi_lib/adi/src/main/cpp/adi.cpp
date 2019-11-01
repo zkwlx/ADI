@@ -15,6 +15,8 @@
 #include "common/jdi_native.h"
 #include "common/log.h"
 #include "handler/ClassFileLoadHookHandler.h"
+#include "handler/ClassPrepareHandler.h"
+#include "handler/FramePopHandler.h"
 
 extern "C" {
 #include "dumper.h"
@@ -78,7 +80,7 @@ void SetAllCapabilities(jvmtiEnv *jvmti) {
     if (error != JVMTI_ERROR_NONE) {
         ALOGI("Error on GetPotentialCapabilities: %d", error);
     }
-    printAllCapabilities(caps);
+//    printAllCapabilities(caps);
     error = jvmti->AddCapabilities(&caps);
     if (error != JVMTI_ERROR_NONE) {
         ALOGI("Error on AddCapabilities: %d", error);
@@ -134,8 +136,9 @@ extern "C" JNIEXPORT jint JNICALL Agent_OnAttach(JavaVM *vm, char *options, void
 
     //TODO NativeMethodBind 比较特殊，需要时注意
 //    callbacks.NativeMethodBind = &JvmTINativeMethodBind;
-    //TODO 不知为何会发 调试信号 导致应用终止
-//    callbacks.MethodEntry = &MethodEntry;
+    // 不知为何会发 调试信号 导致应用终止
+    // callbacks.MethodEntry = &MethodEntry;
+    callbacks.ClassPrepare = &ClassPrepare;
     callbacks.ClassFileLoadHook = &ClassFileLoadHook;
     callbacks.VMObjectAlloc = &ObjectAllocCallback;
     callbacks.GarbageCollectionStart = &GCStartCallback;

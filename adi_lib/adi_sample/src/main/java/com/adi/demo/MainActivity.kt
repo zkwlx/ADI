@@ -52,6 +52,7 @@ class MainActivity : Activity() {
 
         ADIManager.init(this)
 
+
         findViewById<View>(R.id.adi_start).setOnClickListener {
             ADIFloatManager.showADIFloat(this)
         }
@@ -80,10 +81,11 @@ class MainActivity : Activity() {
 
         findViewById<View>(R.id.retransform_test).setOnClickListener {
             val o = TestObject()
-            ADIManager.retransformClass(arrayOf(TestObject::class.java))
+//            ADIManager.retransformClass(arrayOf(TestObject::class.java))
+            o.a()
         }
         findViewById<View>(R.id.thread_start).setOnClickListener {
-//            for (i in 0..4) {
+            //            for (i in 0..4) {
 //                val t = Thread("TTT_$i")
 //            }
             val ooo = TestObject()

@@ -16,7 +16,6 @@
 #include "common/log.h"
 #include "handler/ClassFileLoadHookHandler.h"
 #include "handler/ClassPrepareHandler.h"
-#include "handler/FramePopHandler.h"
 
 extern "C" {
 #include "dumper.h"

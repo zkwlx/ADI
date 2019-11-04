@@ -6,6 +6,8 @@
   <img src='https://img.shields.io/github/license/zkwlx/ADI'>
 </a>
 
+(中文版本请点击 [这里](https://github.com/zkwlx/ADI/wiki/ADI-%E7%AE%80%E4%BB%8B) )
+
 <p>
 <table cellspacing="10">
 <tr>

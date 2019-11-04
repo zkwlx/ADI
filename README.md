@@ -1,4 +1,4 @@
-# ADI 简介
+# ADI Introduction
 <a href='https://bintray.com/zkwlx/ADI/zkw.adi/0.9.3/link'>
   <img src='https://api.bintray.com/packages/zkwlx/ADI/zkw.adi/images/download.svg?version=0.9.3'>
 </a>
@@ -12,23 +12,23 @@
 
   <td>
   <a href="https://zkwlx.github.io/ADI/docs/adi_对象分配.html">
-  <img alt="对象分配与释放的样例" src="docs/对象分配与释放.png"  />
-    <p/>对象分配图表 点击体验
+  <img alt="Example of object allocation and release" src="docs/对象分配与释放.png"  />
+    <p/>Object allocation, Click for try
   </a>
 
   </td>
 
   <td>
   <a href="https://zkwlx.github.io/ADI/docs/adi_线程竞争.html">
-  <img alt="多线程竞争样例" src="docs/多线程竞争.png" />
-    <p/>线程竞争图表 点击体验
+  <img alt="Example of multithreaded contended" src="docs/多线程竞争.png" />
+    <p/>Multithreaded contended, Click for try
   </a>
   </td>
 
   <td>
   <a href="https://github.com/zkwlx/ADI/blob/master/docs/adi_screenshot.png">
-  <img alt="APP 集成样例截图" src="docs/adi_screenshot.png" />
-    <p/>ADI 控制窗
+  <img alt="ADI Controller" src="docs/adi_screenshot.png" />
+    <p/>ADI Controller
   </a>
   </td>
 
@@ -36,14 +36,15 @@
 </table>
 </p>
 
-ADI(Android Debug Intensive) 是通过 JVMTI 实现的 Android 应用开发调试的增强工具集，目前主要提供性能相关的监控能力。  
-ADI 对运行时的 App 进行性能数据收集，并提供工具用于生成分析图表。目前提供如下功能：
-* 监控 ART 运行过程中对象的分配与释放，包括对象大小、创建对象调用栈等信息
-* 监控 ART 运行过程中多线程之间的锁竞争，包括发生竞争时的调用栈、当前竞争线程的等待时长、当前持有锁的线程等信息
-> 注意 ADI 只支持 Android 8.0（包括 8.0）之后的系统。
-# 如何使用
-### 集成到 APP
-首先添加 jcenter 依赖（添加过请忽略）：
+ADI（Android Debug Intensive）is an enhanced tool set for implementing Android application development debugging through JVMTI.Currently, it mainly provides performance-related monitoring capabilities.
+ADI collects performance data from running APP and provides tools for generating analysis charts.  
+The following features are currently available:
+* Monitors the allocation and release of objects during ART running, including object size, creating object call stacks, and more.
+* Monitors the monitor contend between multiple threads during the ART running, including the call stack when the contention occurs, the waiting time of the current contend thread, and the thread currently holding the lock.
+> Note that ADI only supports systems after Android 8.0 (including 8.0).
+# How to use
+### Integrated into APP
+First add jcenter dependencies (added please ignore):
 ```gradle
 buildscript {
     repositories {
@@ -56,74 +57,77 @@ allprojects {
     }
 }
 ```
-然后 APP 工程集成 adi 库：
+then APP works with ADI:
 ```gradle
 debugImplementation 'zkw.adi:adi:0.9.3'
 releaseImplementation 'zkw.adi:adi-nop:0.9.3'
 ```
-### 生成 Log 文件
-集成 adi 库之后便能够对 App 进行性能数据采集，采集方式有两种。
-##### 方法一，使用 start/stop 接口
-具体代码如下
+### Generate a Log file
+After you integrate the ADI library, you can perform performance data collection on the APP.  
+There are two ways to collect.
+##### Method 1: Use the start/stop interface
+The specific code is as follows:
 ```kotlin
-// 首先进行初始化
+// Initialize first.
 ADIManager.init(context)
 ...
-// 在任何想开始采集的地方添加如下代码
+// Add the following code wherever you want to start collecting.
 val builder = ADIConfig.Builder()
-builder.setEventType(ADIConfig.Type.THREAD_MONITOR_CONTEND)// 设置要监控的事件类型
+builder.setEventType(ADIConfig.Type.THREAD_MONITOR_CONTEND)// Set the type of event to monitor.
 ADIManager.start(activity, builder.build())
 ...
-// 在任何停止采集的地方添加如下代码
+// Add the following code wherever you want to stop collecting.
 ADIManager.stop()
 ```
-##### 方法二，可交互的悬浮控制窗
-控制窗可以在不重新编译的情况下更改 ADI 配置，下面代码展示如何启动控制窗
+##### Method 2: Interactive floating control window
+The control window can change the ADI configuration without recompiling.  
+The following code shows how to start the control window:
 ```kotlin
-// 在 Activity 中调用
+// called in the Activity
 ADIFloatManager.showADIFloat(activity)
 ```
-控制窗的使用方法情参考图解
+Please refer to the diagram for how to use the control window:
 
-<img width="300" height="232" alt="控制窗图解" src="docs/adi_float.png" />
+<img width="300" height="232" alt="Control window" src="docs/adi_float.png" />
 
-### 解析 Log 文件并生成图表
-采集的内容存放在 `Context.getExternalCacheDir()`/ADI 目录下，例如
+### Parse the Log file and generate a chart
+The collected content is stored in the `Context.getExternalCacheDir()`/ADI directory, for example:
 ```bash
-/sdcard/Android/data/APP 包名/cache/ADI/adi_1570605092.log
+/sdcard/Android/data/APP Package Name/cache/ADI/adi_1570605092.log
 ```
-取出 log 文件后，需要用`adi-analyzer`工具分析 log 并生成图表，通过 pip3 安装：
+After removing the Log file, you need to analyze the Log with `adi_analyzer` tool and generate a chart, which is installed via pip3:
 ```bash
 pip3 install adi-analyzer
 ```
-之后运行 adi-analyzer 并将 log 文件传入：
+Then run adi_analyzer and pass the log file:
 ```bash
 adi-analyzer ~/adi_1570605092.log
 ```
-adi-analyzer 会创建 .html 结尾的图表文件，之后会自动启动浏览器打开图表文件，图表效果请参考封面。
+adi_anaylzer will create a chart file ending in .html, and then automatically launch the browser to open the chart file. Please refer to the cover for the effect of the chart.
 
-# 功能详解
-## 对象分配监控
-在监控对象分配时，ADI 会监控所有 Java 层对象的创建事件，有几点需要注意：
-* 频繁创建对象可能会导致 App 卡顿甚至卡死，可以通过 [ADIConfig.sampleIntervalMs](https://github.com/zkwlx/ADI/blob/master/adi_lib/adi/src/main/java/com/adi/ADIConfig.java#L68) 或控制窗配置采样间隔（默认 0.8ms）
-* 调用栈的深度默认是 10，可以通过 [ADIConfig.stackDepth](https://github.com/zkwlx/ADI/blob/master/adi_lib/adi/src/main/java/com/adi/ADIConfig.java#L68) 或控制窗修改
-* 如果生成的 Log 文件过大会严重影响图表生成时间，此时建议增加采样间隔或减少整体采样时长
+# Detailed function
+## Object allocation monitoring
+When monitoring object allocation, ADI will monitor the creation events of Java layer objects. There are several points to note:
+* Frequently creating objects can cause APPs to get stuck or even get ANR. The sampling interval can be configured via [ADIConfig.sampleIntervalMs](https://github.com/zkwlx/ADI/blob/master/adi_lib/adi/src/main/java/com/adi/ADIConfig.java#L68) or control window (default 0.8 ms)
+* The depth of the call stack defaults to 10. Can be modified by [ADIConfig.stackDepth](https://github.com/zkwlx/ADI/blob/master/adi_lib/adi/src/main/java/com/adi/ADIConfig.java#L68) or control window.
+* If the generated Log file is too large to affect the chart generation time, it is recommended to increase the sampling interval or reduce the overall sampling duration.
 
-ADI 会为对象事件的 Log 生成两个图表：对象分配数量图表和对象分配大小图表。下面用对象分配数量图表介绍下图表的使用方式。
+ADI generates two charts for the Log of the object event: the object allocation quantity chart and the object allocation size chart. Let's use the Object allocation chart to describe how to use the chart below.
 <a href="https://zkwlx.github.io/ADI/docs/adi_对象分配.html">
- <img alt="图表图解" src="docs/对象分配图表图解.png" />
- <p/>点击体验
+ <img alt="chart to describe" src="docs/对象分配图表图解.png" />
+ <p/>Click for try
 </a>
 
-## 多线程竞争监控
-在监控多线程竞争时，ADI 会监控所有 Java 层 `synchronized` 关键字导致的多线程锁竞争事件，以下几点需要注意：
-* 调用栈的深度默认是 10，可以通过 [ADIConfig.stackDepth](https://github.com/zkwlx/ADI/blob/master/adi_lib/adi/src/main/java/com/adi/ADIConfig.java#L68) 或控制窗修改
-* 如果生成的 Log 文件过大会严重影响图表生成时间，此时建议减少采样时长
+## Multi-threaded competition monitoring
+When monitoring multi-threaded contention, ADI monitors multi-threaded lock contention events caused by the `synchronized` keywords of all Java layers.  
+The following points need to be noted:
+* The depth of the call stack defaults to 10 and can be modified via [ADIConfig.stackDepth](https://github.com/zkwlx/ADI/blob/master/adi_lib/adi/src/main/java/com/adi/ADIConfig.java#L68) or the control window.
+* If the generated Log file is too large to affect the chart generation time, it is recommended to reduce the sampling duration.
 
-多线程竞争图表的 Y 轴是发生竞争的线程名字，X 轴是时间，具体说明请看图解。
+The Y-axis of the multi-threaded competition chart is the name of the thread in which the competition occurs, and the X-axis is the time. For details, see the diagram.
 <a href="https://zkwlx.github.io/ADI/docs/adi_线程竞争.html">
- <img alt="图表图解" src="docs/线程竞争图表图解.png" />
- <p/>点击体验
+ <img alt="chart to describe" src="docs/线程竞争图表图解.png" />
+ <p/>Click for try
 </a>
 
 # License

@@ -5,7 +5,9 @@
 <a href='https://github.com/zkwlx/ADI/blob/master/LICENSE'>
   <img src='https://img.shields.io/github/license/zkwlx/ADI'>
 </a>
-(For english [click me](https://github.com/zkwlx/ADI/blob/master/README_en.md) )
+
+([For english](https://github.com/zkwlx/ADI/blob/master/README_en.md) )
+
 <p>
 <table cellspacing="10">
 <tr>

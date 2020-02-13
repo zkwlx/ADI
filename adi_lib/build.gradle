@@ -39,6 +39,12 @@ task clean(type: Delete) {
 }
 
 ext {
+    minSdkVersion = 21
+    targetSdkVersion = 28
+    compileSdkVersion = 28
+    buildToolsVersion = '29.0.2'
+    javaVersion = JavaVersion.VERSION_1_7
+
     //发布到bintray上仓库名，执行上传前必须手动创建同名到仓库，否则上传会失败
     bintrayRepo = 'ADI'
 

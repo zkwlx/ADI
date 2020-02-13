@@ -1,1 +1,2 @@
 include ':adi_sample', ':adi', ':adi-nop'
+include ':matrix-io-canary'

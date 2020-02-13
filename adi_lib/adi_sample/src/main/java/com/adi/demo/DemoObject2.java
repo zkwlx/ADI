@@ -8,8 +8,12 @@ import android.util.Log;
  */
 public class DemoObject2 {
 
+    public DemoObject2() {
+    }
+
     public static void publicStaticMethod(String str) {
-        Log.i("zkw", "------>>>>>so nice, demo2 !!!!" + str);
+        Log.i("zkw", "------>>>>>so nice, demo2 !!!!" );
+
     }
 
     private void privateMethod() {

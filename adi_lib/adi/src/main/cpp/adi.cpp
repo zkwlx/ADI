@@ -14,8 +14,8 @@
 #include "handler/Config.h"
 #include "common/jdi_native.h"
 #include "common/log.h"
-#include "handler/ClassFileLoadHookHandler.h"
 #include "handler/ClassPrepareHandler.h"
+#include "handler/Terminator.h"
 
 extern "C" {
 #include "dumper.h"
@@ -138,7 +138,7 @@ extern "C" JNIEXPORT jint JNICALL Agent_OnAttach(JavaVM *vm, char *options, void
     // 不知为何会发 调试信号 导致应用终止
     // callbacks.MethodEntry = &MethodEntry;
     callbacks.ClassPrepare = &ClassPrepare;
-    callbacks.ClassFileLoadHook = &ClassFileLoadHook;
+//    callbacks.ClassFileLoadHook = &ClassFileLoadHook;
     callbacks.VMObjectAlloc = &ObjectAllocCallback;
     callbacks.GarbageCollectionStart = &GCStartCallback;
     callbacks.GarbageCollectionFinish = &GCFinishCallback;
@@ -161,6 +161,7 @@ extern "C" {
 }
 
 extern "C" JNIEXPORT void JNICALL startDump(JNIEnv *env, jclass jclazz, jstring dumpDir) {
+    setTerminated(false);
     char *dumpDirChar = const_cast<char *>(env->GetStringUTFChars(dumpDir, JNI_FALSE));
     dumper_start(dumpDirChar);
     env->ReleaseStringUTFChars(dumpDir, dumpDirChar);
@@ -168,6 +169,7 @@ extern "C" JNIEXPORT void JNICALL startDump(JNIEnv *env, jclass jclazz, jstring 
 
 
 extern "C" JNIEXPORT void JNICALL stopDump(JNIEnv *env, jclass jclazz) {
+    setTerminated(true);
     dumper_stop();
 }
 

@@ -6,17 +6,23 @@ import android.content.Context
 import android.net.NetworkInfo
 import android.net.wifi.WifiInfo
 import android.net.wifi.WifiManager
+import android.os.Build
 import android.os.Bundle
+import android.support.annotation.RequiresApi
 import android.util.Log
 import android.view.View
-import com.adi.ADIConfig
-
 import com.adi.ADIManager
 import com.adi.ui.ADIFloatManager
-
-import java.util.ArrayList
+import com.tencent.matrix.iocanary.core.IOCanaryCore
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.IOException
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.util.*
 import kotlin.random.Random
-import kotlin.random.nextInt
+
 
 class MainActivity : Activity() {
 
@@ -46,11 +52,12 @@ class MainActivity : Activity() {
             return null
         }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        ADIManager.init(this)
+//        ADIManager.init(this)
 
 
         findViewById<View>(R.id.adi_start).setOnClickListener {
@@ -99,6 +106,51 @@ class MainActivity : Activity() {
         }
         findViewById<View>(R.id.button_stop_looper_test).setOnClickListener {
             //            ADIManager.stopLooperForTest();
+        }
+
+        findViewById<View>(R.id.io_test).setOnClickListener {
+            createDuplicateLib(this)
+            val sourceFile = File(File(filesDir, "adi"), "agent.so")
+            it.post {
+                val destDirt = File(filesDir, "aaaaai")
+                if (!destDirt.exists()) {
+                    destDirt.mkdirs()
+                }
+                val destFile = File(destDirt, "agent.sooooo")
+                copyFile(sourceFile, destFile)
+                Log.i("zkw", "复制完毕。。。。。")
+            }
+            val bytes = sourceFile.readBytes()
+            Log.i("zkw", "bytes------->>${bytes.size}")
+        }
+
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private fun createDuplicateLib(context: Context): String? { // Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+        return try {
+            val classLoader = context.classLoader
+            val findLibrary =
+                ClassLoader::class.java.getDeclaredMethod("findLibrary", String::class.java)
+            val jvmtiAgentLibPath = findLibrary.invoke(classLoader, "adi_agent") as String
+            //copy lib to /data/user/0/com.adi.demo/files/adi/agent.so
+            val filesDir = context.filesDir
+            val jvmtiLibDir = File(filesDir, "adi")
+            if (!jvmtiLibDir.exists()) {
+                jvmtiLibDir.mkdirs()
+            }
+            val agentLibSo = File(jvmtiLibDir, "agent.so")
+            if (agentLibSo.exists()) {
+                agentLibSo.delete()
+            }
+            Files.copy(
+                Paths.get(File(jvmtiAgentLibPath).absolutePath),
+                Paths.get(agentLibSo.absolutePath)
+            )
+            agentLibSo.absolutePath
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+            null
         }
     }
 
@@ -173,6 +225,23 @@ class MainActivity : Activity() {
         t2.name = threadNamePrefix + "2"
         t2.start()
     }
+
+    @Throws(IOException::class)
+    private fun copyFile(source: File, dest: File) {
+        val input = FileInputStream(source)
+        val output = FileOutputStream(dest)
+        try {
+            val buf = ByteArray(5)
+            var bytesRead: Int
+            while (input.read(buf).also { bytesRead = it } > 0) {
+                output.write(buf, 0, bytesRead)
+            }
+        } finally {
+            input.close()
+            output.close()
+        }
+    }
+
 
 }
 

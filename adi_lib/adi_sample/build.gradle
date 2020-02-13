@@ -36,6 +36,7 @@ dependencies {
 //    debugImplementation 'zkw.adi:adi:0.9.3'
 //    releaseImplementation 'zkw.adi:adi-nop:0.9.3'
     implementation project(':adi')
+    implementation project(':matrix-io-canary')
 
 
     api "com.squareup.okhttp3:okhttp:3.14.2"

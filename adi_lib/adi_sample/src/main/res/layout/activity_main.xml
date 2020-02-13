@@ -59,4 +59,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="测试字节码修改" />
+    <Button
+            android:id="@+id/io_test"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="测试 IO 监控" />
 </LinearLayout>

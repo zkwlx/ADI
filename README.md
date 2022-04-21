@@ -128,6 +128,12 @@ ADI 会为对象事件的 Log 生成两个图表：对象分配数量图表和�
  <p/>点击体验
 </a>
 
+* * *
+
+欢迎关注我的公众号 `二叉树根子`，在这里可以看到不曾见过的 Android 底层技术。
+
+<img width="258" height="258" alt="公众号" src="docs/binary tree root.jpg">
+
 # License
 ```
 Copyright 2019 Square, Inc.
